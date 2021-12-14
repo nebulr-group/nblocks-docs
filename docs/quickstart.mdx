@@ -1,0 +1,226 @@
+---
+sidebar_position: 1
+sidebar_label: Quickstart (5 min)
+---
+
+# Quickstart
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const GridContainer = ({children}) => (
+  <div className="row">
+    {children}
+  </div>
+);
+
+export const GridChild = ({children}) => (
+  <div className="column">
+    {children}
+  </div>
+);
+
+## Overview
+
+The following guide will get you up and running as quickly as possible by covering the following 3 steps:
+
+1. Install the nBlocks plugins for both Frontend and Backend.
+1. Run our provided scripts to bootstrap your project with an initial scaffolding and other dependencies.
+1. View the result and query some data
+
+:::note
+
+This quickstart requires you to have `npm` installed.
+
+:::
+
+Lets go! 🚀
+
+## Getting Started
+In this excercise we'll install **nBlocks** for both a frontent and a backend project to levarage the full plug-n-play experience and prebaked feature set.
+Pick whatever framework that suites your taste for each area.
+
+:::tip
+
+If you don't have a project yet you can create new skeleton projects for both NestJS and Ionic.   
+`nest new my-backend` and `ionic start my-frontend blank --type=angular`.   
+Requires `@nestjs/cli` and `@ionic/cli`
+
+:::
+
+<GridContainer>
+<GridChild>
+
+### Backend
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+nest new nblocks-nestjs-test
+
+1. Install plugin
+```bash
+npm i @nebulr-group/nblocks-nestjs
+```
+
+2. Run scaffolding script
+```bash
+npx @nebulr-group/nblocks-nestjs setup
+```
+
+3. Import the module
+```typescript title="src/app.module.ts"
+import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
+
+@Module({
+  imports: [NBlocksModule],
+})
+export class AppModule {}
+```
+
+4. Add the environment variable for each npm script
+```json title="package.json"
+...
+"start:dev": "APP_ENV=dev nest start --watch",
+"start:debug": "APP_ENV=dev nest start --debug --watch",
+"start:prod": "APP_ENV=prod node dist/main",
+...
+```
+
+:::note
+
+Make sure you have enabled CORS since the Frontend project will need that to query data.
+
+:::
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+
+Coming soon...
+
+</TabItem>
+</Tabs>
+</GridChild>
+<GridChild>
+
+### Frontend
+<Tabs>
+<TabItem value="ionic" label="Ionic" default>
+
+1. Install plugin
+```bash
+npm i @nebulr-group/nblocks-ionic
+```
+
+2. Run scaffolding script
+```bash
+npx @nebulr-group/nblocks-plugin-tool setup-ionic
+```
+
+3. Import the module
+```typescript title="src/app/app.module.ts"
+import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
+
+@NgModule({
+    declarations: [AppComponent],
+    entryComponents: [],
+    imports: [
+      ...
+        NblocksIonicModule.forRoot({
+            apiHost: "http://localhost:3000", // Your running NBlocks API
+            logoPath: "https://www.northwhistle.com/wp-content/uploads/2021/08/NorthWhistle-logo-retina-2.png", // Url to your app logo
+            privacyPolicyUrl: "https://www.myapp.com/privacy", // Url to your app privacy policy
+            graphqlPath: "/graphql", // If you have exposed the GraphQL endpoint somewhere else than standard on NBlocks API
+            openRoutes: ["/"] // Retrieving a 401 response, the interceptors will not redirect to login if user is on any of these UI routes
+        })
+
+    providers: [
+        ...
+        AUTH_HTTP_INTERCEPTOR_PROVIDERS
+})
+```
+
+</TabItem>
+<TabItem value="flutter" label="Flutter">
+Coming soon...
+</TabItem>
+</Tabs>
+</GridChild>
+</GridContainer>
+
+Finish of with launching both your backend and frontend project. E.g. `npm run start:dev` and `ionic serve`
+
+## Let's see the result
+
+### Logging in for the first time
+1. Open up your web browser and navigate to your frontend project start screen. 
+1. Append the current url with `/auth` like in `http://localhost:8100/auth` and hit enter. 
+You should see your first glimse of the nBlocks login screen 😎
+1. Login as XXXXX:XXXXX.
+1. You're now logged in and your session is kept between page reloads, congrats!
+
+<img
+  src={require('./assets/login.png').default}
+  alt="Login screen"
+  className="screenshot"
+/>
+
+### Try adding a user
+1. Go to `/user` to see the User management screen
+1. Click add user, enter a valid email address and click invite.
+1. Check your inbox for an email and click the link to start the onboarding process
+
+<img
+  src={require('./assets/user-list.png').default}
+  alt="User list"
+  className="screenshot"
+/>
+
+### Querying data in backend
+We will render your current user list when the backend receives a `HTTP GET /nblocks-hello` request.
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+1. Open the up the AppController.ts and inject ClientService provider from '@nebulr-group/nblocks-nestjs';
+```typescript title=src/app.controller.ts
+import { ClientService } from '@nebulr-group/nblocks-nestjs';
+...
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+```
+
+2. Add a new controller action for `nblocks-tenants` path.
+```typescript title=src/app.controller.ts
+@Get('nblocks-tenants')
+nblocksTenants(): string {
+  return this.clientService.client.tenants.list();
+}
+```
+
+3. Expose the `nblocks-tenants` path as an open endpoint allowing anonymous calls and restart your server
+```json title=nblocks/config/resourceMappings.json
+{
+  ...
+  "/nblocks-tenants": "ANONYMOUS",
+  ...
+}
+```
+
+3. Open up a new browser tab and enter `http://localhost:3000/nblocks-tenants` and voila! 👨🏻‍🍳   
+You should see a list of your app tenants in JSON format.
+
+
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+### That's all for today folks!
+
+## Next steps
+- Read how to use your [custom branding](guides/branding.mdx).
+- Get ready and [secure your app](guides/security.mdx).
+- Understand the concept of [Tenants and Users](guides/tenants-users.mdx).
+- Go full hard core and checkout the [API reference](https://reference.nblocks.dev).

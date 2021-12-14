@@ -6,15 +6,15 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  url: 'https://your-docusaurus-test-site.com',
+  title: 'nBlocks Documentation',
+  tagline: 'For developer by developers',
+  url: 'https://docs.nblocks.dev',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'nebulr-group', // Usually your GitHub org/user name.
+  projectName: 'nblocks-docs', // Usually your repo name.
 
   presets: [
     [
@@ -51,13 +51,24 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'quickstart',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Quickstart',
+          },
+          {
+            type: 'doc',
+            docId: 'quickstart',
+            position: 'left',
+            label: 'Guides & Examples',
+          },
+          {
+            href: 'https://reference.nblocks.io',
+            position: 'left',
+            label: 'Reference',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/nebulr-group',
             label: 'GitHub',
             position: 'right',
           },
@@ -70,8 +81,8 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
+                label: 'Quickstart',
+                to: '/docs/quickstart',
               },
             ],
           },
@@ -80,7 +91,7 @@ const config = {
             items: [
               {
                 label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                href: 'https://stackoverflow.com/questions/tagged/nblocks',
               },
               {
                 label: 'Discord',
@@ -101,7 +112,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/nebulr-group',
               },
             ],
           },

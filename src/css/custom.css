@@ -26,3 +26,24 @@
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+.screenshot {
+  display: block;
+  max-width: 500px;
+  margin: auto;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.column:first-child {
+  border-right: 1px solid lightgray;
+}

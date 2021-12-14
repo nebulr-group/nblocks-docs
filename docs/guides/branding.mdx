@@ -1,0 +1,60 @@
+---
+sidebar_position: 1
+---
+
+# Branding
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## App model
+Your app model holds some variables that is central to how content like onboarding material from nBlocks looks like.
+
+| Variable          | Description |
+| -----------       | ----------- |
+| name              | Your app name |
+| logo              | A public url to your logo |
+| websiteUrl        | A public url to a landing page. Used in email footers etc. |
+| privacyPolicyUrl  | A public url to a privacy policy. Used in email footers etc. |
+| termsOfServiceUrl | A public url to a terms of service. Used in email footers etc.       |
+
+**Updating your app model**
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+...
+# Set branding
+await this.clientService.client.updateApp({
+    {
+        "name": "My App",
+        "logo": "https://www.example.com/logo.png",
+        "websiteUrl": "https://www.example.com",
+        "privacyPolicyUrl": "https://www.example.com/privacy-policy",
+        "termsOfServiceUrl": "https://www.example.com/terms-of-service"
+    }
+});
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+## Frontend
+<Tabs>
+<TabItem value="ionic" label="Ionic" default>
+
+### Variables
+TBD...
+### Color scheme
+TBD...
+</TabItem>
+<TabItem value="flutter" label="Flutter">
+Coming soon...
+</TabItem>
+</Tabs>

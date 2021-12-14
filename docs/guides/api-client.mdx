@@ -1,0 +1,94 @@
+---
+sidebar_position: 100
+---
+
+# API client
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The API client is our swiss army knife for querying the nBlocks Rest API directly and most of our plug-n-play experiences use the API client under the hood to deliver their feature set. 
+It comes with typings and documentation built in for your convenience.
+
+You'll be able to get hold of an client instance straight, all prepped with credentails, from your plug-n-play plugin.
+
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+...
+# Get the client instance
+const client = this.clientService.client;
+
+# Use the client instance for something
+await client.tenants.list();
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+### Reference
+The API client wraps all functionality from the nBlocks Rest API. See our [API Reference](https://reference.nblocks.io) for exact usage.
+
+## Deep dive
+The client and its sub clients is organised around the NBlocks feature areas and to be a smooth experience for developers using it. 
+
+A client hierarchy has been setup to allow chaining calls.
+```
+PlatformClient
+│── AuthClient
+│── CommunicationClient
+│── Tenants (generic client)
+└───Tenant (specific client)
+    │── FileClient
+    │── Users (generic client)
+    └───User (specific client)
+```
+
+* Generic clients lets you do operations that isn't require a certain id to be present. E.g. `create`, `list` etc.
+* Specific clients lets you do operations that require a certain id to be present. E.g. `get`, `update`, `delete`, `sendEmail` etc.
+
+This allowed us to accomplish the following experience for our developers.
+
+```javascript
+const client = new PlatformClient("ACCESS_KEY");
+
+const aBunchOfUsers = await client.tenant(user.tenant.id).users.list();
+
+const user = client.auth.authorize(authToken, userId, "secure/endpoint");
+
+await client.tenant(user.tenant.id).user(user.id).sendSms({text: "Hello you"});
+```
+
+## Quick start
+You can install the API client manually and use it directly if non of our plug-n-play experiences suite your needs.
+1. Install the plugin
+```
+npm i @nebulr-group/nblocks-ts-client
+```
+
+2. Import the PlatformClient from the package
+```javascript
+import { PlatformClient } from '@nebulr-group/nblocks-ts-client'
+```
+
+3. Instantiate a new client with your access token.
+```javascript
+const client = new PlatformClient("ACCESS_KEY");
+```
+
+4. List all tenants in your app
+```javascript
+import { Tenant } from '@nebulr-group/nblocks-ts-client'
+
+const tenants:Tenant[] = await client.tenants.list();
+tenants.map(t: Tenant => console.log(`Name: ${t.name}, ID:${t.id}`));
+```
+
+**Success!**

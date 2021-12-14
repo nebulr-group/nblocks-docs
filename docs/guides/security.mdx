@@ -1,0 +1,89 @@
+---
+sidebar_position: 3
+---
+
+# Securing your app
+Security is essential for any project and we want it to be as easy as possible for you to customize nBlocks to your security model.
+
+## Define your roles
+Your app model lets you define the different types of roles your users can adapt. 
+Each role you define can grant one of many privilegues, think of roles like a way of grouping privilegues. 
+The names of these are totally up to you and how you organize and protect the data in your app.
+It's ultimatly the match between the granted and required privilegue that gets checked during authorization.
+
+Good examples of roles: `OWNER`, `ADMIN`, `MANAGER` etc.
+
+Good examples of privilegues: `USER_READ`, `USER_WRITE`, `ENTITY_READ` etc.
+
+:::note
+
+nBlocks assigns the `OWNER` role to the person that iniated the creation of a tenant. That person will be the first user and the responsible owner of that tenant.
+
+:::
+
+**Example**
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly nebulrAuthService: NebulrAuthService,
+    private readonly clientService: ClientService
+  ) {}
+...
+# Get the client instance
+const client = this.clientService.client;
+
+# Set role configuration
+await client.updateApp({
+    roles: [
+        "OWNER": [
+            "USER_READ",
+            "USER_WRITE",
+        ],
+        "ADMIN": [
+            "USER_READ",
+            "USER_WRITE",
+        ],
+        "MANAGER": [
+            "USER_READ"
+        ]
+    ]
+});
+
+# Change the role for the current user
+const currentUser = this.nebulrAuthService.getCurrentUser();
+const userClient = client.tenant(currentUser.tenant.id).user(currentUser.id);
+await userClient.update({role: "MANAGER"});
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+## Restricting backend endpoints
+When users login NBlocks will automatically grant their set of privilegues depending to their role.
+
+The `resourceMappings.json` is the heart of the RBAC configuration. It supports both GraphQL queries/mutations as well as HTTP requests. You can use wildcards to allow or dissallow a whole controller or route. Here's how one could look.
+
+```json title=nblocks/config/resourceMappings.json
+{
+    "graphql/readCase":"CASE_READ",
+    "graphql/createCase":"CASE_WRITE",
+    "/secret": "SECRET_READ",
+    "/**": "ANONYMOUS"
+}
+```
+
+Above configuration will demand authenticated users to have the privilegue `CASE_READ` when calling the GraphQL query `readCase` and `SECRET_READ` when calling `HTTP GET|PUT|POST /secret`. Any HTTP call to any other controller action (/\*\*) will be treated as an anonymous call.
+
+In the quick start part the script did just configure all endpoints to allow `ANONYMOUS` calls meaning the built in gatekeeping will not activate any authentication nor resource authorization. To activate gatekeeping, try to change the privilegues to `USER_READ`. This will have all calls that are missing auth cotext to render back `401 Unauthorized` or `403 Forbidden`. If you're already using any of our NBlocks UI plugins, you'll be redirected to the login screen immediately after making such request.
+
+If you wish to do your own role check in your own code you'll always have access to the role data of the currentUser data via `NebulrAuthService`. See [Get the current user](get-the-current-user)
+
+## Restricting frontend components
+`AUTH_HTTP_INTERCEPTOR_PROVIDERS`
+
+`nblocks-access-control` directive

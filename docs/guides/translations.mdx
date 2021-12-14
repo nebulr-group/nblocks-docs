@@ -1,0 +1,34 @@
+---
+sidebar_position: 2
+---
+
+# i18n & Translations
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Internationalisation (i18n) support is a given requirement for any serious app project. 
+The nBlocks api uses i18n to generate onboarding content and other communication material in different languages for your users. 
+What default language to use is determined by the `locale` property of your tenants. This is something you (programmatically) or the tenant owner can change anytime.
+
+## Backend
+Any request that has been authorized through nBlocks will contain the tenant context and ultimatly a `locale` property. 
+You can use this property to set the language of the i18n plugin and render your translations.
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+TBD...
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+## Frontend
+<Tabs>
+<TabItem value="ionic" label="Ionic" default>
+TBD...
+</TabItem>
+<TabItem value="flutter" label="Flutter">
+Coming soon...
+</TabItem>
+</Tabs>
