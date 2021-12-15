@@ -4,38 +4,35 @@ import styles from './HomepageFeatures.module.css';
 
 type FeatureItem = {
   title: string;
-  image: string;
+  image?: string;
   description: JSX.Element;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    image: '/img/undraw_docusaurus_mountain.svg',
+    title: 'Plug and play user management',
+    // image: `/img/undraw_docusaurus_mountain.svg`,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Install our API with full backend and frontend support in 5 minutes. Choose between our ready to use functionality or customise as you wish.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    image: '/img/undraw_docusaurus_tree.svg',
+    title: 'Speed up your development',
+    // image: '/img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        With nBlocks user management API you’ll get ready to use functionality with complete frontend and backend support. Choose between using it as is, tweaking it to your need or cherrypick from all included features.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    image: '/img/undraw_docusaurus_react.svg',
+    title: 'For developer by developers',
+    // image: '/img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Be productive and get the best of two worlds! Use the installable plugins with plug and play views and best practices for your software stack.
       </>
     ),
   },
@@ -45,7 +42,7 @@ function Feature({title, image, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <img className={styles.featureSvg} alt={title} src={image} />
+        {image && <img className={styles.featureSvg} alt={title} src={image} />}
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
