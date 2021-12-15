@@ -9,12 +9,13 @@ const config = {
   title: 'nBlocks Documentation',
   tagline: 'For developer by developers',
   url: 'https://docs.nblocks.dev',
-  baseUrl: '/',
+  baseUrl: '/nblocks-docs/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'nebulr-group', // Usually your GitHub org/user name.
   projectName: 'nblocks-docs', // Usually your repo name.
+  trailingSlash: false,
 
   presets: [
     [
@@ -62,9 +63,9 @@ const config = {
             label: 'Guides & Examples',
           },
           {
-            href: 'https://reference.nblocks.io',
+            href: 'https://nebulr-group.github.io/nblocks-api-docs',
             position: 'left',
-            label: 'Reference',
+            label: 'API Reference',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
