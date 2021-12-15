@@ -55,8 +55,6 @@ Requires `@nestjs/cli` and `@ionic/cli`
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-nest new nblocks-nestjs-test
-
 1. Install plugin
 ```bash
 npm i @nebulr-group/nblocks-nestjs
@@ -192,7 +190,7 @@ constructor(
 2. Add a new controller action for `nblocks-tenants` path.
 ```typescript title=src/app.controller.ts
 @Get('nblocks-tenants')
-nblocksTenants(): string {
+async nblocksTenants(): Promise<TenantResponseDto[]> {
   return this.clientService.client.tenants.list();
 }
 ```

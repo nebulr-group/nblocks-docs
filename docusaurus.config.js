@@ -43,10 +43,10 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'My Site',
+        title: 'Home',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
           {
@@ -57,7 +57,7 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'quickstart',
+            docId: 'guides/branding',
             position: 'left',
             label: 'Guides & Examples',
           },
@@ -117,7 +117,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `© ${new Date().getFullYear()} nBlocks. A Nebulr product. All Rights Reserved`,
       },
       prism: {
         theme: lightCodeTheme,
