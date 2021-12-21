@@ -114,7 +114,20 @@ npm i @nebulr-group/nblocks-ionic
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ```
 
-3. Import the module
+3. Include the nblocks css styles and styles from PrimeNG peer dependencies under build options in angular.json
+```json title="angular.json"
+...
+"styles": [
+  ...
+  "node_modules/primeicons/primeicons.css",
+  "node_modules/primeng/resources/themes/saga-blue/theme.css",
+  "node_modules/primeng/resources/primeng.min.css",
+  "node_modules/@nebulr-group/nblocks-ionic/styles/global.css"
+],
+...
+```
+
+4. Import the module
 ```typescript title="src/app/app.module.ts"
 import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
 
@@ -123,13 +136,7 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
     entryComponents: [],
     imports: [
       ...
-        NblocksIonicModule.forRoot({
-            apiHost: "http://localhost:3000", // Your running NBlocks API
-            logoPath: "https://www.northwhistle.com/wp-content/uploads/2021/08/NorthWhistle-logo-retina-2.png", // Url to your app logo
-            privacyPolicyUrl: "https://www.myapp.com/privacy", // Url to your app privacy policy
-            graphqlPath: "/graphql", // If you have exposed the GraphQL endpoint somewhere else than standard on NBlocks API
-            openRoutes: ["/"] // Retrieving a 401 response, the interceptors will not redirect to login if user is on any of these UI routes
-        })
+        NblocksIonicModule.forRoot({})
 
     providers: [
         ...
