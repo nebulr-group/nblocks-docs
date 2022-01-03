@@ -8,27 +8,53 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 Internationalisation (i18n) support is a given requirement for any serious app project. 
-The nBlocks api uses i18n to generate onboarding content and other communication material in different languages for your users. 
+The nBlocks platform uses i18n to generate onboarding content and other communication material in different languages for your users. 
 What default language to use is determined by the `locale` property of your tenants. This is something you (programmatically) or the tenant owner can change anytime.
 
-## Backend
-Any request that has been authorized through nBlocks will contain the tenant context and ultimatly a `locale` property. 
-You can use this property to set the language of the i18n plugin and render your translations.
-<Tabs>
-<TabItem value="nestjs" label="NestJS" default>
-TBD...
-</TabItem>
-<TabItem value="expressjs" label="Express.js">
-Coming soon...
-</TabItem>
-</Tabs>
-
 ## Frontend
+Our frontend plugins comes with i18n support and during the installation process some translation files where put into your project. 
+The NBlocks views will load these files over HTTP. Feel free to change these text entries to your own standards. 
+You can add more languages by adding a new file named `nblocks_${LANG}.json`, where `LANG` should be a lower case in ISO_639-1 format and using the same translation keys as the other files.
+
+The current language is automatically resolved for the logged in user. If you want to allow the user to change language via the built in frontend plugin views you need to configure this for the plugin.
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
-TBD...
+
+Use the forRoot() method on the NblocksIonicModule to customize the languages.
+```typescript title="src/app/app.module.ts"
+/* Enable both English and Swedish translations */
+NblocksIonicModule.forRoot({
+  languages: ['en','sv'],
+})
+```
 </TabItem>
 <TabItem value="flutter" label="Flutter">
 Coming soon...
 </TabItem>
 </Tabs>
+
+:::note
+
+See [supported languages](#supported-languages-in-nblocks-platform) to understand the possibility and limitation of new languages.
+
+:::
+
+## Backend
+Any request that has been authorized through nBlocks will contain the tenant context and ultimatly a `locale` property. 
+You can use this property to set the language of the i18n plugin and render your own translations.
+
+Since our backend plugins do not use translations we don't provide any examples. Feel free to use any tool you like.
+
+
+## Supported languages in NBlocks platform
+Even if you're supporting different languages in your app, the NBlocks platform (responsible for emailing, onboarding etc.) supports these language at the time.
+NBlocks will fallback to English if an unknown language is present.
+
+| ISO_639-1       | Language |
+| -----------     | ----------- |
+| en              | English (Default for new tenants) |
+| sv              | Swedish |
+
+*Updated 2022-01-01*
+
+Contact us if you want to request support for a new language. We'd be happy to put that into the roadmap.
