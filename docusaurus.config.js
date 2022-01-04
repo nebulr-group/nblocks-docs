@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'nBlocks Documentation',
+  title: 'Nblocks Documentation',
   tagline: 'For developer by developers',
   url: 'https://docs.nblocks.dev',
   baseUrl: '/nblocks-docs/',
@@ -118,7 +118,7 @@ const config = {
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} nBlocks. A Nebulr product. All Rights Reserved`,
+        copyright: `© ${new Date().getFullYear()} Nblocks. A Nebulr product. All Rights Reserved`,
       },
       prism: {
         theme: lightCodeTheme,

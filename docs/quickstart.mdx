@@ -24,7 +24,7 @@ export const GridChild = ({children}) => (
 
 The following guide will get you up and running as quickly as possible by covering the following 3 steps:
 
-1. Install the nBlocks plugins for both Frontend and Backend.
+1. Install the Nblocks plugins for both Frontend and Backend.
 1. Run our provided scripts to bootstrap your project with an initial scaffolding and other dependencies. During this phase you'll be able to signup directly.
 1. View the result and query some data
 
@@ -37,7 +37,7 @@ This quickstart requires you to have `npm` installed.
 Lets go! 🚀
 
 ## Getting Started
-In this excercise we'll install **nBlocks** for both a frontent and a backend project to levarage the full plug-n-play experience and prebaked feature set.
+In this excercise we'll install **Nblocks** for both a frontent and a backend project to levarage the full plug-n-play experience and prebaked feature set.
 Pick whatever framework that suites your taste for each area.
 
 During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared accross all testers.
@@ -110,7 +110,7 @@ npm i @nebulr-group/nblocks-ionic
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ```
 
-3. Include the nblocks css styles and styles from PrimeNG peer dependencies under build options in angular.json
+3. Include the Nblocks css styles and styles from PrimeNG peer dependencies under build options in the angular.json file located in your project root.
 ```json title="angular.json"
 ...
 "styles": [
@@ -155,7 +155,7 @@ Finish of with launching both your backend and frontend project. E.g. `npm run s
 ### Logging in for the first time
 1. Open up your web browser and navigate to your frontend project start screen. 
 1. Append the current url with `/auth` like in `http://localhost:8100/auth` and hit enter. 
-You should see your first glimse of the nBlocks login screen 😎
+You should see your first glimse of the Nblocks login screen 😎
 1. If you choose to use Demo app, login as `john.doe@example.com`, password `helloworld`. If you signed up straight in your console you have receieved an email to onboard your first user, click that link now and set your first password and login.
 1. You're now logged in and your session is kept between page reloads, congrats!
 
@@ -166,7 +166,7 @@ You should see your first glimse of the nBlocks login screen 😎
 />
 
 ### Try adding a user
-1. Before we try to query sensitive data we must make sure that we've protected the backend endpoint so that the NBlocks guards will authorize and identify you.
+1. Before we try to query sensitive data we must make sure that we've protected the backend endpoint so that the Nblocks guards will authorize and identify you.
 Lets make all graphql endpoints require the `USER_READ` privilegue and restart your backend. 
 ```typescript title="nblocks/config/resourceMappings.json"
 {
@@ -233,4 +233,4 @@ Coming soon...
 - Read how to use your [custom branding](guides/branding.mdx).
 - Get ready and [secure your app](guides/security.mdx).
 - Understand the concept of [Tenants and Users](guides/tenants-users.mdx).
-- Go full hard core and checkout the [API reference](https://reference.nblocks.dev).
+- Go full hard core and checkout the [API client](guides/api-client.mdx) and [API reference](https://nebulr-group.github.io/nblocks-api-docs).

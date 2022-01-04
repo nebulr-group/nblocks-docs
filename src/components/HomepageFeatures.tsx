@@ -23,7 +23,7 @@ const FeatureList: FeatureItem[] = [
     // image: '/img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        With nBlocks user management API you’ll get ready to use functionality with complete frontend and backend support. Choose between using it as is, tweaking it to your need or cherrypick from all included features.
+        With Nblocks user management API you’ll get ready to use functionality with complete frontend and backend support. Choose between using it as is, tweaking it to your need or cherrypick from all included features.
       </>
     ),
   },
