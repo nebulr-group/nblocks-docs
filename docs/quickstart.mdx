@@ -58,17 +58,12 @@ Requires `@nestjs/cli` and `@ionic/cli`
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-1. Install plugin.
-```bash
-npm i @nebulr-group/nblocks-nestjs
-```
-
-2. Run scaffolding script and choose to signup or use the demo app.
+1. Run scaffolding script to install all dependencies and choose to signup or use the demo app.
 ```bash
 npx @nebulr-group/nblocks-nestjs setup
 ```
 
-3. Import the module.
+2. Import the module.
 ```typescript title="src/app.module.ts"
 import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 
@@ -100,17 +95,12 @@ Coming soon...
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
 
-1. Install plugin
-```bash
-npm i @nebulr-group/nblocks-ionic
-```
-
-2. Run scaffolding script
+1. Run scaffolding script to install all dependencies.
 ```bash
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ```
 
-3. Include the Nblocks css styles and styles from PrimeNG peer dependencies under build options in the angular.json file located in your project root.
+2. Include the Nblocks css styles and styles from PrimeNG peer dependencies under build options in the angular.json file located in your project root.
 ```json title="angular.json"
 ...
 "styles": [
@@ -123,7 +113,7 @@ npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ...
 ```
 
-4. Import the module
+3. Import the module
 ```typescript title="src/app/app.module.ts"
 import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
 
@@ -139,6 +129,12 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
         AUTH_HTTP_INTERCEPTOR_PROVIDERS
 })
 ```
+
+:::note
+
+We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
+
+:::
 
 </TabItem>
 <TabItem value="flutter" label="Flutter">
