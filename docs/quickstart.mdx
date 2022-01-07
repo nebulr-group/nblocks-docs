@@ -58,12 +58,17 @@ Requires `@nestjs/cli` and `@ionic/cli`
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-1. Run scaffolding script to install all dependencies and choose to signup or use the demo app.
+1. Install plugin.
+```bash
+npm i @nebulr-group/nblocks-nestjs
+```
+
+2. Run scaffolding script and choose to signup or use the demo app.
 ```bash
 npx @nebulr-group/nblocks-nestjs setup
 ```
 
-2. Import the module.
+3. Import the module.
 ```typescript title="src/app.module.ts"
 import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 
