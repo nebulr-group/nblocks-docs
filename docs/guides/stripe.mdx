@@ -2,9 +2,192 @@
 sidebar_position: 6
 ---
 
-# Subscribers & Stripe
-How you get paid by your customers is defined by your `Business model` which essentially consists of different `plans` and `tax` configurations.
+# Customers & Stripe
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+We've made it easy to setup a paywall to your app and offer new customers to pick a plan and checkout a new subscription that grants access to your app.
+With this module we also have you covered from customers that stops paying. Users of these tenants will be locked out if they neglect the Nblocks reminders.
+How you get paid by your customers is defined by your Business model which essentially consists of your `plans` and `tax` configurations.
+
+We use Stripe as our payment partner.
+The business model can be setup using the Nblock Dashboard or programmatically.
+
+:::tip
+Read more about the concept of users and tenants [here](tenants-users.mdx).
+:::
 
 ## Plans
+With plans you describe different subscription types that customers will be able to subscribe to. 
+Naturally, different plans sets out how rich feature set your app will provision. The richer feature set, the higher pricing.
+
+For example consider you want to offer your app in two pricing points with different feature sets. One essential feature set and one complete. 
+For that we define two plans.
+
+| Name          | Description
+| -----------   | -----------   |
+| ESSENTIAL     | A light set of features that people can subscribe to |
+| COMPLETE      | A bigger set of features that people can subscribe to |
+
+:::note
+Everytime a customer (may it be a new or an existing one) checkout a new subscription; a new tenant with this plan is created. 
+You're app will be able to easily obtain the plan information everytime a request to your backend is made. 
+Using that information you'll be able to provision different feature sets
+:::
+
+Once we've define the different types of plans it's time to think of the pricing.
+
+### Prices
+Each plan will be tied to one or more pricings. The sole purpose for this is to make the plan available for different regions and currencies.
+
+Consider you want to offer the "essential" plan for 50 Euros in France and 30 GBP in England.
+
+| Region      | Price    | Currency |
+| -----------   | -----------   | -----------   |
+| FR     | 50 | EUR  |
+| EN      | 30 | GBP   |
+
+And the "complete" plan for 150 Euros in France and 100 GBP in England.
+
+| Region      | Price    | Currency |
+| -----------   | -----------   | -----------   |
+| FR     | 150 | EUR  |
+| EN      | 100 | GBP   |
+
+These prices will be withdrawn monthly from your customers credit cards. 
+
+Great! Now we know the plans and their pricings for different regions. Last but not least is to have a look at taxes.
 
 ## Taxes
+Many businesses are obligated to collect Value added tax (VAT) from their domestic customers. This may vary if you have internation customers. 
+With that in mind we've done it easy to apply taxes like this for the regions you decide.
+
+Let's say we're a French startup and we'd like our French customers to get a VAT of 20 % added to the total whilst having our English customers to proceed without affecting the total.
+We therefor declare these taxes:
+
+| Region      | Name    | Percentage |
+| -----------   | -----------   | -----------   |
+| FR     | VAT/TVA | 20  |
+
+## Setup example
+Now when we understand the different parts of the business model we can set this up programmatically for our Nblocks app model.
+1. First we make sure to provide our Stripe api credentials with which Nblocks will authenticate itself with.
+1. Then we update the business model which will synchronize automatically with Stripe creating the nessesary resources in Stripe.
+1. In the last example we use the checkout api to obtain an checkout id to use with Stripes official frontend library to open the prebuilt checkout view.
+
+:::warning
+Don't change products and price data inside Stripe created automatically by Nblocks. This might affect the checkout availablity and recurring subscription management.
+:::
+
+### Stripe credentials
+
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+...
+await client.updateAppCredentials(
+    {
+        stripeSecretKey: "XXXXXXX", 
+        stripePublicKey: "XXXXXXX"
+    }
+);
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+### Update the business model
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+...
+
+await this.clientService.client.updateApp({
+    "businessModel": {
+        "taxes": [
+            {
+                "region": "FR",
+                "name": "VAT/TVA",
+                "percentage": 20
+            }
+        ],
+        "plans": [
+            {
+                "name": "ESSENTIAL",
+                "prices": [
+                    {
+                        "region": "FR",
+                        "amount": 50,
+                        "currency": "EUR",
+                        "recurrenceInterval": "month"
+                    },
+                    {
+                        "region": "EN",
+                        "amount": 30,
+                        "currency": "GBP",
+                        "recurrenceInterval": "month"
+                    }
+                ]
+            },
+            {
+                "name": "COMPLETE",
+                "prices": [
+                    {
+                        "region": "FR",
+                        "amount": 150,
+                        "currency": "EUR",
+                        "recurrenceInterval": "month"
+                    },
+                    {
+                        "region": "EN",
+                        "amount": 100,
+                        "currency": "GBP",
+                        "recurrenceInterval": "month"
+                    }
+                ]
+            }
+        ]
+    }
+});
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+:::tip
+Altering the business model will trigger a synchronization with Stripe. You must have stored your Stripe integration keys in Nblocks for this to happen.
+:::
+
+### Obtain an id for the prebuild Stripe checkout
+
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```typescript
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+...
+const checkoutSession = await client.createCheckoutSession({region: "FR"});
+```
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>

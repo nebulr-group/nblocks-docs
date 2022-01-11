@@ -68,7 +68,7 @@ npm i @nebulr-group/nblocks-nestjs
 npx @nebulr-group/nblocks-nestjs setup
 ```
 
-3. Import the module.
+3. Import the NBlocksModule in your app.module.ts
 ```typescript title="src/app.module.ts"
 import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 
@@ -78,7 +78,7 @@ import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 export class AppModule {}
 ```
 
-4. Enable CORS since the Frontend project will need that to query data.
+4. Enable CORS in your main.ts since the Frontend project will need that to query data.
 ```typescript title="src/main.ts"
 ...
 async function bootstrap() {
@@ -90,7 +90,7 @@ async function bootstrap() {
 ...
 ```
 
-5. Launch your Backend. 
+4. Launch your Backend. 
 ```bash
 npm run start:dev
 ``` 
@@ -109,6 +109,7 @@ Coming soon...
 </TabItem>
 </Tabs>
 </GridChild>
+
 <GridChild>
 
 ### Frontend
@@ -120,7 +121,8 @@ Coming soon...
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ```
 
-2. Include the Nblocks css styles and styles from PrimeNG peer dependencies under build options in the angular.json file located in your project root.
+2. Include the Nblocks css styles and styles from PrimeNG peer dependencies under **app > architect > build > options** in the angular.json file located in your project root.
+Usually this property sits around row 34.
 ```json title="angular.json"
 ...
 "styles": [
@@ -133,7 +135,7 @@ npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ...
 ```
 
-3. Import the module
+3. Import the NblocksIonicModule in your app.module.ts.
 ```typescript title="src/app/app.module.ts"
 import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
 
@@ -185,23 +187,29 @@ You should see your first glimpse of the Nblocks login screen 😎
 />
 
 ### Try adding a user
-1. Before we try to query sensitive data we must make sure that we've protected the backend endpoint so that the Nblocks guards will authorize and identify you.
-Lets make all graphql endpoints require the `USER_READ` privilegue and restart your backend. 
+Before we try to query sensitive data we must make sure that we've protected the backend endpoint so that the Nblocks guards will authorize and identify you.
+This is achived using the `resourceMappings.json` file which is read by the plugin during startup. 
+:::note
+Every time you change `resourceMappings.json`, a server restart is necessary for the changes to take effect.
+:::
+**Let's proceed!** 👨‍💻
+1. 
+Make all graphql endpoints require the `USER_READ` privilegue by adding this to the file and restart your backend server. 
 ```typescript title="nblocks/config/resourceMappings.json"
 {
     "graphql/**": "USER_READ",
     "/**": "ANONYMOUS"
 }
 ```
-1. Navigate your browser to `/user` as in `http://localhost:8100/user` to see the User management screen
-1. Click add user, enter a valid email address and click invite.
-1. Check your inbox for an email and click the link to start the onboarding process
-
+2. Navigate your browser to `/user` as in `http://localhost:8100/user` to see the User management screen.
 <img
   src={require('./assets/user-list.png').default}
   alt="User list"
   className="screenshot"
 />
+3. Click add user, enter a valid email address and click invite.
+4. Check your inbox for an email and click the link to start the onboarding process.
+5. Mission completed! 🥊
 
 ### Querying data in backend
 In this example, you'll code a small controller action that will render the current user list back.   
@@ -247,6 +255,7 @@ Coming soon...
 </Tabs>
 
 ### That's all for today folks!
+You've just unlocked the next level you're ready take on next challenge.
 
 ## Next steps
 - Read how to use your [custom branding](guides/branding.mdx).
