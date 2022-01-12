@@ -37,11 +37,11 @@ This quickstart requires you to have `npm` installed.
 Lets go! 🚀
 
 ## Getting Started
-In this excercise we'll install **Nblocks** for both a frontent and a backend project to levarage the full plug-n-play experience and prebaked feature set.
-Pick whatever framework that suites your taste for each area.
+In this exercise we'll install **Nblocks** for both a frontent and a backend project to leverage the full plug-n-play experience and prebaked feature set.
+Pick whatever framework that suits your taste for each area.
 
-During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared accross all testers.
-If you choose to signup, wait with clicking the onboard link until the guide says so.
+During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared across all testers.
+If you choose to sign up, wait with clicking the onboard link until the guide says so.
 
 :::tip
 
@@ -63,7 +63,7 @@ Requires `@nestjs/cli` and `@ionic/cli`
 npm i @nebulr-group/nblocks-nestjs
 ```
 
-2. Run scaffolding script and choose to signup or use the demo app.
+2. Run scaffolding script and choose to sign up or use the demo app.
 ```bash
 npx @nebulr-group/nblocks-nestjs setup
 ```
@@ -177,7 +177,7 @@ Coming soon...
 1. Open up your web browser and navigate to your frontend project start screen. 
 1. Append the current url with `/auth` like in `http://localhost:8100/auth` and hit enter. 
 You should see your first glimpse of the Nblocks login screen 😎
-1. If you choose to use Demo app, login as `john.doe@example.com`, password `helloworld`. If you signed up straight in your console you have receieved an email to onboard your first user, click that link now and set your first password and login.
+1. If you choose to use the Demo app, login as `john.doe@example.com`, password `helloworld`. If you signed up straight in your console you have received an email to onboard your first user, click that link now and set your first password and login.
 1. You're now logged in and your session is kept between page reloads, congrats!
 
 <img
@@ -188,13 +188,13 @@ You should see your first glimpse of the Nblocks login screen 😎
 
 ### Try adding a user
 Before we try to query sensitive data we must make sure that we've protected the backend endpoint so that the Nblocks guards will authorize and identify you.
-This is achived using the `resourceMappings.json` file which is read by the plugin during startup. 
+This is achieved using the `resourceMappings.json` file which is read by the plugin during startup. 
 :::note
 Every time you change `resourceMappings.json`, a server restart is necessary for the changes to take effect.
 :::
 **Let's proceed!** 👨‍💻
 1. 
-Make all endpoints require the `USER_READ` privilegue by adding this to the file and restart your backend server. 
+Make all endpoints require the `USER_READ` privilege by adding this to the file and restart your backend server. 
 ```json title="nblocks/config/resourceMappings.json"
 {
     "graphql/**": "USER_READ",
@@ -213,7 +213,7 @@ Make all endpoints require the `USER_READ` privilegue by adding this to the file
 
 ### Querying data in backend
 In this example, you'll code a small controller action that will render the current user list back.   
-You'll be testing this by using your browser and navigate to `http://localhost:3000/nblocks-tenants`.
+You'll be testing this by using your browser and navigating to `http://localhost:3000/nblocks-tenants`.
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
@@ -255,7 +255,7 @@ Coming soon...
 </Tabs>
 
 ### That's all for today folks!
-You've just unlocked the next level you're ready take on next challenge.
+You've just unlocked the next level and you're ready take on the next challenge.
 
 ## Next steps
 - Read how to use your [custom branding](guides/branding.mdx).
