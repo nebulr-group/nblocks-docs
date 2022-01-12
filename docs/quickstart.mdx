@@ -194,11 +194,11 @@ Every time you change `resourceMappings.json`, a server restart is necessary for
 :::
 **Let's proceed!** 👨‍💻
 1. 
-Make all graphql endpoints require the `USER_READ` privilegue by adding this to the file and restart your backend server. 
+Make all endpoints require the `USER_READ` privilegue by adding this to the file and restart your backend server. 
 ```json title="nblocks/config/resourceMappings.json"
 {
     "graphql/**": "USER_READ",
-    "/**": "ANONYMOUS"
+    "/**": "USER_READ"
 }
 ```
 2. Navigate your browser to `/user` as in `http://localhost:8100/user` to see the User management screen.

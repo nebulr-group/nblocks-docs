@@ -121,6 +121,25 @@ Coming soon...
 </TabItem>
 </Tabs>
 
+## Password complexity
+Initially password complexity is disabled for a smooth quick start. This can easily be enabled by providing the configuration to the nblocks UI plugin.
+<Tabs>
+<TabItem value="ionic" label="Ionic" default>
+
+```typescript title="src/app/app.module.ts"
+@NgModule({
+    imports: [
+      ...
+        NblocksIonicModule.forRoot({passwordComplexity: true})
+})
+```
+
+</TabItem>
+<TabItem value="flutter" label="Flutter">
+Coming soon...
+</TabItem>
+</Tabs>
+
 ## Restricting frontend components
 
 `AUTH_HTTP_INTERCEPTOR_PROVIDERS`
