@@ -70,17 +70,25 @@ We therefor declare these taxes:
 | -----------   | -----------   | -----------   |
 | FR     | VAT/TVA | 20  |
 
-## Setup example
+## Checkout
+We offer a prebuilt checkout solution that you can easily embedd on your own product web page. 
+The checkout allows new customers to subscripe to a plan with their credit card that automatically creates a new tenant workspace and user access to your application. 
+
+:::tip
+Read more about tenants, users and how they can access your application [here](tenants-users).
+:::
+
+## Setup
 Now when we understand the different parts of the business model we can set this up programmatically for our Nblocks app model.
-1. First we make sure to provide our Stripe api credentials with which Nblocks will authenticate itself with.
+1. You must first register for a Stripe account. This can be easily done at [stripe.com](https://stripe.com).
+1. Provide your Stripe api credentials obtained from your Stripe dashboard to Nblocks with which Nblocks will authenticate itself with.
 1. Then we update the business model which will synchronize automatically with Stripe creating the nessesary resources in Stripe.
 1. In the last example we use the checkout api to obtain an checkout id to use with Stripes official frontend library to open the prebuilt checkout view.
 
-:::warning
-Don't change products and price data inside Stripe created automatically by Nblocks. This might affect the checkout availablity and recurring subscription management.
-:::
+### Register for a Stripe account
+Coming soon...
 
-### Stripe credentials
+### Store Stripe credentials
 
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
@@ -173,6 +181,10 @@ Coming soon...
 Altering the business model will trigger a synchronization with Stripe. You must have stored your Stripe integration keys in Nblocks for this to happen.
 :::
 
+:::warning
+Don't change products and price data inside Stripe created automatically by Nblocks. This might affect the checkout availablity and recurring subscription management.
+:::
+
 ### Obtain an id for the prebuild Stripe checkout
 
 <Tabs>
@@ -183,7 +195,9 @@ constructor(
     private readonly clientService: ClientService
   ) {}
 ...
-const checkoutSession = await client.createCheckoutSession({region: "FR"});
+const checkoutSession = await client.createCheckoutSession({plan: "ESSENTIAL", region: "FR"});
+
+// Use checkoutSession.id to render the prebuilt Stripe checkout page using Stripe JS Lib.
 ```
 
 </TabItem>
