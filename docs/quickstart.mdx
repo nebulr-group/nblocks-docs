@@ -225,7 +225,7 @@ You'll be testing this by using your browser and navigating to `http://localhost
 
 1. Open the up the AppController.ts and inject ClientService provider from '@nebulr-group/nblocks-nestjs';
 ```typescript title=src/app.controller.ts
-import { ClientService } from '@nebulr-group/nblocks-nestjs';
+import { ClientService, TenantResponseDto } from '@nebulr-group/nblocks-nestjs';
 ...
 constructor(
     private readonly clientService: ClientService
