@@ -1,0 +1,71 @@
+---
+sidebar_position: 2
+sidebar_label: Query your first data (2 min)
+
+---
+
+# Using the client to query your first data
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Intro
+1. In this example, you'll code a small backend controller which will be responsible to render back a list of all your tenant workspaces.
+1. We'll make use of the built in API client to query this data straight from the Nblocks platform.
+1. You'll be testing this and see the result by using your web browser and navigating to [http://localhost:3000/nblocks-tenants](http://localhost:3000/nblocks-tenants).
+
+:::tip
+Curious about the API client and what it can do? Head over the [API client article](../articles/api-client).
+:::
+
+## Let's code!
+Open up your backend project where our nblocks-backend plugin is installed.
+
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+1. Open the up the AppController.ts and inject `ClientService` as a provider from our plugin.
+```typescript title=src/app.controller.ts
+import { ClientService } from '@nebulr-group/nblocks-nestjs';
+...
+constructor(
+    private readonly clientService: ClientService
+  ) {}
+```
+
+2. Create a new controller action. Let's call it `nblocks-tenants`.
+```typescript title=src/app.controller.ts
+@Get('nblocks-tenants')
+async nblocksTenants(): Promise<TenantResponseDto[]> {
+  return this.clientService.client.tenants.list();
+}
+```
+
+:::tip
+`TenantResponseDto` response type is available to import from the plugin.
+:::
+
+3. Before we're done we need to make sure this new controller endpoint can actually be accessed by a browser and this is done in `resourceMappings.json`. 
+Add a new line to delare that the `nblocks-tenants` path will allow anonymous calls.
+```json title=nblocks/config/resourceMappings.json
+{
+  ...
+  "/nblocks-tenants": "ANONYMOUS",
+  ...
+}
+```
+:::info
+Changes to `resourceMappings.json` requires a server restart.
+:::
+
+3. That's all you needed to do. Restart the backend and head over to the result!
+
+</TabItem>
+<TabItem value="expressjs" label="Express.js">
+Coming soon...
+</TabItem>
+</Tabs>
+
+## Check the result
+Open up a new browser tab and enter [http://localhost:3000/nblocks-tenants](http://localhost:3000/nblocks-tenants) and voila! 👨🏻‍🍳   
+You should see a list of your app tenants in JSON format.

@@ -58,9 +58,15 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'guides/branding',
+            docId: 'examples/setup-email-sender',
             position: 'left',
             label: 'Guides & Examples',
+          },
+          {
+            type: 'doc',
+            docId: 'articles/branding',
+            position: 'left',
+            label: 'Articles',
           },
           {
             href: 'https://nebulr-group.github.io/nblocks-api-docs',

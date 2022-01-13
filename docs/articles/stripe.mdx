@@ -81,7 +81,8 @@ Read more about tenants, users and how they can access your application [here](t
 ## Setup
 Now when we understand the different parts of the business model we can set this up programmatically for our Nblocks app model.
 1. You must first register for a Stripe account. This can be easily done at [stripe.com](https://stripe.com).
-1. Provide your Stripe api credentials obtained from your Stripe dashboard to Nblocks with which Nblocks will authenticate itself with.
+1. Add the Nblocks webhook URL to Stripe webhooks
+1. Provide your Stripe api credentials (found in your Stripe dashboard) to Nblocks. Nblocks will use this to authenticate itself.
 1. Then we update the business model which will synchronize automatically with Stripe creating the necessary resources in Stripe.
 1. In the last example we use the checkout api to obtain a checkout id to use with Stripes official frontend library to open the prebuilt checkout view.
 
