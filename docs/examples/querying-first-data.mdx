@@ -26,7 +26,7 @@ Open up your backend project where our nblocks-backend plugin is installed.
 
 1. Open the up the AppController.ts and inject `ClientService` as a provider from our plugin.
 ```typescript title=src/app.controller.ts
-import { ClientService } from '@nebulr-group/nblocks-nestjs';
+import { ClientService, TenantResponseDto } from '@nebulr-group/nblocks-nestjs';
 ...
 constructor(
     private readonly clientService: ClientService
