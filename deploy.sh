@@ -1,2 +1,2 @@
 #!/bin/bash
-GIT_USER=orr3 yarn deploy
+GIT_USER=olgashev yarn deploy
