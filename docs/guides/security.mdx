@@ -11,17 +11,17 @@ import TabItem from '@theme/TabItem';
 
 ## Define your roles
 Your app model lets you define the different types of roles your users can adapt. 
-Each role you define can grant one of many privilegues, think of roles like a way of grouping privilegues. 
+Each role you define can grant one of many privileges, think of roles like a way of grouping privileges. 
 The names of these are totally up to you and how you organize and protect the data in your app.
-It's ultimatly the match between the granted and required privilegue that gets checked during authorization.
+It's ultimately the match between the granted and required privilege that gets checked during authorization.
 
 Good examples of roles: `OWNER`, `ADMIN`, `MANAGER` etc.
 
-Good examples of privilegues: `USER_READ`, `USER_WRITE`, `ENTITY_READ` etc.
+Good examples of privileges: `USER_READ`, `USER_WRITE`, `ENTITY_READ` etc.
 
 :::note
 
-Nblocks assigns the `OWNER` role to the person that iniated the creation of a [tenant](tenants-users). That person will be the first user and the responsible owner of that tenant.
+Nblocks assigns the `OWNER` role to the person that initiated the creation of a [tenant](tenants-users). That person will be the first user and the responsible owner of that tenant.
 
 :::
 
@@ -68,9 +68,9 @@ Coming soon...
 </Tabs>
 
 ## Restricting backend endpoints
-When users login Nblocks will automatically grant their set of privilegues depending to their role.
+When users login, Nblocks will automatically grant their set of privileges depending on their role.
 
-The `resourceMappings.json` is the heart of the RBAC configuration. It supports both GraphQL queries/mutations as well as HTTP requests. You can use wildcards to allow or dissallow a whole controller or route. Here's how one could look.
+The `resourceMappings.json` is the heart of the RBAC configuration. It supports both GraphQL queries/mutations as well as HTTP requests. You can use wildcards to allow or disallow a whole controller or route. Here's how one could look.
 
 ```json title=nblocks/config/resourceMappings.json
 {
@@ -81,9 +81,9 @@ The `resourceMappings.json` is the heart of the RBAC configuration. It supports 
 }
 ```
 
-Above configuration will demand authenticated users to have the privilegue `CASE_READ` when calling the GraphQL query `readCase` and `SECRET_READ` when calling `HTTP GET|PUT|POST /secret`. Any HTTP call to any other controller action (/\*\*) will be treated as an anonymous call.
+Above configuration will demand authenticated users to have the privilege `CASE_READ` when calling the GraphQL query `readCase` and `SECRET_READ` when calling `HTTP GET|PUT|POST /secret`. Any HTTP call to any other controller action (/\*\*) will be treated as an anonymous call.
 
-In the quick start part the script did just configure all endpoints to allow `ANONYMOUS` calls meaning the built in gatekeeping will not activate any authentication nor resource authorization. To activate gatekeeping, try to change the privilegues to `USER_READ`. This will have all calls that are missing auth cotext to render back `401 Unauthorized` or `403 Forbidden`. If you're already using any of our NBlocks UI plugins, you'll be redirected to the login screen immediately after making such request.
+In the quick start part the script did just configure all endpoints to allow `ANONYMOUS` calls meaning the built in gatekeeping will not activate any authentication nor resource authorization. To activate gatekeeping, try to change the privileges to `USER_READ`. This will have all calls that are missing auth context to render back `401 Unauthorized` or `403 Forbidden`. If you're already using any of our NBlocks UI plugins, you'll be redirected to the login screen immediately after making such a request.
 
 If you wish to do your own role check in your own code you'll always have access to the role data of the `currentUser` data via `NebulrAuthService.getCurrentUser()`.
 
