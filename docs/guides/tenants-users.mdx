@@ -4,13 +4,13 @@ sidebar_label: Users & Tenants
 ---
 
 # Users & Tenants
-Everytime we've started a new SaaS project before we've seen the following needs for security and user management:
-* Our customers data needs to be organized in workspaces.
+Every time we've started a new SaaS project before we've seen the following needs for security and user management:
+* Our customers' data needs to be organized in workspaces.
 * The workspace data should be easily distinguished in the database so we can build filters and accomplish data separation.
-* Users needs to be able to login and be granted a set of predefined privilegues.
+* Users need to be able to login and be granted a set of predefined privilegues.
 * Users should be able to invite other users to the same workspace.
 * Some users would like to get access to several workspaces but still use the same credentials and one login.
-* Same user might be granted different privilegues for different workspaces.
+* Same user might be granted different privileges for different workspaces.
 
 We then sat down with all the learnings and created something flexible for you to use.
 We decided to name workspaces as **tenants** from the well known data separation architecture [Multitenancy](https://en.wikipedia.org/wiki/Multitenancy).
@@ -22,10 +22,10 @@ This is a central concept of Nblocks and defines how you can expect the data to 
 
 ## Tenants
 A tenant represents a **workspace** of a customer and encapsulates all its users and other data for that workspace. 
-The tenant contains information about the current subscription plan which can be used to render a specific feature set and other fields like locale which can be used to render translate resources. 
-Other data could be files in the file storage etc. Many calls that you make to Nblocks requires you to provide an identification for the tenant context for this purpose.
+The tenant contains information about the current subscription plan which can be used to render a specific feature set and other fields like locale which can be used to render translation resources. 
+Other data could be files in the file storage etc. Many calls that you make to Nblocks require you to provide an identification for the tenant context for this purpose.
 
-Tenants gets created automatically in Nblocks if you've opt in for our [checkout solution](stripe). 
+Tenants get created automatically in Nblocks if you've opted in for our [checkout solution](stripe). 
 There's also the option for you to manage this yourself and programatically create new tenants. Be aware that Nblocks will not monitor payments and automatically provision access to your app for manual tenants.
 
 Here's an example of data that is made available to your app via the Tenant object:
@@ -48,7 +48,7 @@ This will enable you to accomplish data separation when serving multiple users.
 :::
 
 ## Users
-A user represents an individual and he's/her's access to specific tenants and therefore your application. The same user can be added to several tenants and still use the same credentials as before. After login, the user will be able to select what tenant to access.
+A user represents an individual and his/her access to specific tenants and therefore your application. The same user can be added to several tenants and still use the same credentials as before. After login, the user will be able to select what tenant to access.
 
 The user object contains personal information as well as other valuable fields for your use.
 Here's an example of data that is made available to your app via the User object:
@@ -60,8 +60,8 @@ Here's an example of data that is made available to your app via the User object
 | email             | Email address |
 | username          | Username to login as, currently same as email address  |
 | fullName          | Users full name (first name and last name concatenated) |
-| onboarded         | If user is onboarded or not (should be put through onboarding after first login) |
-| enabled           | If user should be allowed to login or not. Changeble via user management view |
+| onboarded         | If the user is onboarded or not (should be put through onboarding after first login) |
+| enabled           | If the user should be allowed to login or not. Changeable via user management view |
 | teams             | Array of identifiers that can be used to group several users into teams or groups  |
 | tenant            | A nested Tenant object  |
 | createdAt         | Date when the user was created  |
@@ -72,7 +72,7 @@ Read more about users and how to secure access to your application based on thei
 
 ## Onboarding
 1. A new tenant always creates a user with the role `OWNER`. This gives the user the grant to change name, locale and manage the subscription (if using payment service) for the tenant using the nblocks-plugins provided views.
-1. The new tenant ower user will receive an email containing an onboarding link to your app.
-1. The onboarding link will guide the user through a initial set password process or redirect straight to login if the user already existed in another tenant.
-1. After login, each subsequent call the user makes to your api will contain resolved security data about a new tenant and its user. It's now up to you to render data and a response to these request.
+1. The new tenant owner user will receive an email containing an onboarding link to your app.
+1. The onboarding link will guide the user through an initial set password process or redirect straight to login if the user already existed in another tenant.
+1. After login, each subsequent call the user makes to your api will contain resolved security data about a new tenant and its user. It's now up to you to render data and a response to these requests.
 
