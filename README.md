@@ -5,7 +5,7 @@ This website is built using [Docusaurus 2](https://docusaurus.io/), a modern sta
 ## Docker container
 1. Open up Visual studio and reopen the project in a container.
 1. The container setup will install GitHub CLI.
-1. Run `gh auth login` and login with your user. Choose HTTPS and using an external browser works!
+1. Run `gh auth login` and login with your user. Choosing HTTPS and using an external browser works!
 
 ## Manually
 
