@@ -64,9 +64,9 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'articles/branding',
+            docId: 'concepts/branding',
             position: 'left',
-            label: 'Articles',
+            label: 'Concepts',
           },
           {
             href: 'https://nebulr-group.github.io/nblocks-api-docs',
