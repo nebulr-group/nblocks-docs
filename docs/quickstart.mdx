@@ -43,7 +43,7 @@ Pick whatever framework that suits your taste for each area.
 During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared across all testers.
 If you choose to sign up, wait with clicking the onboard link until the guide says so.
 
-:::tip
+:::tip Don't have a project yet?
 
 If you don't have a project yet you can create new skeleton projects for both NestJS and Ionic.   
 `nest new my-backend` and `ionic start my-frontend blank --type=angular`.   
@@ -53,7 +53,7 @@ Requires `@nestjs/cli` and `@ionic/cli`
 
 :::note
 
-Our plugins should be installed into your project root folder and not anywhere else.
+The installation instructions below requires you to run the commands inside your project root folders and not anywhere else.
 
 :::
 
@@ -64,12 +64,12 @@ Our plugins should be installed into your project root folder and not anywhere e
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-1. Install plugin.
+1. Step into your NestJS project and install the nblocks-nestjs plugin.
 ```bash
 npm i @nebulr-group/nblocks-nestjs
 ```
 
-2. Run scaffolding script and choose to sign up or use the demo app.
+2. Run scaffolding script and follow the installation guide.
 ```bash
 npx @nebulr-group/nblocks-nestjs setup
 ```
@@ -123,7 +123,7 @@ Coming soon...
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
 
-1. Run scaffolding script to install all dependencies.
+1. Step into your Ionic project and run the scaffolding script to install our nblocks-ionic plugin and all it's dependencies.
 ```bash
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
 ```
@@ -326,7 +326,8 @@ Make all endpoints require the `USER_READ` privilege by adding this to the file 
 You've just unlocked the next level and you're ready take on another challenge.
 
 ## Next steps
-- Read how to use your [custom branding](articles/branding.mdx).
+- Try another example and [query your first data](examples/querying-first-data).
+- Read more about what's possible with [custom branding](articles/branding.mdx).
 - Get ready and [secure your app](articles/security.mdx).
 - Understand the concept of [Tenants and Users](articles/tenants-users.mdx).
 - Go full hard core and checkout the [API client](articles/api-client.mdx) and [API reference](https://nebulr-group.github.io/nblocks-api-docs).

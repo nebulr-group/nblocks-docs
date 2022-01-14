@@ -6,26 +6,35 @@ sidebar_label: Users & Tenants
 # Users & Tenants
 Every time we've started a new SaaS project before we've seen the following needs for security and user management:
 * Our customers' data needs to be organized in workspaces.
-* The workspace data should be easily distinguished in the database so we can build filters and accomplish data separation.
-* Users need to be able to login and be granted a set of predefined privilegues.
 * Users should be able to invite other users to the same workspace.
+* Users need to be able to login and granted a predefined set of privileges.
 * Some users would like to get access to several workspaces but still use the same credentials and one login.
 * Same user might be granted different privileges for different workspaces.
+* The workspace data should be easily distinguished in the database so we can build filters and accomplish data separation.
 
-We then sat down with all the learnings and created something flexible for you to use.
-We decided to name workspaces as **tenants** from the well known data separation architecture [Multitenancy](https://en.wikipedia.org/wiki/Multitenancy).
-You'll not need to store any user or tenant data yourself.
+We then sat down with all the learnings and created something flexible for you to use with the requirement that your app should not need to manage this yourself.
+We decided to name *workspaces* as **tenants** from the well known data separation architecture [Multitenancy](https://en.wikipedia.org/wiki/Multitenancy).
 
 :::note
 This is a central concept of Nblocks and defines how you can expect the data to be organized.
 :::
 
 ## Tenants
-A tenant represents a **workspace** of a customer and encapsulates all its users and other data for that workspace. 
+A tenant represents an **isolated workspace** of a customer and encapsulates all its users and other data for that workspace. 
 The tenant contains information about the current subscription plan which can be used to render a specific feature set and other fields like locale which can be used to render translation resources. 
 Other data could be files in the file storage etc. Many calls that you make to Nblocks require you to provide an identification for the tenant context for this purpose.
 
-Tenants get created automatically in Nblocks if you've opted in for our [checkout solution](stripe). 
+:::tip Need an example?
+Who's the customer and how's that linked to a tenant? Let's think of two case.
+
+**Business to Business**   
+A company signing up to your app will get access to a new tenant. This company is your customer now and currently holds access to one tenant and a plan which you provision and get paid for. The intial and only user of the tenant will eventually start inviting more users (collegues) depending on your app offer.
+
+**Business to Customer**   
+A person signs up for access to your app and is given access to a tenant. The person is your customer now and this customer currently holds access to one tenant and a plan which you provision and get paid for. In B2C cases it's more common that there will be only one user of a tenant but this depends what your app offer. As described, nothing really change between the cases except for who's the customer.
+:::
+
+Tenants get created automatically in Nblocks if you've using our prebuilt [checkout solution](stripe). 
 There's also the option for you to manage this yourself and programatically create new tenants. Be aware that Nblocks will not monitor payments and automatically provision access to your app for manual tenants.
 
 Here's an example of data that is made available to your app via the Tenant object:
@@ -42,8 +51,8 @@ Here's an example of data that is made available to your app via the Tenant obje
 
 Removing a tenant will also remove all of its data. This comes in handy because in the age of privacy protection your tenants own their data.
 
-:::tip
-A common solution is to add the tenant id on each database entry so that you can easily separate and filter data based on what tenant the current user belongs to. 
+:::tip Need to separate and filter user data?
+A common solution is to add the tenant id on each of your own database entry so that you can easily separate and filter data based on what tenant the current user belongs to. 
 This will enable you to accomplish data separation when serving multiple users.
 :::
 
@@ -67,10 +76,10 @@ Here's an example of data that is made available to your app via the User object
 | createdAt         | Date when the user was created  |
 
 :::tip
-Read more about users and how to secure access to your application based on their privilegues [here](security).
+Read more about users and how to secure access to your application based on their privileges [here](security).
 :::
 
-## Onboarding
+## Onboarding your users
 1. A new tenant always creates a user with the role `OWNER`. This gives the user the grant to change name, locale and manage the subscription (if using payment service) for the tenant using the nblocks-plugins provided views.
 1. The new tenant owner user will receive an email containing an onboarding link to your app.
 1. The onboarding link will guide the user through an initial set password process or redirect straight to login if the user already existed in another tenant.
