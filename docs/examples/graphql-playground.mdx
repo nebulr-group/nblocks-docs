@@ -1,0 +1,126 @@
+---
+sidebar_position: 2
+sidebar_label: Play with GraphQL (5 min)
+---
+
+# Play with GraphQL playground
+Right after finishing [quickstart](../quickstart) we've made it so you got access to a web based editor playground to query and mutate the GraphQL endpoints. 
+This playground lives under [http://localhost:3000/graphql](http://localhost:3000/graphql).
+
+We really like the power of [GraphQL](https://graphql.org/) and many of the views that comes packed in our frontent plugins use this technology.
+
+## Familiar yourself with the playground
+<img
+  src={require('../assets/graphql-playground-1.png').default}
+  alt="Branding"
+  className=""
+/>
+
+
+Go ahead, start your backend server and open the playground by clicking [http://localhost:3000/graphql](http://localhost:3000/graphql).
+* On the right hand side you have an inline documentation for our pre existing queries and mutations.
+* On the left side you write your queries and click the play button to run theme
+* The results are shown in the middle.
+
+## Run your first query
+
+We're going to start simple. Let's list your current Tenants with their `ID`, `name` and `plan` fields.
+
+:::note
+For this example we need to relax the security a bit. 
+Make sure all graphql endpoints allow *ANONYMOUS* calls by updating the resourceMappings.json file and restart the backend server.
+```json title="nblocks/config/resourceMappings.json"
+{
+    "graphql/**": "ANONYMOUS",
+}
+```
+:::
+
+Let's go! 
+
+Add this to your left hand side editor in the playground and click play.
+```graphql
+query {
+  listTenants {
+    id
+    name
+    plan
+  }
+}
+```
+
+This call will make it to your backend server and later out to the Nblocks Platform and back. You should see something like this as a response in the middle lane.
+```json
+{
+  "data": {
+    "listTenants": [
+      {
+        "id": "61d6bd08faf9710008b984c7",
+        "name": "My first demo workspace",
+        "plan": "ESSENTIAL"
+      }
+    ]
+  }
+}
+```
+
+Cool! 💥
+
+That's our first tenant.
+
+## Use this info and run your second query
+Now we turn the notch up a little 😉.   
+We want to list the users of this particular tenant we saw in the previous response. 
+We got two options here: Either we login as a real user and provide our copy pasted security context to our playground request or we use a much more simple approach and just provide the tenant id as value. 
+I strongly recommend the second option in this case.
+
+Did you see that variable area on the bottom right of the playground? Here's where you can add variables and headers to your future request.
+1. Click HTTP HEADERS
+1. Add the following header value, where the id should be **your tenant id from the earlier response**
+
+```json
+{"x-tenant-id":"61d6bd08faf9710008b984c7"}
+```
+It should look something like this:
+<img
+  src={require('../assets/graphql-playground-2.png').default}
+  alt="headers"
+  className="screenshot"
+/>
+
+Perfect! We can now add the second query which will list the users of this tenant and populate the fields, `ID`, `fullName` and `role`.
+
+```graphql
+query {
+  listUsers {
+    id
+    fullName
+    role
+  }
+}
+```
+
+Click run and wait for the result. It should look something like this:
+
+```json
+{
+  "data": {
+    "listUsers": [
+      {
+        "id": "61d6bd08faf9710008b984ca",
+        "fullName": "John Doe",
+        "role": "OWNER"
+      }
+    ]
+  }
+}
+```
+
+Can you see what more fields are available on the User type? Use the doc and try different queries.
+
+**Voila! Thats all for now**👨🏻‍🍳
+
+:::tip
+While you develop your app and add your own GraphQL resolvers with queries and mutations, this interactive doc and playground is going to update itself. 
+This is a great way to test the functionality.
+:::
