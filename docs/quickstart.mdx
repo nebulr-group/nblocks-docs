@@ -182,7 +182,7 @@ We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
 
 ### Logging in for the first time
 1. Open up your web browser and navigate to your frontend project start screen. 
-1. Append the current url with `/auth` like in `http://localhost:8100/auth` and hit enter. 
+1. Append the current url with `/auth/login` like in [http://localhost:8100/auth/login](http://localhost:8100/auth/login) and hit enter. 
 You should see your first glimpse of the Nblocks login screen 😎
 1. If you signed up straight in your console you have received an email to onboard your first user, click that link now and set your first password and login. (If you choose to use the Demo app, login as `john.doe@example.com`, password `helloworld`)
 1. You're now logged in and your session is kept between page reloads, congrats!
@@ -193,15 +193,48 @@ You should see your first glimpse of the Nblocks login screen 😎
   className="screenshot"
 />
 
+### Try adding a second user
+No fun without some friends 🤙. You're going to use our user management view to add another user!
+
+**Let's proceed!** 👨‍💻
+
+Before starting we must make sure that we've protected the backend so that the Nblocks plugin will authorize and identify you before the requests hits the controllers.
+This is achieved using the `resourceMappings.json` file which is read by the plugin during startup. 
+
+1. Make all endpoints require the `USER_READ` privilege by adding this to the file and restart your backend server. 
+```json title="nblocks/config/resourceMappings.json"
+{
+    "graphql/**": "USER_READ",
+    "/**": "USER_READ"
+}
+```
+:::note
+Every time you change `resourceMappings.json`, a server restart is necessary for the changes to take effect.
+:::
+2. If you're not logged in, login again.
+3. Navigate your browser to `/user/list` as in [http://localhost:8100/user/list](http://localhost:8100/user/list) to see the User management screen.
+<img
+  src={require('./assets/user-list.png').default}
+  alt="User list"
+  className=""
+/>
+4. Click add user, enter an alternative email address to yourself and click invite.
+5. Check your inbox for a new onboarding email and click the link to start and complete the onboarding process. 
+(This is going to take you through the same step you just did yourself in the previous excercise.)
+6. Login with your new user.
+7. Navigate to [http://localhost:8100/user/list](http://localhost:8100/user/list) and you should se both your users popping up.
+
+Perfect! Head over to the last excercise.
+
 ### Customize your app branding
 
 Wouldn't it be cool if your logo were used in both the UI and that onboarding email you received before instead?
-While we're at it let's also try changing some colors and texts so you get a hang of it 😃
+While we're at it let's also try changing some colors and texts in the UI so you get a hang of it 😃
 
 Here's an overview on the stuff we're changing here: 
-* The email logo and footer.
+* The email logo and footer link.
 * The UI logo.
-* A text header on a page.
+* The title of the set-password page.
 * The primary color for buttons and links.
 
 #### Branding the email (Backend)
@@ -209,8 +242,8 @@ Here's an overview on the stuff we're changing here:
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-First off we'll change the email appearance a bit. This part is actually stored on your app configuration in the Nblocks platform. 
-The configuration can be changed in a lot of ways, using the built in API client, REST Http call or via the upcoming Web dashboard.    
+First off we'll change the email appearance a bit. This part is about information stored on your app configuration in the Nblocks platform. 
+The configuration can be changed in a lot of ways, using the built in API client or a REST Http call.    
 But hold on! We've made it super simple for this quick start and all you need to do is the following two step:
 1. Open your unique app-configuration.json file located in your nblocks folder which was put there by the setup script.
 You can change the `logo` and `websiteUrl` to your own or if you do not have it available use these two.
@@ -230,14 +263,20 @@ You can change the `logo` and `websiteUrl` to your own or if you do not have it 
 
 Awesome! The data has now been pushed and Nblocks will use this configuration in the future 🚀
 
+You can already see this in effect by requesting a forgot password email from the forgot-password view.
+Click here [http://localhost:8100/auth/forgot-password](http://localhost:8100/auth/forgot-password) and add the email address from any of your users.
+
+Check you inbox again! Pretty neat huh! 😎
+
 </TabItem>
 </Tabs>
 
 #### Branding the UI (Frontend)
+Next step we're focusing on the views you get from the plugin.
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
 
-1. Rember that NblocksIonicModule that you imported during installation? Let's give it a few configs instead of using the default ones! We'll tell it to use another logo by configuring the `logoPath`.
+1. Rember that NblocksIonicModule you imported during installation? Let's give it a few configs instead of using the default ones! We'll tell it to use another logo by configuring the `logoPath`.
 
 ```typescript title="src/app/app.module.ts"
 
@@ -250,9 +289,9 @@ Awesome! The data has now been pushed and Nblocks will use this configuration in
 })
 ```
 
-2. Open up the english language translation file found under assets. 
+2. Open up the english language translation file found under `assets/i18n`. 
 This, and other translation files, where put here by the setup script and defines the text content of all Nblocks views.
-We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` which is the title of the set-password page and set it to something nicer.
+We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` which is the title of the set-password page and set it to something nice.
 ```json title="src/assets/i18n/nblocks_en.json"
 {
 	"NBLOCKS": {
@@ -262,7 +301,7 @@ We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` wh
 			"SET_NEW_PASSWORD": "It's time to set that first password ;)",
 ```
 
-3. Lastly lets change the default Nblocks primary color for buttons and links and we wish to change it. 
+3. Lastly lets change the default Nblocks primary color for buttons and links. 
 This will be done by altering the `--ion-color-primary` color in the Ionic theme variable.scss.
 
 ```scss title="src/theme/variables.scss"
@@ -271,43 +310,17 @@ This will be done by altering the `--ion-color-primary` color in the Ionic theme
   --ion-color-primary: #434447;
 ```
 
-💥 Perfect! You just did your first branding. We'll wait to unveal the results until you get to the next final step where you'll add a new user.
+💥 Perfect! You just did your first branding. Click [http://localhost:8100/auth/set-password/token](http://localhost:8100/auth/set-password/token) to reveal your changes.   
+The set-password page should look something like this now 🙀
 
-</TabItem>
-</Tabs>
-
-### Try adding a second user
-Just one last step! This is where we see all things come together.
-
-As a starter, we must make sure that we've protected the backend so that the Nblocks plugin will authorize and identify you before the requests hits the controllers.
-This is achieved using the `resourceMappings.json` file which is read by the plugin during startup. 
-:::note
-Every time you change `resourceMappings.json`, a server restart is necessary for the changes to take effect.
-:::
-**Let's proceed!** 👨‍💻
-1. 
-Make all endpoints require the `USER_READ` privilege by adding this to the file and restart your backend server. 
-```json title="nblocks/config/resourceMappings.json"
-{
-    "graphql/**": "USER_READ",
-    "/**": "USER_READ"
-}
-```
-2. Navigate your browser to `/user` as in `http://localhost:8100/user` to see the User management screen.
-<img
-  src={require('./assets/user-list.png').default}
-  alt="User list"
-  className=""
-/>
-3. Click add user, enter an alternative email address to yourself and click invite.
-4. Check your inbox for a new onboarding email and click the link to start the onboarding process.
-5. Remember that we customized the branding a bit? You're set-password page should look something like this now! 🙀
 <img
   src={require('./assets/branding.png').default}
   alt="Branding"
   className="screenshot"
 />
-6. Go ahead and finish the onboarding to not leave this user hanging...
+
+</TabItem>
+</Tabs>
 
 **Mission completed!** 🥊
 
@@ -316,7 +329,8 @@ Great job with the quickstart! Now your app has been supercharged with Nblocks �
 You've just unlocked the next level and you're ready take on another challenge.
 
 ## Next steps
-- Try another example and [query your first data](examples/querying-first-data).
+- Try another example and [query your first data with graphql](examples/graphql-playground).
+- Create your first [controller](examples/querying-first-data).
 - Read more about what's possible with [custom branding](concepts/branding.mdx).
 - Get ready and [secure your app](concepts/security.mdx).
 - Understand the concept of [Tenants and Users](concepts/tenants-users.mdx).
