@@ -10,4 +10,4 @@ Yes of course! It's common to create an app for each environment of your project
 You might also not just have several environments but several projects that you use Nblocks with.
 
 ## Will you add a Nblocks plugin for Framework X?
-We'd love to hear about these kinds of requests and what you'd like to see us take on next with Nblocks. Ping us at hello@nblocks.dev.
+We'd love to hear about these kinds of requests and what you'd like to see us take on next with Nblocks. Join the discussion with us at Discord, https://discord.gg/WgzfZrCP.

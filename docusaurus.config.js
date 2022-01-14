@@ -58,7 +58,7 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'examples/setup-email-sender',
+            docId: 'examples/querying-first-data',
             position: 'left',
             label: 'Guides & Examples',
           },
