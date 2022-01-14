@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: Quickstart (10 min)
+description: Quickstart | Nblocks Documentation
 ---
 
 # Quickstart
@@ -69,10 +70,17 @@ npx @nebulr-group/nblocks-nestjs setup
 
 3. Import the NBlocksModule in your app.module.ts
 ```typescript title="src/app.module.ts"
+...
+// Import the NBlocksModule
 import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 
 @Module({
-  imports: [NBlocksModule],
+  imports: [
+    ...
+    // Add new import for NBlocksModule
+    NBlocksModule
+    ...
+  ],
 })
 export class AppModule {}
 ```
@@ -82,6 +90,7 @@ export class AppModule {}
 ...
 async function bootstrap() {
   ...
+  // Enable CORS
   app.enableCors();
   ...
   await app.listen(3000);
@@ -122,6 +131,7 @@ Usually this property sits around row 34.
 ...
 "styles": [
   ...
+  // The next block of styles should be added
   "node_modules/primeicons/primeicons.css",
   "node_modules/primeng/resources/themes/saga-blue/theme.css",
   "node_modules/primeng/resources/primeng.min.css",
@@ -132,18 +142,23 @@ Usually this property sits around row 34.
 
 3. Import the NblocksIonicModule in your app.module.ts.
 ```typescript title="src/app/app.module.ts"
+...
+// Import the NblocksIonicModule and interceptor providers
 import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
 
 @NgModule({
-    declarations: [AppComponent],
-    entryComponents: [],
-    imports: [
-      ...
-        NblocksIonicModule.forRoot({})
-
-    providers: [
-        ...
-        AUTH_HTTP_INTERCEPTOR_PROVIDERS
+  declarations: [AppComponent],
+  entryComponents: [],
+  imports: [
+    ...
+    // Add new import for NblocksIonicModule
+    NblocksIonicModule.forRoot({})
+  ],
+  providers: [
+    ...
+    // Add new record for interceptor providers
+    AUTH_HTTP_INTERCEPTOR_PROVIDERS
+  ]
 })
 ```
 
@@ -202,10 +217,11 @@ You can change the `logo` and `websiteUrl` to your own or if you do not have it 
 
 ```json title="nblocks/config/app-configuration.json"
 {
-	...
-	"logo": "http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png",
-	"websiteUrl": "https://app.example.com",
-  ...
+    ...
+    // Update logo and websiteUrl settings
+    "logo": "http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png",
+    "websiteUrl": "https://app.example.com",
+    ...
 }
 ```
 
@@ -227,9 +243,10 @@ Awesome! The data has now been pushed and Nblocks will use this configuration in
 
 @NgModule({
   ...
-      NblocksIonicModule.forRoot({
-        logoPath: 'https://www.northwhistle.com/wp-content/uploads/2021/08/NorthWhistle-logo-retina-2.png',
-      })
+    // Configure logoPath
+    NblocksIonicModule.forRoot({
+      logoPath: 'https://www.northwhistle.com/wp-content/uploads/2021/08/NorthWhistle-logo-retina-2.png',
+    })
 })
 ```
 
