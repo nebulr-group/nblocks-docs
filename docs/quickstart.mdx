@@ -9,18 +9,6 @@ description: Quickstart | Nblocks Documentation
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-export const GridContainer = ({children}) => (
-  <div className="row">
-    {children}
-  </div>
-);
-
-export const GridChild = ({children}) => (
-  <div className="column">
-    {children}
-  </div>
-);
-
 ## Overview
 
 The following guide will get you up and running as quickly as possible by covering the following 3 steps:
@@ -43,18 +31,14 @@ At this moment we support Ionic Angular for the frontent project and NestJS for 
 
 During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared across all testers.
 
+### Backend
+Start with installing the Nblocks plugin to supercharge your backend.
 :::tip Don't have a project yet?
 
-If you don't have a project yet you can create new skeleton projects for both NestJS and Ionic.   
-`nest new my-backend` and `ionic start my-frontend blank --type=angular`.   
-Requires `@nestjs/cli` and `@ionic/cli`
+If you don't have a project yet you can create new skeleton project for NestJS.   
+`nest new my-backend`. Requires `@nestjs/cli`.
 
 :::
-
-<GridContainer>
-<GridChild>
-
-### Backend
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
@@ -112,11 +96,14 @@ We support both NestJS 7 & 8.
 </TabItem>
 </Tabs>
 
-</GridChild>
-
-<GridChild>
-
 ### Frontend
+It's time for the frontend! Install our plugin containg ready-to-use views that make use of your Nblocks loaded backend.
+:::tip Don't have a project yet?
+
+If you don't have a project yet you can create new skeleton project for Ionic.   
+`ionic start my-frontend blank --type=angular`. Requires `@ionic/cli`.
+
+:::
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
 
@@ -175,10 +162,19 @@ We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
 
 </TabItem>
 </Tabs>
-</GridChild>
-</GridContainer>
 
-## Everything is installed and set! Let's try it!
+### Done! Everything is installed and set!
+
+You are now set up, supercharged and ready to power your app with all that we have to offer. Enjoy prebuilt frontend views and full functionality for:
+
+-> Tenancy   
+-> Register & onboarding   
+-> Login   
+-> Access control   
+-> User management   
+-> Checkout and billing   
+
+## Let's try it!
 
 ### Logging in for the first time
 1. Open up your web browser and navigate to your frontend project start screen. 
