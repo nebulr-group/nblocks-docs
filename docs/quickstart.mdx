@@ -42,6 +42,12 @@ If you don't have a project yet you can create new skeleton project for NestJS.
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
+:::note
+
+We support both NestJS 7 & 8.
+
+:::
+
 1. Step into your NestJS project root and install the nblocks-nestjs plugin.
 ```bash
 npm i @nebulr-group/nblocks-nestjs
@@ -55,14 +61,12 @@ npx @nebulr-group/nblocks-nestjs setup
 3. Import the NBlocksModule in your app.module.ts
 ```typescript title="src/app.module.ts"
 ...
-// Import the NBlocksModule
-import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
+import { NBlocksModule } from '@nebulr-group/nblocks-nestjs'; <--- Import the NBlocksModule
 
 @Module({
   imports: [
     ...
-    // Add new import for NBlocksModule
-    NBlocksModule
+    NBlocksModule <--- Add the NBlocksModule in module imports 
     ...
   ],
 })
@@ -74,8 +78,7 @@ export class AppModule {}
 ...
 async function bootstrap() {
   ...
-  // Enable CORS
-  app.enableCors();
+  app.enableCors(); <--- Enable CORS Add this to enable CORS
   ...
   await app.listen(3000);
 }
@@ -86,12 +89,6 @@ async function bootstrap() {
 ```bash
 npm run start:dev
 ``` 
-
-:::note
-
-We support both NestJS 7 & 8.
-
-:::
 
 </TabItem>
 </Tabs>
@@ -107,6 +104,12 @@ If you don't have a project yet you can create new skeleton project for Ionic.
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
 
+:::note
+
+We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
+
+:::
+
 1. Step into your Ionic project root and run the scaffolding script to install our nblocks-ionic plugin and all it's dependencies.
 ```bash
 npx @nebulr-group/nblocks-plugin-tool setup-ionic
@@ -118,8 +121,7 @@ Usually this property sits around row 34.
 ...
 "styles": [
   ...
-  // The next block of styles should be added
-  "node_modules/primeicons/primeicons.css",
+  "node_modules/primeicons/primeicons.css", <--- Add these four lines after your current styles imports
   "node_modules/primeng/resources/themes/saga-blue/theme.css",
   "node_modules/primeng/resources/primeng.min.css",
   "node_modules/@nebulr-group/nblocks-ionic/styles/global.css"
@@ -138,13 +140,11 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
   entryComponents: [],
   imports: [
     ...
-    // Add new import for NblocksIonicModule
-    NblocksIonicModule.forRoot({})
+    NblocksIonicModule.forRoot({}) <--- Add the NblocksIonicModule in module imports 
   ],
   providers: [
     ...
-    // Add new record for interceptor providers
-    AUTH_HTTP_INTERCEPTOR_PROVIDERS
+    AUTH_HTTP_INTERCEPTOR_PROVIDERS <--- Add our interceptor providers to your current list of providers
   ]
 })
 ```
@@ -153,12 +153,6 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
 ```bash
 ionic serve
 ``` 
-
-:::note
-
-We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
-
-:::
 
 </TabItem>
 </Tabs>
@@ -278,9 +272,8 @@ Next step we're focusing on the views you get from the plugin.
 
 @NgModule({
   ...
-    // Configure logoPath
     NblocksIonicModule.forRoot({
-      logoPath: 'http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png',
+      logoPath: 'http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png', <--- configure logo
     })
 })
 ```
@@ -294,7 +287,7 @@ We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` wh
     ...
 		"AUTH": {
       ...
-			"SET_NEW_PASSWORD": "It's time to set that first password ;)",
+			"SET_NEW_PASSWORD": "It's time to set that first password ;)", <--- Change this
 ```
 
 3. Lastly lets change the default Nblocks primary color for buttons and links. 

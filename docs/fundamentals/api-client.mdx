@@ -17,14 +17,12 @@ You'll be able to get hold of a client instance straight, all prepped with crede
 
 ```typescript
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService <--- Inject the ClientService
   ) {}
 ...
-// Get the client instance
-const client = this.clientService.client;
+const client = this.clientService.client; <--- Get the client instance
 
-// Use the client instance for something
-await client.tenants.list();
+await client.tenants.list(); <--- Use the client instance for something
 ```
 
 </TabItem>

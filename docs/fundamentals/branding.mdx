@@ -85,8 +85,8 @@ Use the `forRoot()` method on the `NblocksIonicModule` to provide your own varia
 
 ```typescript title="src/app/app.module.ts"
 NblocksIonicModule.forRoot({
-  logoPath: "https://www.myapp.com/path/to/logo.png",
-  privacyPolicyUrl: "https://www.myapp.com/privacy",
+  logoPath: "https://www.myapp.com/path/to/logo.png",  <--- Set logo
+  privacyPolicyUrl: "https://www.myapp.com/privacy", <--- Set Privacy policy
 })
 ```
 </TabItem>
@@ -125,7 +125,7 @@ Below we use the built in Nblocks Api client that can be obtained via the plugin
 
 ```typescript
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService <--- Inject the ClientService
   ) {}
 ...
 // Set branding

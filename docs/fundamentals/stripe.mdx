@@ -96,7 +96,7 @@ Coming soon...
 
 ```typescript
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService <--- Inject the ClientService
   ) {}
 ...
 await client.updateAppCredentials(
@@ -116,7 +116,7 @@ await client.updateAppCredentials(
 
 ```typescript
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService <--- Inject the ClientService
   ) {}
 ...
 
@@ -187,7 +187,7 @@ Don't change products and price data inside Stripe created automatically by Nblo
 
 ```typescript
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService  <--- Inject the ClientService
   ) {}
 ...
 const checkoutSession = await client.createCheckoutSession({plan: "ESSENTIAL", region: "FR"});

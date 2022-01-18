@@ -29,7 +29,7 @@ Open up your backend project where our nblocks-backend plugin is installed.
 import { ClientService, TenantResponseDto } from '@nebulr-group/nblocks-nestjs';
 ...
 constructor(
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService <--- Inject the ClientService
   ) {}
 ```
 

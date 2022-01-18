@@ -31,12 +31,11 @@ Nblocks assigns the `OWNER` role to the person that initiated the creation of a 
 
 ```typescript
 constructor(
-    private readonly nebulrAuthService: NebulrAuthService,
-    private readonly clientService: ClientService
+    private readonly nebulrAuthService: NebulrAuthService,  <--- Inject the NebulrAuthService
+    private readonly clientService: ClientService           <--- Inject the ClientService
   ) {}
 ...
-// Get the client instance
-const client = this.clientService.client;
+const client = this.clientService.client; <--- Inject the Get the client instance
 
 // Set role configuration
 await client.updateApp({
@@ -91,7 +90,7 @@ Each request made from a logged in user always contains resolved security data. 
 
 ```typescript
 constructor(
-    private readonly nebulrAuthService: NebulrAuthService
+    private readonly nebulrAuthService: NebulrAuthService <--- Inject the NebulrAuthService
   ) {}
 
 const currentUser = this.nebulrAuthService.getCurrentUser();
@@ -124,7 +123,7 @@ Initially password complexity is disabled for a smooth quick start. This can eas
 @NgModule({
     imports: [
       ...
-        NblocksIonicModule.forRoot({passwordComplexity: true})
+        NblocksIonicModule.forRoot({passwordComplexity: true}) <--- Use forRoot() to provide options to Nblocks
 })
 ```
 
