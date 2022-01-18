@@ -46,7 +46,7 @@ const config = {
       navbar: {
         title: 'Home',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Nblocks Logo',
           src: 'img/logo.png',
         },
         items: [
