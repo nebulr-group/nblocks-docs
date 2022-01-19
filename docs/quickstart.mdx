@@ -94,7 +94,7 @@ npm run start:dev
 </Tabs>
 
 ### Frontend
-It's time for the frontend! Install our plugin containg ready-to-use views that make use of your Nblocks loaded backend.
+It's time for the frontend! Install our plugin contacining ready-to-use views that make use of your Nblocks loaded backend.
 :::tip Don't have a project yet?
 
 If you don't have a project yet you can create new skeleton project for Ionic.   
@@ -217,11 +217,11 @@ Every time you change `resourceMappings.json`, a server restart is necessary for
 Perfect! Head over to the last excercise.
 
 ### Customize your app branding
+	
+Wouldn’t it be cool if your logo was used in both the UI and the onboarding email you just received?
+Let’s make it happen and while we’re at it let’s try changing some colors and texts in the UI so you get the hang of it 😃
 
-Wouldn't it be cool if your logo were used in both the UI and that onboarding email you received before instead?
-While we're at it let's also try changing some colors and texts in the UI so you get a hang of it 😃
-
-Here's an overview on the stuff we're changing here: 
+Here's an overview of the stuff we're changing here: 
 * The email logo and footer link.
 * The UI logo.
 * The title of the set-password page.
@@ -234,7 +234,7 @@ Here's an overview on the stuff we're changing here:
 
 First off we'll change the email appearance a bit. This part is about information stored on your app configuration in the Nblocks platform. 
 The configuration can be changed in a lot of ways, using the built in API client or a REST Http call.    
-But hold on! We've made it super simple for this quick start and all you need to do is the following two step:
+But hold on! We've made it super simple for this quickstart and all you need to do is the following two step:
 1. Open your unique app-configuration.json file located in your nblocks folder which was put there by the setup script.
 You can change the `logo` and `websiteUrl` to your own or if you do not have it available use these two.
 
@@ -279,7 +279,7 @@ Next step we're focusing on the views you get from the plugin.
 ```
 
 2. Open up the english language translation file found under `assets/i18n`. 
-This, and other translation files, where put here by the setup script and defines the text content of all Nblocks views.
+This, and other translation files, were put here by the setup script and defines the text content of all Nblocks views.
 We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` which is the title of the set-password page and set it to something nice.
 ```json title="src/assets/i18n/nblocks_en.json"
 {
@@ -299,7 +299,7 @@ This will be done by altering the `--ion-color-primary` color in the Ionic theme
   --ion-color-primary: #434447;
 ```
 
-💥 Perfect! You just did your first branding. Click [http://localhost:8100/auth/set-password/token](http://localhost:8100/auth/set-password/token) to reveal your changes.   
+💥 Perfect! You just completed your first branding. Click [http://localhost:8100/auth/set-password/token](http://localhost:8100/auth/set-password/token) to reveal your changes.   
 The set-password page should look something like this now 🙀
 
 <img
@@ -324,4 +324,4 @@ You've just unlocked the next level and you're ready take on another challenge.
 - Get ready and [secure your app](fundamentals/security.mdx).
 - Understand the concept of [Tenants and Users](fundamentals/tenants-users.mdx).
 
-If you haven't already, join our [Discord](https://discord.gg/WgzfZrCP)
+If you haven’t already don’t forget to join our [Discord](https://discord.gg/WgzfZrCP) to hit us up with questions, announcements and updates.
