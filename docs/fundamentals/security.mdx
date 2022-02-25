@@ -68,6 +68,10 @@ When users login, Nblocks will automatically grant their set of privileges depen
 
 The `resourceMappings.json` is the heart of the RBAC configuration. It supports both GraphQL queries/mutations as well as HTTP requests. You can use wildcards to allow or disallow a whole controller or route. Here's how one could look.
 
+:::tip What is RBAC?
+Role-Based Access Control (RBAC) is a mechanism that restricts system access. The user will gain access to certain parts of the system depending on which roll and what privileges the user have. If you want to read more about RBAC is on Wikipedia, click [here](https://en.wikipedia.org/wiki/Role-based_access_control).
+:::
+
 ```json title=nblocks/config/resourceMappings.json
 {
     "graphql/readCase":"CASE_READ",
