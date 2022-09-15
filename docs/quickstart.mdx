@@ -29,16 +29,80 @@ Lets go! 🚀
 In this exercise we'll install **Nblocks** for both a frontent and a backend project to leverage the full plug-n-play experience and prebaked feature set.
 At this moment we support Ionic Angular for the frontent project and NestJS for the backend.
 
-During the backend setup; the scripts will let you choose to signup for your own app and have the new credentials resolve automatically or use our demo app playground which is shared across all testers.
+### Backend
+Start with installing the backend! Install our plugin containing the necessary endpoints to power the Nblocks loaded frontend.
+
+During the backend setup; the scripts will let you choose to signup for your own app profile in the Nblocks world.
+
+:::tip Don't have a project yet?
+
+If you don't have a project yet you can create a new skeleton project for NestJS.   
+`nest new my-backend`. Requires @nestjs/cli.
+
+Or you can clone a working [example project](https://github.com/nebulr-group/nblocks-nestjs-example) with this plugin installed from our Github 😉
+:::
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+:::note
+
+We support both NestJS 7 & 8.
+
+:::
+
+1. Step into your NestJS project root and install the nblocks-nestjs plugin.
+```bash
+npm i @nebulr-group/nblocks-nestjs
+```
+
+2. Run scaffolding script and follow the installation guide.
+```bash
+npx @nebulr-group/nblocks-nestjs setup
+```
+
+3. Import the NBlocksModule in your app.module.ts
+```typescript title="src/app.module.ts"
+...
+import { NBlocksModule } from '@nebulr-group/nblocks-nestjs'; <--- Import the NBlocksModule
+
+@Module({
+  imports: [
+    ...
+    NBlocksModule <--- Add the NBlocksModule in module imports 
+    ...
+  ],
+})
+export class AppModule {}
+```
+
+4. Enable CORS in your main.ts since the Frontend project will need that to query data.
+```typescript title="src/main.ts"
+...
+async function bootstrap() {
+  ...
+  app.enableCors(); <--- Enable CORS Add this to enable CORS
+  ...
+  await app.listen(3000);
+}
+...
+```
+
+4. Launch your Backend. 
+```bash
+npm run start:dev
+``` 
+
+</TabItem>
+</Tabs>
 
 ### Frontend
-Start with installing the Nblocks plugin to supercharge your frontend.
+It's time for the Nblocks plugin to supercharge your frontend.
 :::tip Don't have a project yet?
 
 If you don't have a project yet you can create a new skeleton project for Ionic.   
 `ionic start my-frontend blank --type=angular`. Requires @ionic/cli to be installed.
 
-Or you can clone an [example project](https://github.com/nebulr-group/nblocks-ionic-example) from our Github 😉
+Or you can clone a working [example project](https://github.com/nebulr-group/nblocks-ionic-example) with this plugin installed from our Github 😉
 :::
 <Tabs>
 <TabItem value="ionic" label="Ionic" default>
@@ -95,69 +159,6 @@ ionic serve
 </TabItem>
 </Tabs>
 
-### Backend
-It's time for the backend! Install our plugin containing the necessary endpoints to power the Nblocks loaded frontend.
-:::tip Don't have a project yet?
-
-If you don't have a project yet you can create a new skeleton project for NestJS.   
-`nest new my-backend`. Requires @nestjs/cli.
-
-Or you can clone an [example project](https://github.com/nebulr-group/nblocks-ionic-example) from our Github 😉
-:::
-<Tabs>
-<TabItem value="nestjs" label="NestJS" default>
-
-:::note
-
-We support both NestJS 7 & 8.
-
-:::
-
-1. Step into your NestJS project root and install the nblocks-nestjs plugin.
-```bash
-npm i @nebulr-group/nblocks-nestjs
-```
-
-2. Run scaffolding script and follow the installation guide.
-```bash
-npx @nebulr-group/nblocks-nestjs setup
-```
-
-3. Import the NBlocksModule in your app.module.ts
-```typescript title="src/app.module.ts"
-...
-import { NBlocksModule } from '@nebulr-group/nblocks-nestjs'; <--- Import the NBlocksModule
-
-@Module({
-  imports: [
-    ...
-    NBlocksModule <--- Add the NBlocksModule in module imports 
-    ...
-  ],
-})
-export class AppModule {}
-```
-
-4. Enable CORS in your main.ts since the Frontend project will need that to query data.
-```typescript title="src/main.ts"
-...
-async function bootstrap() {
-  ...
-  app.enableCors(); <--- Enable CORS Add this to enable CORS
-  ...
-  await app.listen(3000);
-}
-...
-```
-
-4. Launch your Backend. 
-```bash
-npm run start:dev
-``` 
-
-</TabItem>
-</Tabs>
-
 ### Done! Everything is installed and set!
 
 You are now set up, supercharged and ready to power your app with all that we have to offer. Enjoy prebuilt frontend views and full functionality for:
@@ -171,11 +172,11 @@ You are now set up, supercharged and ready to power your app with all that we ha
 
 ## Let's try it!
 
-### Logging in for the first time
-1. Open up your web browser and navigate to your frontend project start screen. 
-1. Append the current url with `/auth/login` like in [http://localhost:8100/auth/login](http://localhost:8100/auth/login) and hit enter. 
-You should see your first glimpse of the Nblocks login screen 😎
-1. If you signed up straight in your console you have received an email to onboard your first user, click that link now and set your first password and login. (If you choose to use the Demo app, login as `john.doe@example.com`, password `helloworld`)
+### Create your first user and login
+1. Go to your signup screen by clicking this link [http://localhost:8100/setup/signup](http://localhost:8100/setup/signup).
+1. Signup with a new user.
+1. Go to your email inbox, wait for the onboarding email to arrive and follow the instructions to set a password.
+1. Login with your new credentials.
 1. You're now logged in and your session is kept between page reloads, congrats!
 
 <img
@@ -189,128 +190,18 @@ No fun without some friends 🤙. You're going to use our user management view t
 
 **Let's proceed!** 👨‍💻
 
-Before starting we must make sure that we've protected the backend so that the Nblocks plugin will authorize and identify you before the requests hits the controllers.
-This is achieved using the `resourceMappings.json` file which is read by the plugin during startup. 
-
-1. Make all endpoints require the `USER_READ` privilege by adding this to the file and restart your backend server. 
-```json title="nblocks/config/resourceMappings.json"
-{
-    "graphql/**": "USER_READ",
-    "/**": "USER_READ"
-}
-```
-:::note
-Every time you change `resourceMappings.json`, a server restart is necessary for the changes to take effect.
-:::
-2. If you're not logged in, login again.
-3. Navigate your browser to `/user/list` as in [http://localhost:8100/user/list](http://localhost:8100/user/list) to see the User management screen.
+1. If you're not logged in, login again.
+1. Navigate your browser to `/user/list` as in [http://localhost:8100/user/list](http://localhost:8100/user/list) to see the User management screen.
 <img
   src={require('./assets/user-list.png').default}
   alt="User list"
   className=""
 />
-4. Click add user, enter an alternative email address to yourself and click invite.
-5. Check your inbox for a new onboarding email and click the link to start and complete the onboarding process. 
+1. Click add user, enter an alternative email address to yourself and click invite.
+1. Check your inbox for a new onboarding email and click the link to start and complete the onboarding process. 
 (This is going to take you through the same step you just did yourself in the previous excercise.)
-6. Login with your new user.
-7. Navigate to [http://localhost:8100/user/list](http://localhost:8100/user/list) and you should se both your users popping up.
-
-Perfect! Head over to the last excercise.
-
-### Customize your app branding
-
-Wouldn't it be cool if your logo were used in both the UI and that onboarding email you received before instead?
-While we're at it let's also try changing some colors and texts in the UI so you get a hang of it 😃
-
-Here's an overview on the stuff we're changing here: 
-* The email logo and footer link.
-* The UI logo.
-* The title of the set-password page.
-* The primary color for buttons and links.
-
-#### Branding the email (Backend)
-
-<Tabs>
-<TabItem value="nestjs" label="NestJS" default>
-
-First off we'll change the email appearance a bit. This part is about information stored on your app configuration in the Nblocks platform. 
-The configuration can be changed in a lot of ways, using the built in API client or a REST Http call.    
-But hold on! We've made it super simple for this quick start and all you need to do is the following two step:
-1. Open your unique app-configuration.json file located in your nblocks folder which was put there by the setup script.
-You can change the `logo` and `websiteUrl` to your own or if you do not have it available use these two.
-
-```json title="nblocks/config/app-configuration.json"
-{
-    ...
-    // Update logo and websiteUrl settings
-    "logo": "http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png",
-    "websiteUrl": "https://app.example.com",
-    ...
-}
-```
-
-2. Great! Now we'll push the data so Nblocks stores these new values. In your terminal, navigate to the root of your backend project and run.
-`npx @nebulr-group/nblocks-nestjs push-app-configuration`.
-
-Awesome! The data has now been pushed and Nblocks will use this configuration in the future 🚀
-
-You can already see this in effect by requesting a forgot password email from the forgot-password view.
-Click here [http://localhost:8100/auth/forgot-password](http://localhost:8100/auth/forgot-password) and add the email address from any of your users.
-
-Check you inbox again! Pretty neat huh! 😎
-
-</TabItem>
-</Tabs>
-
-#### Branding the UI (Frontend)
-Next step we're focusing on the views you get from the plugin.
-<Tabs>
-<TabItem value="ionic" label="Ionic" default>
-
-1. Rember that NblocksIonicModule you imported during installation? Let's give it a few configs instead of using the default ones! We'll tell it to use another logo by configuring the `logoPath`.
-
-```typescript title="src/app/app.module.ts"
-
-@NgModule({
-  ...
-    NblocksIonicModule.forRoot({
-      logoPath: 'http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png', <--- configure logo
-    })
-})
-```
-
-2. Open up the english language translation file found under `assets/i18n`. 
-This, and other translation files, where put here by the setup script and defines the text content of all Nblocks views.
-We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` which is the title of the set-password page and set it to something nice.
-```json title="src/assets/i18n/nblocks_en.json"
-{
-	"NBLOCKS": {
-    ...
-		"AUTH": {
-      ...
-			"SET_NEW_PASSWORD": "It's time to set that first password ;)", <--- Change this
-```
-
-3. Lastly lets change the default Nblocks primary color for buttons and links. 
-This will be done by altering the `--ion-color-primary` color in the Ionic theme variable.scss.
-
-```scss title="src/theme/variables.scss"
-:root {
-  /** primary **/
-  --ion-color-primary: #434447;
-```
-
-💥 Perfect! You just did your first branding. Click [http://localhost:8100/auth/set-password/token](http://localhost:8100/auth/set-password/token) to reveal your changes.   
-The set-password page should look something like this now 🙀
-
-<img
-  src={require('./assets/branding.png').default}
-  alt="Branding"
-  className="screenshot"
-/>
-
-</TabItem>
-</Tabs>
+1. Login with your new user.
+1. Navigate to [http://localhost:8100/user/list](http://localhost:8100/user/list) and you should se both your users popping up.
 
 **Mission completed!** 🥊
 
@@ -319,6 +210,7 @@ Great job with the quickstart! Now your app has been supercharged with Nblocks �
 You've just unlocked the next level and you're ready take on another challenge.
 
 ## Next steps
+- Test apply a simple [first branding](examples/first-branding).
 - Try another example and [query your first data with graphql](examples/graphql-playground).
 - Create your first [controller](examples/querying-first-data).
 - Read more about what's possible with [custom branding](fundamentals/branding.mdx).
