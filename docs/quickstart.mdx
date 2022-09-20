@@ -50,37 +50,35 @@ We support both NestJS 7 & 8.
 
 :::
 
-1. Step into your NestJS project root and install the nblocks-nestjs plugin.
+1. Step into your NestJS project root and run the scaffolding script to install our nblocks-nestjs plugin and all it's dependencies..
 ```bash
-npm i @nebulr-group/nblocks-nestjs
+npx @nebulr-group/nblocks-plugin-tool setup-nestjs
 ```
 
-2. Run scaffolding script and follow the installation guide.
-```bash
-npx @nebulr-group/nblocks-nestjs setup
-```
-
-3. Import the NBlocksModule in your app.module.ts
+2. Import the NBlocksModule in your app.module.ts
 ```typescript title="src/app.module.ts"
 ...
-import { NBlocksModule } from '@nebulr-group/nblocks-nestjs'; <--- Import the NBlocksModule
+// Import the NBlocksModule
+import { NBlocksModule } from '@nebulr-group/nblocks-nestjs';
 
 @Module({
   imports: [
     ...
-    NBlocksModule <--- Add the NBlocksModule in module imports 
+    // Add the NBlocksModule in module imports 
+    NBlocksModule
     ...
   ],
 })
 export class AppModule {}
 ```
 
-4. Enable CORS in your main.ts since the Frontend project will need that to query data.
+3. Enable CORS in your main.ts since the Frontend project will need that to query data.
 ```typescript title="src/main.ts"
 ...
 async function bootstrap() {
   ...
-  app.enableCors(); <--- Enable CORS Add this to enable CORS
+  // Enable CORS Add this to enable CORS
+  app.enableCors();
   ...
   await app.listen(3000);
 }
@@ -109,7 +107,7 @@ Or you can clone a working [example project](https://github.com/nebulr-group/nbl
 
 :::note
 
-We support Ionic 5 & 6 and Angular 10, 11, 12, 13.
+We support Ionic 5 & 6 and Angular 10, 11, 12, 13, 14.
 
 :::
 
@@ -124,7 +122,8 @@ Usually this property sits around row 34.
 ...
 "styles": [
   ...
-  "node_modules/primeicons/primeicons.css", <--- Add these four lines after your current styles imports
+  // Add these four lines after your current styles imports
+  "node_modules/primeicons/primeicons.css",
   "node_modules/primeng/resources/themes/saga-blue/theme.css",
   "node_modules/primeng/resources/primeng.min.css",
   "node_modules/@nebulr-group/nblocks-ionic/styles/global.css"
@@ -143,11 +142,13 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
   entryComponents: [],
   imports: [
     ...
-    NblocksIonicModule.forRoot({}) <--- Add the NblocksIonicModule in module imports 
+    // Add the NblocksIonicModule in module imports 
+    NblocksIonicModule.forRoot({})
   ],
   providers: [
     ...
-    AUTH_HTTP_INTERCEPTOR_PROVIDERS <--- Add our interceptor providers to your current list of providers
+    // Add our interceptor providers to your current list of providers
+    AUTH_HTTP_INTERCEPTOR_PROVIDERS
   ]
 })
 ```
@@ -185,6 +186,14 @@ You are now set up, supercharged and ready to power your app with all that we ha
   className="screenshot"
 />
 
+**Here's a list of the build in views included in the frontend.**
+- [http://localhost:8100/auth/login](http://localhost:8100/auth/login)
+- [http://localhost:8100/auth/set-password](http://localhost:8100/auth/set-password)
+- [http://localhost:8100/auth/onboarding](http://localhost:8100/auth/onboarding)
+- [http://localhost:8100/auth/social-login](http://localhost:8100/auth/social-login)
+- [http://localhost:8100/auth/mfa](http://localhost:8100/auth/mfa)
+- [http://localhost:8100/user/list](http://localhost:8100/user/list)
+
 ### Try adding a second user
 No fun without some friends 🤙. You're going to use our user management view to add another user!
 
@@ -203,6 +212,7 @@ No fun without some friends 🤙. You're going to use our user management view t
 1. Login with your new user.
 1. Navigate to [http://localhost:8100/user/list](http://localhost:8100/user/list) and you should se both your users popping up.
 
+
 **Mission completed!** 🥊
 
 ### That's all for today folks!
@@ -210,7 +220,7 @@ Great job with the quickstart! Now your app has been supercharged with Nblocks �
 You've just unlocked the next level and you're ready take on another challenge.
 
 ## Next steps
-- Test apply a simple [first branding](examples/first-branding).
+- Apply your simple and [first branding](examples/first-branding).
 - Try another example and [query your first data with graphql](examples/graphql-playground).
 - Create your first [controller](examples/querying-first-data).
 - Read more about what's possible with [custom branding](fundamentals/branding.mdx).
