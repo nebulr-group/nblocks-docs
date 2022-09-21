@@ -135,7 +135,7 @@ Usually this property sits around row 34.
 ```typescript title="src/app/app.module.ts"
 ...
 // Import the NblocksIonicModule and interceptor providers
-import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-group/nblocks-ionic';
+import { NblocksIonicModule, NBLOCKS_AUTH_HTTP_INTERCEPTORS } from '@nebulr-group/nblocks-ionic';
 
 @NgModule({
   declarations: [AppComponent],
@@ -148,7 +148,7 @@ import { NblocksIonicModule, AUTH_HTTP_INTERCEPTOR_PROVIDERS } from '@nebulr-gro
   providers: [
     ...
     // Add our interceptor providers to your current list of providers
-    AUTH_HTTP_INTERCEPTOR_PROVIDERS
+    NBLOCKS_AUTH_HTTP_INTERCEPTORS
   ]
 })
 ```
