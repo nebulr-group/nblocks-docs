@@ -27,7 +27,7 @@ Lets go! 🚀
 
 ## Getting Started
 In this exercise we'll install **Nblocks** for both a frontent and a backend project to leverage the full plug-n-play experience and prebaked feature set.
-At this moment we support Ionic Angular for the frontent project and NestJS for the backend.
+At this moment we support React for the frontend project and NestJS for the backend.
 
 ### Backend
 Start with installing the backend! Install our plugin containing the necessary endpoints to power the Nblocks loaded frontend.
@@ -97,68 +97,54 @@ npm run start:dev
 It's time for the Nblocks plugin to supercharge your frontend.
 :::tip Don't have a project yet?
 
-If you don't have a project yet you can create a new skeleton project for Ionic.   
-`ionic start my-frontend blank --type=angular`. Requires @ionic/cli to be installed.
+If you don't have a project yet you can create a new skeleton project for React.   
+`npx create-react-app my-app --template typescript`.
 
-Or you can clone a working [example project](https://github.com/nebulr-group/nblocks-ionic-example) with this plugin installed from our Github 😉
+Or you can clone a working [example project](https://github.com/nebulr-group/nblocks-react-example) with this plugin installed from our Github 😉
 :::
 <Tabs>
-<TabItem value="ionic" label="Ionic" default>
+<TabItem value="react" label="React" default>
 
 :::note
 
-We support Ionic 5 & 6 and Angular 10, 11, 12, 13, 14.
+We support React 18.
 
 :::
 
-1. Step into your Ionic project root and run the scaffolding script to install our nblocks-ionic plugin and all it's dependencies.
+1. Step into your React project root and run the scaffolding script to install our nblocks-react plugin and all it's dependencies.
 ```bash
-npx @nebulr-group/nblocks-plugin-tool setup-ionic
+npx @nebulr-group/nblocks-plugin-tool setup-react
 ```
 
-2. Include the Nblocks css styles and styles from PrimeNG peer dependencies under **app > architect > build > options** in the angular.json file located in your project root.
-Usually this property sits around row 34.
-```json title="angular.json"
-...
-"styles": [
-  ...
-  // Add these four lines after your current styles imports
-  "node_modules/primeicons/primeicons.css",
-  "node_modules/primeng/resources/themes/saga-blue/theme.css",
-  "node_modules/primeng/resources/primeng.min.css",
-  "node_modules/@nebulr-group/nblocks-ionic/styles/global.css"
-],
-...
+2. Import the NblocksProvider and surround your top most App component in App.tsx.
+```typescript title="src/App.tsx"
+import { NblocksProvider, InstallationCompleteComponent } from "@nebulr-group/nblocks-react";
+function App() {
+  return (
+    <NblocksProvider config={{ devMode: true }}>
+      {/* Optional success component */}
+      <InstallationCompleteComponent/> 
+    </NblocksProvider>
+  );
+}
+
+export default App; 
 ```
 
-3. Import the NblocksIonicModule in your app.module.ts.
-```typescript title="src/app/app.module.ts"
-...
-// Import the NblocksIonicModule and interceptor providers
-import { NblocksIonicModule, NBLOCKS_AUTH_HTTP_INTERCEPTORS } from '@nebulr-group/nblocks-ionic';
+:::tip Whats Dev mode?
+Setting `devMode: true` will configure the plugin with some sensible defaults. More on this later.
+:::
 
-@NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [
-    ...
-    // Add the NblocksIonicModule in module imports 
-    NblocksIonicModule.forRoot({})
-  ],
-  providers: [
-    ...
-    // Add our interceptor providers to your current list of providers
-    NBLOCKS_AUTH_HTTP_INTERCEPTORS
-  ]
-})
-```
-
-4. Launch your Frontend. 
+3. Launch your Frontend.
 ```bash
-ionic serve
+PORT=8080 npm start
 ``` 
 </TabItem>
 </Tabs>
+
+:::tip Why port 8080?
+Both React and the backend are using port 3000 by default. Therefore we start React on another port.
+:::
 
 ### Done! Everything is installed and set!
 
@@ -174,7 +160,8 @@ You are now set up, supercharged and ready to power your app with all that we ha
 ## Let's try it!
 
 ### Create your first user and login
-1. Go to your signup screen by clicking this link [http://localhost:8100/setup/signup](http://localhost:8100/setup/signup).
+1. Try access your app by navigating to [http://localhost:8080](http://localhost:8080) and you should see a login screen.
+1. Click the Create new account button.
 1. Signup with a new user.
 1. Go to your email inbox, wait for the onboarding email to arrive and follow the instructions to set a password.
 1. Login with your new credentials.
@@ -187,12 +174,16 @@ You are now set up, supercharged and ready to power your app with all that we ha
 />
 
 **Here's a list of the build in views included in the frontend.**
-- [http://localhost:8100/auth/login](http://localhost:8100/auth/login)
-- [http://localhost:8100/auth/set-password](http://localhost:8100/auth/set-password)
-- [http://localhost:8100/auth/onboarding](http://localhost:8100/auth/onboarding)
-- [http://localhost:8100/auth/social-login](http://localhost:8100/auth/social-login)
-- [http://localhost:8100/auth/mfa](http://localhost:8100/auth/mfa)
-- [http://localhost:8100/user/list](http://localhost:8100/user/list)
+- [http://localhost:8080/setup/config](http://localhost:8080/setup/config)
+- [http://localhost:8080/setup/signup](http://localhost:8080/setup/signup)
+- [http://localhost:8080/auth/login](http://localhost:8080/auth/login)
+- [http://localhost:8080/auth/reset-password](http://localhost:8080/auth/reset-password)
+- [http://localhost:8080/auth/set-password/token](http://localhost:8080/auth/set-password/token)
+- [http://localhost:8080/auth/mfa/required](http://localhost:8080/auth/mfa/required)
+- [http://localhost:8080/auth/mfa/recover](http://localhost:8080/auth/mfa/recover)
+- [http://localhost:8080/auth/mfa/setup](http://localhost:8080/auth/mfa/setup)
+- [http://localhost:8080/user/list](http://localhost:8080/user/list)
+- [http://localhost:8080/auth/logout](http://localhost:8080/auth/logout)
 
 ### Try adding a second user
 No fun without some friends 🤙. You're going to use our user management view to add another user!
@@ -200,7 +191,7 @@ No fun without some friends 🤙. You're going to use our user management view t
 **Let's proceed!** 👨‍💻
 
 1. If you're not logged in, login again.
-1. Navigate your browser to `/user/list` as in [http://localhost:8100/user/list](http://localhost:8100/user/list) to see the User management screen.
+1. Navigate your browser to `/user/list` as in [http://localhost:8080/user/list](http://localhost:8080/user/list) to see the User management screen.
 <img
   src={require('./assets/user-list.png').default}
   alt="User list"
@@ -210,7 +201,7 @@ No fun without some friends 🤙. You're going to use our user management view t
 1. Check your inbox for a new onboarding email and click the link to start and complete the onboarding process. 
 (This is going to take you through the same step you just did yourself in the previous excercise.)
 1. Login with your new user.
-1. Navigate to [http://localhost:8100/user/list](http://localhost:8100/user/list) and you should se both your users popping up.
+1. Navigate to [http://localhost:8080/user/list](http://localhost:8080/user/list) and you should se both your users popping up.
 
 
 **Mission completed!** 🥊
@@ -221,6 +212,7 @@ You've just unlocked the next level and you're ready take on another challenge.
 
 ## Next steps
 - Apply your simple and [first branding](examples/first-branding).
+- Get [payment ready](examples/payment-ready) in no time!
 - Try another example and [query your first data with graphql](examples/graphql-playground).
 - Create your first [controller](examples/querying-first-data).
 - Read more about what's possible with [custom branding](fundamentals/branding.mdx).

@@ -1,0 +1,150 @@
+---
+sidebar_position: 4
+sidebar_label: Getting payment ready (10 min)
+---
+
+# Getting payment ready with Stripe
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+We've made it easy to setup a paywall to your app and offer new customers to pick a plan and checkout a new subscription that grants access to your app.
+How you get paid by your customers is defined by your Business model which essentially consists of your *plans* configuration.
+
+We use Stripe as our payment partner.
+Your business model can easily be setup programmatically, we'll go through this later.
+
+We also have you covered from customers that stop paying. Users of these tenants will be locked out if they neglect the Nblocks reminders.
+
+:::tip
+Read more about the concept of users and tenants [here](../fundamentals/tenants-users.mdx).
+:::
+
+In this guide we'll setup an integration with Stripe in no time. The integration will initially run Stripe in test mode for the sake of having you click through the functionalty.
+We'll end up describing how you can toggle the integration into production mode.
+
+## Setup the Stripe integration
+First step is to create your own Stripe account which NBlocks is going to use to enable payments.
+1. Register for a new Stripe account. This can be easily done at [stripe.com](https://stripe.com). If you already have an account you can use that.
+<img
+  src={require('../assets/stripe/stripe_1.png').default}
+  alt="Create stripe account"
+  className=""
+/>
+1. Theres no need to activate payments and setup banking at this point.
+1. Give your account a name which is required by Stripe before we can test payments.
+<img
+  src={require('../assets/stripe/stripe_2.png').default}
+  alt="Set account name"
+  className=""
+/>
+1. Grab your Stripe test keys (both Publishable key and Secret key) found in your Stripe dashboard or at https://dashboard.stripe.com/apikeys. It's important these keys are for the test mode, otherwise you'll not be able to use Stripes test credit cards during checkout.
+<img
+  src={require('../assets/stripe/stripe_3.png').default}
+  alt="Set account name"
+  className=""
+/>
+1. Go to your app config page [http://localhost:8080/setup/config](http://localhost:8080/setup/config) and add these keys. Nblocks will use this to authenticate itself for future payments.
+1. Voila!
+
+## Setup your business model
+Next step is to define some simple plans so there's actually something our users can checkout. We'll go ahead and explain the *Business model* very briefly and how to setup a first draft. 
+
+:::tip
+Read more about the concept of business model [here](../fundamentals/business-model.mdx).
+:::
+
+For this example we're going to create two *plans*: one free named "FREEMIUM" and one paid named "PREMIUM".
+Payments will be made in Euro and charged should recurr monthly. These details needs to be put together into a JSON format and stored on your app model.
+
+1. Head over to your backend project and locate the `app-configuration.json` file located in `nblocks/config` folder.
+2. Change the `businessModel` property with below JSON directly within the file.
+```json title="nblocks/config/app-configuration.json"
+...
+businessModel: {
+  "taxes": [],
+  "plans": [
+      {
+          "name": "FREEMIUM",
+          "prices": [
+              {
+                  "region": "DEFAULT",
+                  "amount": 0,
+                  "currency": "EUR",
+                  "recurrenceInterval": "month"
+              }
+          ]
+      },
+      {
+          "name": "PREMIUM",
+          "prices": [
+              {
+                  "region": "DEFAULT",
+                  "amount": 50,
+                  "currency": "EUR",
+                  "recurrenceInterval": "month"
+              }
+          ]
+      }
+  ]
+},
+...
+```
+3. In the terminal of your backend project; run `npx @nebulr-group/nblocks-plugin-tool push-app` to persist the changes.
+
+## Restrict features
+**TODO add a description**
+### Frontend
+<Tabs>
+<TabItem value="react" label="React" default>
+
+```tsx
+<PlanAccessControllComponent
+  plans={["PREMIUM"]}
+>
+  <h1>This is premium content!</h1>
+</PlanAccessControllComponent>
+```
+
+</TabItem>
+</Tabs>
+
+### Backend
+<Tabs>
+<TabItem value="nestjs" label="NestJS" default>
+
+```json title="nblocks/config/resourceMappings.json"
+...
+"/super/feature": {
+    "privilege": "AUTHENTICATED",
+    "plans": ["PREMIUM"]
+},
+...
+```
+
+</TabItem>
+</Tabs>
+
+## Signup
+The time has come to finally test payments. NBlocks supports two ways to expose this to your end users.
+- Using the signup form in-app where the new user will be guided through a payment step after onboarding.
+- Using a set of unique links to open the prebuilt checkout views which automatically create a new user.
+
+:::tip
+These alternatives and their links are available to explore on your app config page [http://localhost:8080/setup/config](http://localhost:8080/setup/config).
+:::
+
+We're going to make use of the first option this time.
+1. Go to [http://localhost:8080/setup/signup](http://localhost:8080/setup/signup) and signup for a new account.
+1. Click the link in signup email and login.
+1. Select the PREMIUM plan.
+1. Enter the Stripe test credit card `4242 4242 4242 4242`, valid until `12/34` and any CVC number.
+1. Click subscribe.
+1. Done! You're now a paying subscriber to your own app! Check that you can access Premium features
+
+## Getting production ready
+Getting production ready with Stripe is as easy as replacing the test keys with the live keys via the app config page. You can grab your Stripe live keys here https://dashboard.stripe.com/apikeys.
+
+:::note
+You will not be able to use the Stripe test credit card during checkout in production mode.
+:::
