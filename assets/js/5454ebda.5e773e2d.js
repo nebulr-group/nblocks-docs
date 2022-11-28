@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunknblocks_docs=self.webpackChunknblocks_docs||[]).push([[7990],{4130:s=>{s.exports=JSON.parse('{"permalink":"/nblocks-docs/blog/tags/docusaurus","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);

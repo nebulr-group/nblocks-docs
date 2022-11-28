@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunknblocks_docs=self.webpackChunknblocks_docs||[]).push([[65],{2709:function(s){s.exports=JSON.parse('{"allTagsPath":"/nblocks-docs/blog/tags","slug":"/nblocks-docs/blog/tags/hola","name":"hola","count":1,"permalink":"/nblocks-docs/blog/tags/hola"}')}}]);
