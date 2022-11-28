@@ -10,7 +10,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githu
 apt update
 apt install gh
 
-echo -e "${GREEN}Installing NPM plugins${NC}"
-npm install
+echo -e "${GREEN}Installing NPM plugins (yarn)${NC}"
+yarn
 
 echo -e "${GREEN}Done initializing${NC}"

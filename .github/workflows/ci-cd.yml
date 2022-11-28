@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Build content
         run: |
+          yarn
           yarn build
       - uses: redkubes/docusaurus-deploy-action@v1
         with:
