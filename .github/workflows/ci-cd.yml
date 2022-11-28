@@ -13,7 +13,7 @@ jobs:
         run: |
           yarn
           yarn build
-      - uses: redkubes/docusaurus-deploy-action@v1
+      - uses: redkubes/docusaurus-deploy-action@v1.2
         with:
           source-folder: build
           git-user: ${{ github.actor }}

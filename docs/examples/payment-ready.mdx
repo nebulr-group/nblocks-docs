@@ -9,10 +9,10 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 We've made it easy to setup a paywall to your app and offer new customers to pick a plan and checkout a new subscription that grants access to your app.
-How you get paid by your customers is defined by your Business model which essentially consists of your *plans* configuration.
+How you get paid by your customers is defined by your pricing plan which essentially consists of your *plans* configuration set.
 
 We use Stripe as our payment partner.
-Your business model can easily be setup programmatically, we'll go through this later.
+Your pricing plan can easily be setup programmatically, we'll go through this later.
 
 We also have you covered from customers that stop paying. Users of these tenants will be locked out if they neglect the Nblocks reminders.
 
@@ -47,11 +47,11 @@ First step is to create your own Stripe account which NBlocks is going to use to
 1. Go to your app config page [http://localhost:8080/setup/config](http://localhost:8080/setup/config) and add these keys. Nblocks will use this to authenticate itself for future payments.
 1. Voila!
 
-## Setup your business model
-Next step is to define some simple plans so there's actually something our users can checkout. We'll go ahead and explain the *Business model* very briefly and how to setup a first draft. 
+## Setup your pricing plan
+Next step is to define some simple plans so there's actually something our users can checkout. We'll go ahead and explain the *Pricing plan* very briefly and how to setup a first draft. 
 
 :::tip
-Read more about the concept of business model [here](../fundamentals/business-model.mdx).
+Read more about the concept of your pricing plan [here](../fundamentals/pricing-plan.mdx).
 :::
 
 For this example we're going to create two *plans*: one free named "FREE" and one paid named "PREMIUM".
@@ -93,16 +93,21 @@ businessModel: {
 3. In the terminal of your backend project; run `npx @nebulr-group/nblocks-plugin-tool push-app` to persist the changes.
 
 ## Restrict features
-**TODO add a description**
+Both out frontend and backend plugins contain support to restrict user access to features and components based on the current plan. 
+This is really usefull when you want to just allow certain customers access to more advanced features.
+
+In the below example we're going to restrict the analytics dashboard for any other than PREMIUM customers.
 ### Frontend
+
 <Tabs>
 <TabItem value="react" label="React" default>
+To hide content in frontend, wrap your component with the provided PlanAccessControllComponent.
 
 ```tsx
 <PlanAccessControllComponent
   plans={["PREMIUM"]}
 >
-  <h1>This is premium content!</h1>
+  <AnalyticsDashboardComponent />
 </PlanAccessControllComponent>
 ```
 
@@ -110,13 +115,15 @@ businessModel: {
 </Tabs>
 
 ### Backend
+
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
+Use the resourceMappings.json to restrict a http endpoint or resolver to a certain plan. Here we say that the dashboard endpoint requires users to have plan PREMIUM and ANALYTICS_READ privilege.
 
 ```json title="nblocks/config/resourceMappings.json"
 ...
-"/super/feature": {
-    "privilege": "AUTHENTICATED",
+"/analytics/dashboard": {
+    "privilege": "ANALYTICS_READ",
     "plans": ["PREMIUM"]
 },
 ...
