@@ -54,8 +54,8 @@ Next step is to define some simple plans so there's actually something our users
 Read more about the concept of business model [here](../fundamentals/business-model.mdx).
 :::
 
-For this example we're going to create two *plans*: one free named "FREEMIUM" and one paid named "PREMIUM".
-Payments will be made in Euro and charged should recurr monthly. These details needs to be put together into a JSON format and stored on your app model.
+For this example we're going to create two *plans*: one free named "FREE" and one paid named "PREMIUM".
+Payments will be made in Euro and charged should recur monthly. These details needs to be put together into a JSON format and stored on your app model.
 
 1. Head over to your backend project and locate the `app-configuration.json` file located in `nblocks/config` folder.
 2. Change the `businessModel` property with below JSON directly within the file.
@@ -65,7 +65,7 @@ businessModel: {
   "taxes": [],
   "plans": [
       {
-          "name": "FREEMIUM",
+          "name": "FREE",
           "prices": [
               {
                   "region": "DEFAULT",
