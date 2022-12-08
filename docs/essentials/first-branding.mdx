@@ -5,28 +5,30 @@ sidebar_label: Branding intro (5 min)
 
 # Branding intro
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 Wouldn't it be cool if your logo were used in both the UI and that onboarding email you received before instead?
 While we're at it let's also try changing some colors and texts in the UI so you get a hang of it 😃
 
-Here's an overview on the stuff we're changing here: 
-* The email logo and footer link.
-* The UI logo.
-* The title of the set-password page.
-* The primary color for buttons and links.
+Here's an overview on the stuff we're changing here:
+
+- The email logo and footer link.
+- The UI logo.
+- The title of the set-password page.
+- The primary color for buttons and links.
 
 #### Branding the email (Backend)
 
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
 
-First off we'll change the email appearance a bit. This part is about information stored on your app configuration in the Nblocks platform. 
-The configuration can be changed in a lot of ways, using the built in [SDK client](/docs/core/sdk-client) or a REST HTTP call.    
+First off we'll change the email appearance a bit. This part is about information stored on your app configuration in the Nblocks platform.
+The configuration can be changed in a lot of ways, using the built in [SDK client](/docs/core/sdk-client) or a REST HTTP call.  
 But hold on! We've made it super simple for this quick start and all you need to do is the following two step:
+
 1. Open your unique app-configuration.json file located in your nblocks folder which was put there by the setup script.
-You can change the `logo` and `websiteUrl` to your own or if you do not have it available use these two.
+   You can change the `logo` and `websiteUrl` to your own or if you do not have it available use these two.
 
 ```json title="nblocks/config/app-configuration.json"
 {
@@ -39,7 +41,7 @@ You can change the `logo` and `websiteUrl` to your own or if you do not have it 
 ```
 
 2. Great! Now we'll push the data so Nblocks stores these new values. In your terminal, navigate to the root of your backend project and run.
-`npx @nebulr-group/nblocks-nestjs push-app-configuration`.
+   `npx @nebulr-group/nblocks-nestjs push-app-configuration`.
 
 Awesome! The data has now been pushed and Nblocks will use this configuration in the future 🚀
 
@@ -52,48 +54,35 @@ Check you inbox again! Pretty neat huh! 😎
 </Tabs>
 
 #### Branding the UI (Frontend)
+
 Next step we're focusing on the views you get from the plugin.
+
 <Tabs>
-<TabItem value="ionic" label="Ionic" default>
+<TabItem value="React" label="React" default>
 
-1. Rember that NblocksIonicModule you imported during installation? Let's give it a few configs instead of using the default ones! We'll tell it to use another logo by configuring the `logoPath`.
-
-```typescript title="src/app/app.module.ts"
-
-@NgModule({
-  ...
-    NblocksIonicModule.forRoot({
-      logoPath: 'http://nblocks.dev/wp-content/uploads/2021/12/nblocks-testlogo.png', <--- configure logo
-    })
-})
-```
-
-2. Open up the english language translation file found under `assets/i18n`. 
-This, and other translation files, where put here by the setup script and defines the text content of all Nblocks views.
-We'll replace the text of the translation key `NBLOCKS.AUTH.SET_NEW_PASSWORD` which is the title of the set-password page and set it to something nice.
-```json title="src/assets/i18n/nblocks_en.json"
-{
-	"NBLOCKS": {
-    ...
-		"AUTH": {
-      ...
-			"SET_NEW_PASSWORD": "It's time to set that first password ;)", <--- Change this
-```
-
-3. Lastly lets change the default Nblocks primary color for buttons and links. 
-This will be done by altering the `--ion-color-primary` color in the Ionic theme variable.scss.
+Lets change the default Nblocks primary color pallete, which is used by buttons and links.
+This will be done by creating the `--color-primary-*` variables in the global CSS variables block.
 
 ```scss title="src/theme/variables.scss"
 :root {
   /** primary **/
-  --ion-color-primary: #434447;
+  --color-primary-50: #EBF1FF;
+  --color-primary-100: #D4E1FF;
+  --color-primary-200: #BECFFE;
+  --color-primary-300: #A8BDFD;
+  --color-primary-400: #93A9FD;
+  --color-primary-500: #6C82FB;
+  --color-primary-600: #4C5FF7;
+  --color-primary-700: #3342F2;
+  --color-primary-800: #202AE9;
+  --color-primary-900: #1117D7;
 ```
 
-💥 Perfect! You just did your first branding. Click [http://localhost:8100/auth/set-password/token](http://localhost:8100/auth/set-password/token) to reveal your changes.   
-The set-password page should look something like this now 🙀
+💥 Perfect! You just did your first branding. Click [http://localhost:8081/auth/login](http://localhost:8081/auth/login) to reveal your changes.  
+The login page should look something like this now 🙀
 
 <img
-  src={require('../assets/branding.png').default}
+  src={require("../assets/branding.png").default}
   alt="Branding"
   className="screenshot"
 />
@@ -102,4 +91,5 @@ The set-password page should look something like this now 🙀
 </Tabs>
 
 ## Next steps
-- Read more about the concept of [Branding](/docs/concepts/branding.mdx).
+
+- # Read more about the concept of [Branding](/docs/concepts/branding.mdx).
