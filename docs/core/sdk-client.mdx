@@ -1,13 +1,14 @@
 ---
 sidebar_position: 100
+sidebar_label: SDK client
 ---
 
-# API client
+# SDK client
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The API client is our swiss army knife for querying the Nblocks Rest API directly and most of our plug-n-play experiences use the API client under the hood to deliver their feature set. 
+The SDK client is our swiss army knife for querying the Nblocks Rest API directly and most of our plug-n-play experiences use the SDK client under the hood to deliver their feature set. 
 It comes with typings and documentation built in for your convenience.
 
 You'll be able to get hold of a client instance straight, all prepped with credentials, from your plug-n-play plugin.
@@ -29,7 +30,7 @@ await client.tenants.list(); <--- Use the client instance for something
 </Tabs>
 
 ### Reference
-The API client wraps all functionality from the Nblocks Rest API. See our [API Reference](https://nebulr-group.github.io/nblocks-api-docs) for exact usage.
+The SDK client wraps all functionality from the Nblocks Rest API. See our [API Reference](https://nebulr-group.github.io/nblocks-api-docs) for exact usage.
 
 ## Deep dive
 The client and its sub clients are organised around the Nblocks feature areas and to be a smooth experience for developers using it. 
@@ -62,7 +63,7 @@ await client.tenant(user.tenant.id).user(user.id).sendSms({text: "Hello you"});
 ```
 
 ## Quick start
-You can install the API client manually and use it directly if non of our plug-n-play experiences suite your needs.
+You can install the SDK client manually and use it directly if non of our plug-n-play experiences suite your needs.
 1. Install the plugin
 ```
 npm i @nebulr-group/nblocks-ts-client

@@ -23,6 +23,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          sidebarCollapsed: false,
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
@@ -52,21 +53,21 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'quickstart',
+            docId: 'essentials/quickstart',
             position: 'left',
-            label: 'Quickstart',
+            label: 'Essentials',
           },
           {
             type: 'doc',
-            docId: 'examples/querying-first-data',
+            docId: 'tutorials/querying-first-data',
             position: 'left',
             label: 'Guides & Examples',
           },
           {
             type: 'doc',
-            docId: 'fundamentals/branding',
+            docId: 'concepts/branding',
             position: 'left',
-            label: 'Fundamentals',
+            label: 'Concepts',
           },
           {
             href: 'https://nebulr-group.github.io/nblocks-api-docs',
@@ -89,7 +90,7 @@ const config = {
             items: [
               {
                 label: 'Quickstart',
-                to: '/docs/quickstart',
+                to: '/docs/essentials/quickstart',
               },
             ],
           },

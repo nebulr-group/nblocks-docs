@@ -30,11 +30,11 @@ Who's the customer and how's that linked to a tenant? Let's think of two case.
 **Business to Business**   
 A company signing up to your app will get access to a new tenant. This company is your customer now and currently holds access to one tenant and a plan which you provision and get paid for. The intial and only user of the tenant will eventually start inviting more users (collegues) depending on your app offer.
 
-**Business to Customer**   
+**Business to Consumer**   
 A person signs up for access to your app and is given access to a tenant. The person is your customer now and this customer currently holds access to one tenant and a plan which you provision and get paid for. In B2C cases it's more common that there will be only one user of a tenant but this depends what your app offer. As described, nothing really change between the cases except for who's the customer.
 :::
 
-Tenants get created automatically in Nblocks if you've using our [payment ready](../examples/payment-ready) solution. 
+Tenants get created automatically in Nblocks if you've using our [payment ready](/docs/essentials/payment-ready) solution. 
 There's also the option for you to manage this yourself and programatically create new tenants. Be aware that Nblocks will not monitor payments and automatically provision access to your app for manual tenants.
 
 Here's an example of data that is made available to your app via the Tenant object:
@@ -65,7 +65,7 @@ Here's an example of data that is made available to your app via the User object
 | Variable          | Description |
 | -----------       | ----------- |
 | id                | Unique ID |
-| role              | Role of the user. Grants a set of privileges. Privileges are configured on the `App` model. See [security](security).|
+| role              | Role of the user. Grants a set of privileges. Privileges are configured on the `App` model. See [security](/docs/concepts/security).|
 | email             | Email address |
 | username          | Username to login as, currently same as email address  |
 | fullName          | Users full name (first name and last name concatenated) |
@@ -76,7 +76,7 @@ Here's an example of data that is made available to your app via the User object
 | createdAt         | Date when the user was created  |
 
 :::tip
-Read more about users and how to secure access to your application based on their privileges [here](security).
+Read more about users and how to secure access to your application based on their privileges [here](/docs/concepts/security).
 :::
 
 ## Onboarding your users
