@@ -113,7 +113,9 @@ To hide content in frontend, wrap your component with the provided *NBAccessCont
 ```
 
 :::tip
-The NBAccessControlComponent can both be used to show / hide content or restrict a route. It can also restrict roles. See the built in documentation in react.
+
+The *NBPlanAccessControlGuard* can used to restrict a route for a certain plan and redirect the user back if the criteras are not met.
+
 :::
 
 </TabItem>
@@ -123,7 +125,8 @@ The NBAccessControlComponent can both be used to show / hide content or restrict
 
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
-Use the resourceMappings.json to restrict a http endpoint or resolver to a certain plan. Here we say that the dashboard endpoint requires users to have plan PREMIUM and AUTHENTICATED privilege.
+Use the *resourceMappings.json* file to restrict a HTTP endpoint or GraphQL resolver to a certain plan. 
+Here we say that the dashboard endpoint requires users to have plan PREMIUM and AUTHENTICATED privilege.
 
 ```json title="nblocks/config/resourceMappings.json"
 ...
