@@ -101,15 +101,20 @@ In the below example we're going to restrict the analytics dashboard for any oth
 
 <Tabs>
 <TabItem value="react" label="React" default>
-To hide content in frontend, wrap your component with the provided PlanAccessControllComponent.
+
+To hide content in frontend, wrap your component with the provided *NBAccessControlComponent*
 
 ```tsx
-<PlanAccessControllComponent
+<NBAccessControlComponent
   plans={["PREMIUM"]}
 >
-  <AnalyticsDashboardComponent />
-</PlanAccessControllComponent>
+  <AnalyticsButton />
+</NBAccessControlComponent>
 ```
+
+:::tip
+The NBAccessControlComponent can both be used to show / hide content or restrict a route. It can also restrict roles. See the built in documentation in react.
+:::
 
 </TabItem>
 </Tabs>
@@ -118,13 +123,13 @@ To hide content in frontend, wrap your component with the provided PlanAccessCon
 
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
-Use the resourceMappings.json to restrict a http endpoint or resolver to a certain plan. Here we say that the dashboard endpoint requires users to have plan PREMIUM and ANALYTICS_READ privilege.
+Use the resourceMappings.json to restrict a http endpoint or resolver to a certain plan. Here we say that the dashboard endpoint requires users to have plan PREMIUM and AUTHENTICATED privilege.
 
 ```json title="nblocks/config/resourceMappings.json"
 ...
-"/analytics/dashboard": {
-    "privilege": "ANALYTICS_READ",
-    "plans": ["PREMIUM"]
+"/analytics/data": {
+  "privilege": "AUTHENTICATED",
+  "plans": ["PREMIUM"]
 },
 ...
 ```
