@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunknblocks_docs=self.webpackChunknblocks_docs||[]).push([[9614],{2192:s=>{s.exports=JSON.parse('{"label":"docusaurus","permalink":"/nblocks-docs/blog/tags/docusaurus","allTagsPath":"/nblocks-docs/blog/tags","count":4}')}}]);
