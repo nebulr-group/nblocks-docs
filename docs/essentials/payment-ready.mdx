@@ -94,7 +94,7 @@ Payments will be made in Euro and charged should recur monthly. These details ne
 
 ## Restrict features
 Both out frontend and backend plugins contain support to restrict user access to features and components based on the current plan. 
-This is really usefull when you want to just allow certain customers access to more advanced features.
+This is really useful when you want to just allow certain customers access to specific features.
 
 In the below example we're going to restrict the analytics dashboard for any other than PREMIUM customers.
 ### Frontend
@@ -102,21 +102,30 @@ In the below example we're going to restrict the analytics dashboard for any oth
 <Tabs>
 <TabItem value="react" label="React" default>
 
-To hide content in frontend, wrap your component with the provided *NBAccessControlComponent*
+#### Content
+
+The *NBAccessControlComponent* let's you show content for certain plans or user roles.
 
 ```tsx
-<NBAccessControlComponent
-  plans={["PREMIUM"]}
->
+<NBAccessControlComponent plans={["PREMIUM"]} roles={['ADMIN']}>
+  {/** The children here will just be shown if the criteras are met */}
   <AnalyticsButton />
 </NBAccessControlComponent>
 ```
 
-:::tip
+#### Routes
 
-The *NBPlanAccessControlGuard* can used to restrict a route for a certain plan and redirect the user back if the criteras are not met.
+The *NBPlanAccessControlGuard* let's you enable a route for certain plans. The guard will redirect the user back if the criteras are not met.
 
-:::
+```tsx
+<Route exact path="/analytics" element={
+    <NBPlanAccessControlGuard plans={['PREMIUM']}>
+      {/** The children here will just be shown if the criteras are met otherwise a redirect will happen */}
+      <Analytics />
+    </NBPlanAccessControlGuard>
+  }
+/>
+```
 
 </TabItem>
 </Tabs>
@@ -125,6 +134,7 @@ The *NBPlanAccessControlGuard* can used to restrict a route for a certain plan a
 
 <Tabs>
 <TabItem value="nestjs" label="NestJS" default>
+
 Use the *resourceMappings.json* file to restrict a HTTP endpoint or GraphQL resolver to a certain plan. 
 Here we say that the dashboard endpoint requires users to have plan PREMIUM and AUTHENTICATED privilege.
 
