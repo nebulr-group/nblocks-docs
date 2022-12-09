@@ -15,7 +15,6 @@ Here's an overview on the stuff we're changing here:
 
 - The email logo and footer link.
 - The UI logo.
-- The title of the set-password page.
 - The primary color for buttons and links.
 
 #### Branding the email (Backend)
@@ -46,7 +45,7 @@ But hold on! We've made it super simple for this quick start and all you need to
 Awesome! The data has now been pushed and Nblocks will use this configuration in the future 🚀
 
 You can already see this in effect by requesting a forgot password email from the forgot-password view.
-Click here [http://localhost:8100/auth/forgot-password](http://localhost:8100/auth/forgot-password) and add the email address from any of your users.
+Click here [http://localhost:8080/auth/forgot-password](http://localhost:8080/auth/forgot-password) and add the email address from any of your users.
 
 Check you inbox again! Pretty neat huh! 😎
 
@@ -61,24 +60,25 @@ Next step we're focusing on the views you get from the plugin.
 <TabItem value="React" label="React" default>
 
 Lets change the default Nblocks primary color pallete, which is used by buttons and links.
-This will be done by creating the `--color-primary-*` variables in the global CSS variables block.
+This will be done by creating the `--color-primary-*` variables in the global CSS variables block within your project's css file.
 
-```scss title="src/theme/variables.scss"
+```css
 :root {
   /** primary **/
-  --color-primary-50: #EBF1FF;
-  --color-primary-100: #D4E1FF;
-  --color-primary-200: #BECFFE;
-  --color-primary-300: #A8BDFD;
-  --color-primary-400: #93A9FD;
-  --color-primary-500: #6C82FB;
-  --color-primary-600: #4C5FF7;
-  --color-primary-700: #3342F2;
-  --color-primary-800: #202AE9;
-  --color-primary-900: #1117D7;
+  --color-primary-50: #ebf1ff;
+  --color-primary-100: #d4e1ff;
+  --color-primary-200: #becffe;
+  --color-primary-300: #a8bdfd;
+  --color-primary-400: #93a9fd;
+  --color-primary-500: #6c82fb;
+  --color-primary-600: #4c5ff7;
+  --color-primary-700: #3342f2;
+  --color-primary-800: #202ae9;
+  --color-primary-900: #1117d7;
+}
 ```
 
-💥 Perfect! You just did your first branding. Click [http://localhost:8081/auth/login](http://localhost:8081/auth/login) to reveal your changes.  
+💥 Perfect! You just did your first branding. Click [http://localhost:8080/auth/login](http://localhost:8080/auth/login) to reveal your changes.  
 The login page should look something like this now 🙀
 
 <img
@@ -92,4 +92,4 @@ The login page should look something like this now 🙀
 
 ## Next steps
 
-- # Read more about the concept of [Branding](/docs/concepts/branding.mdx).
+- Read more about the concept of [Branding](/docs/concepts/branding.mdx).
