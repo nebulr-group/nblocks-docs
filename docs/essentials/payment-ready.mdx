@@ -107,7 +107,7 @@ In the below example we're going to restrict the analytics dashboard for any oth
 The *NBAccessControlComponent* let's you show content for certain plans or user roles.
 
 ```tsx
-<NBAccessControlComponent plans={["PREMIUM"]} roles={['ADMIN']}>
+<NBAccessControlComponent plans={["PREMIUM"]}>
   {/** The children here will just be shown if the criteras are met */}
   <AnalyticsButton />
 </NBAccessControlComponent>
@@ -119,10 +119,10 @@ The *NBPlanAccessControlGuard* let's you enable a route for certain plans. The g
 
 ```tsx
 <Route exact path="/analytics" element={
-    <NBPlanAccessControlGuard plans={['PREMIUM']}>
-      {/** The children here will just be shown if the criteras are met otherwise a redirect will happen */}
+    <NBAccessControlGuard plans={['PREMIUM']}>
+      {/** The Route children here will just be possible if the criteras are met otherwise a redirect will happen */}
       <Analytics />
-    </NBPlanAccessControlGuard>
+    </NBAccessControlGuard>
   }
 />
 ```
