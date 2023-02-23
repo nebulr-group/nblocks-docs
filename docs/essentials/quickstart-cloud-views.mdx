@@ -1,0 +1,245 @@
+---
+sidebar_position: 2
+sidebar_label: Quickstart Cloud Login
+description: Quickstart Cloud Login | Nblocks Documentation
+---
+
+# Quickstart Cloud Login
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Integrate with Nblocks Cloud Login in any stack and have your users authenticate in no time!
+
+## Overview
+
+The following guide will get you up and running as quickly as possible by covering the following 3 steps:
+
+1. Create a Nblocks app and get hold of your App id.
+1. Integrate Nblocks login flow into your project.
+1. Testing the login flow
+
+
+Lets go! 🚀
+
+## Create a Nblocks app
+If you haven't already, create a Nblocks app. This is super simple to do with our terminal tools where you'll be guided throught the process.
+
+<Tabs>
+<TabItem value="npm" label="Npm" default>
+
+```bash
+npx @nebulr-group/nblocks-cli create-app
+```
+
+The tool will place an `.env` file containing your Nblocks Api key and download a copy of your app profile into a file `app-configuration.json`.
+
+</TabItem>
+
+</Tabs>
+
+## Integrating with Cloud Login
+
+There will be three steps in this integration. We're going to go through each one of them and show examples for different software stacks. 
+The main idea will not be different no matter what stack your building on.
+
+1. Redirect the user to cloud login.
+1. After completed login, the user is redirected back to your app with a code which should be exchanged for tokens.
+1. Decode the tokens into useful auth and profile information.
+
+### Step 1. Redirect the user to cloud login
+To start the login process you need to redirect the user to the cloud login url. This url is easy to construct.
+
+**Redirect the user to this url:**
+```
+https://auth-stage.nblocks.cloud/url/login/APP_ID
+```
+
+:::tip What APP_ID?
+
+`APP_ID` is your Nblocks app id. You can get this from your `app-configuration.json` file.
+
+:::
+
+Preferrably you would put this redirect in the beginning of your app flow to make sure users are logged in. Below are some examples for different stacks.
+
+<Tabs>
+
+<TabItem value="sdk" label="SDK" default>
+
+```ts
+// Get the url and redirect
+const url = new NblocksPublicClient(APP_ID).auth.getLoginUrl();
+window.location.href = url;
+```
+
+</TabItem>
+
+<TabItem value="js" label="JS" default>
+
+```js
+window.location.href = "https://auth-stage.nblocks.cloud/url/login/APP_ID";
+```
+
+</TabItem>
+
+</Tabs>
+
+### Step 2. Receive the user back and obtain the tokens.
+
+When the user completes login the user will be redirected back to your app with the url    
+`http://localhost:8080/auth/oauth-callback?code=eyJh....`
+
+You need to obtain this code from the url search params and exchange it for tokens.
+
+This can be done by exposing a new route `/auth/oauth-callback` where you load a component or intercept the incoming call in your app. 
+It all depends on what stack your using and how your building.
+
+Once the code has been obtained; call the *token* endpoint with the code in the body to retrieve the tokens.
+
+<Tabs>
+<TabItem value="rest" label="REST" default>
+
+`POST https://auth-stage.nblocks.cloud/token/code/APP_ID`    
+Body `{"code": "eyJh...."}`
+
+The endpoint will return the tokens in JSON format.
+
+```json
+{
+  "access_token": "eyJhbGciOiJQ...",
+  "refresh_token": "eyJhbGciOiJQ...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "id_token": "eyJhbGciOiJQ...",
+}
+```
+</TabItem>
+
+<TabItem value="sdk" label="SDK" default>
+
+```ts
+const code = (new URL(window.location.href)).searchParams.get('code');
+const tokens = new NblocksPublicClient(APP_ID).auth.getTokens(code);
+```
+
+</TabItem>
+
+<TabItem value="js" label="JS" default>
+
+```js
+const code = (new URL(window.location.href)).searchParams.get('code');
+const tokens = await fetch("https://auth-stage.nblocks.cloud/token/code/APP_ID",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      code,
+    }),
+  }
+).then(res => res.json());
+```
+
+</TabItem>
+
+</Tabs>
+
+### Step 3. Decode the tokens into auth and profile information
+You need to decode the tokens from their compact form into readable JSON.
+
+These tokens are [JWT](https://jwt.io) tokens, provided in a compact form, all according to the [OAuth 2.0 / OpenID standard](https://www.oauth.com). 
+That means there are plenty of libraries for many software stacks to decode them into readable JSON. Here's a extensive list of tools for most software stacks https://jwt.io/libraries.
+
+<Tabs>
+
+<TabItem value="sdk" label="SDK" default>
+
+```ts
+// Decode and verifies the tokens, everything comes bundled
+const authContext = new NblocksPublicClient(APP_ID).auth.context.getAuthContext(access_token);
+const profile = new NblocksPublicClient(APP_ID).auth.context.getProfile(id_token);
+```
+
+</TabItem>
+
+<TabItem value="js" label="JS" default>
+
+```js
+// Use jsonwebtoken plugin from NPM
+import { decode } from "jsonwebtoken";
+
+const authContext = decode(access_token);
+const profile = decode(id_token);
+
+```
+
+</TabItem>
+
+</Tabs>
+
+- The *access_token* contains the authentication information like user id, tenant id, plan etc.
+- The *id_token* contains user profile information.
+
+<details><summary>Example of decoded access token</summary>
+
+```json
+{
+  "tid": "63d25a9e0796d40008680f96", // Tenant id
+  "scope": "TENANT_WRITE TENANT_READ USER_WRITE USER_READ AUTHENTICATED",
+  "role": "OWNER",
+  "sub": "63d25a9e0796d40008680f9a" // User id
+}
+```
+
+</details>
+
+<details><summary>Example of decoded id token</summary>
+
+```json
+{
+  "name": "John Doe",
+  "family_name": "Doe",
+  "given_name": "John",
+  "preferred_username": "john@example.com",
+  "locale": "en",
+  "email": "john@example.com",
+  "email_verified": true,
+  "onboarded": true,
+  "tenant_id": "63d25a9e0796d40008680f96",
+  "tenant_name": "Johns Family",
+  "tenant_locale": "en",
+  "tenant_logo": "",
+  "sub": "63d25a9e0796d40008680f9a" // User id
+}
+```
+
+This is information you can trust since it has been cryptographically signed by Nblocks.
+
+</details>
+
+## Testing login
+
+### Step 1. Start by redirecting the user to the cloud login url.
+
+You should arrive to the cloud login screen.
+
+<img
+  src={require('../assets/login.png').default}
+  alt="Login screen"
+  className="screenshot"
+/>
+
+Enter your credentials and click login.
+
+:::tip Don't have an account?
+
+If you haven't an account already you can click "Create one". 
+No worries, you'll remain in the login flow and get back to your app once you've verified your email address and set a password.
+
+:::
+
+### Step 2. Complete login
+Once you've logged in your're redirected back to your app with the callback code in the URL parameters. 
+E.g. `http://localhost:8080/auth/oauth-callback?code=eyJh....`.
