@@ -119,16 +119,34 @@ const currentUser = this.nebulrAuthService.getCurrentUser();
 </Tabs>
 
 ## Password complexity
-Initially password complexity is disabled for a smooth quick start. This can easily be enabled by providing the configuration to the nblocks UI plugin.
-<Tabs>
-<TabItem value="ionic" label="Ionic" default>
+Initially password validation is disabled when running the plugin in `devMode` for a smooth quick start. This can easily be enabled by providing the configuration to the Nblocks UI plugin.
+The default validation requires the following complexity:
+- Password field can not be empty.
+- Minimal length: 10 characters.
+- Should contain uppercase letter.
+- Should contain lowercase letter.
+- Should contain digit.
+- Should contain special character.
 
-```typescript title="src/app/app.module.ts"
-@NgModule({
-    imports: [
-      ...
-        NblocksIonicModule.forRoot({passwordComplexity: true}) <--- Use forRoot() to provide options to Nblocks
-})
+You can also change the complexity by providing your own Regex which will be used instead.
+
+Here are some examples how to change the plugin config.
+
+<Tabs>
+<TabItem value="react" label="React" default>
+
+** Enable password validation **
+```typescript
+<NblocksProvider config={{passwordValidation: true}}>
+  ...
+</NblocksProvider>
+```
+
+** Bring your own password Regex **
+```typescript
+<NblocksProvider config={{passwordValidation: true, passwordComplexityRegex: /^(?=.*[A-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@])(?!.*[iIoO])\S{6,12}$/ }}>
+  ...
+</NblocksProvider>
 ```
 
 </TabItem>
