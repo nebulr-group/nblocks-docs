@@ -1,13 +1,188 @@
 ---
 sidebar_position: 1
-sidebar_label: Adding login
+sidebar_label: Quickstart login
 tags:
     - guide
+    - quickstart
 ---
 
-# Adding login
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris a nisl consequat, iaculis ante at, pharetra libero. Etiam scelerisque dolor sagittis justo posuere sodales. Donec dignissim fringilla mi, eget lacinia orci lacinia a. Aenean semper diam id interdum rhoncus. Phasellus euismod fermentum tellus sed ullamcorper. Donec cursus arcu ut leo vulputate, a elementum leo hendrerit. Mauris et lectus eget magna rhoncus ullamcorper vel quis arcu. Aliquam a ante a lorem lacinia lobortis. Morbi et risus at ligula varius porta. Suspendisse potenti. Integer pharetra tincidunt quam eget rhoncus. Praesent consectetur tempus neque ac faucibus. Mauris in nulla faucibus leo vestibulum laoreet non vel ligula. Nam varius mauris ut quam tempus, at rhoncus lacus iaculis. Ut vitae magna et felis luctus rhoncus id eu quam. Integer eget dui et erat accumsan euismod.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Nullam dignissim pharetra est, a aliquam erat pellentesque et. Praesent scelerisque, arcu vitae fermentum efficitur, augue urna pretium felis, faucibus sagittis nisi nulla sit amet enim. Nullam nec est nec sem facilisis cursus. Nunc ornare massa sit amet nunc ullamcorper tincidunt. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce dui magna, congue et volutpat id, gravida id nisl. Cras laoreet, augue at mattis semper, diam augue condimentum lacus, vel venenatis massa justo quis enim. Sed lorem enim, porta eget ornare nec, consectetur vel nisi. Duis congue enim iaculis, pretium justo a, gravida nibh. Morbi eu libero nisi. Nulla hendrerit sodales rutrum. Mauris suscipit vel lorem non tempus.
+# Quickstart User login
+Integrate with Nblocks Cloud Login in any stack and have your users authenticate in no time!
 
-Donec ipsum felis, vestibulum in tincidunt vel, tempor et arcu. Phasellus a lorem eu massa lobortis pulvinar et vel quam. Morbi ac blandit mauris, non mattis arcu. Mauris tempor sodales turpis, non mattis elit dictum id. Praesent eros felis, aliquet at odio a, placerat imperdiet tellus. Suspendisse ante enim, fringilla sed fringilla eu, hendrerit nec lorem. Integer tristique non dolor eu finibus. In hac habitasse platea dictumst. Vivamus laoreet posuere est in ultrices.
+## What will we build?
+Here we're going to go through some awesome yada yada yada
+You can do this in any stack you want, frontend or backend.
+
+In 5 minutes from now, your application will have a login box with Sign in, Sign up, and SSO. All this with just a few lines of code using redirects, Open Id Connect, and OAuth2.
+
+Use case: yada yada yada, your own web project project 
+
+:::tip Code examples
+
+You'll find example projects implementing this quickstart [here](/docs/getting-started/example-projects).
+
+:::
+
+## Prerequisites
+* You have previously [signed up](/docs/getting-started/signup) for Nblocks and have access to your [app id](/docs/getting-started/id-and-keys) 
+* You have a web project in any stack you like that can run on http://localhost:8080
+
+## Step 1: Open your project code base
+Open your project source code in any editor of your choice.
+
+## Step 2: Redirect the user to Nblocks Login
+The idea is that your app should navigate user to Nblocks Login. 
+
+### Add a login route
+Add a new route in your app and redirect your user to the Nblocks Login entrypoint.
+Below are pseudo code depending if you're implementing this for a frontend or backend.
+
+#### Pseudo code
+<Tabs>
+<TabItem value="frontend" label="Frontend" default>
+
+```ts
+var APP_ID = "XXX";
+window.location.href = `https://auth-stage.nblocks.cloud/url/login/${APP_ID}`;
+
+```
+
+</TabItem>
+
+<TabItem value="backend" label="Backend" default>
+
+```ts
+var APP_ID = "XXX";
+router.get("/login", (req, res) => {
+    res.redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`)
+})
+```
+
+</TabItem>
+</Tabs>
+
+:::tip
+
+We're using the `/authorize` endpoint here. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
+
+:::
+
+That's enough for this step. The user will be redirected away from your app and we can proceed to next step.
+
+## Step 3: Recieve the user back
+When the user completes authentication with Nblocks login, the user is redirected back to your app with a code that we will resolve into something more useful.
+The URL looks like this: 
+`http://localhost:8080/auth/oauth-callback?code=eyJh....`
+
+### Add a callback route
+Add a new route in your app that act as a handler when the user is returned. Your code must be able to retrieve the code parameter from the URL. 
+
+#### Pseudo code
+<Tabs>
+<TabItem value="frontend" label="Frontend" default>
+
+```ts
+var code = (new URL(window.location.href)).searchParams.get('code');
+```
+
+</TabItem>
+
+<TabItem value="backend" label="Backend" default>
+
+```ts
+router.get("/auth/oauth-callback", (req, res) => {
+    var code = req.query.code;
+})
+```
+
+</TabItem>
+</Tabs>
+
+### Exchange the code for tokens
+With the code now successfully obtained we can exchange it for some more useful profile information. 
+Your app should make a API call to make this exchange. 
+The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
+
+<Tabs>
+<TabItem value="rest" label="Rest" default>
+
+Request
+```ts
+POST https://auth-stage.nblocks.cloud/token/code/APP_ID
+```
+
+Response
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "access_token": "eyJhbGciOiJQ...",
+  "refresh_token": "eyJhbGciOiJQ...",
+  "id_token": "eyJhbGciOiJQ...",
+  "user_profile": {
+    "name": "John Doe",
+    "family_name": "Doe",
+    "given_name": "John",
+    ...
+  }
+}
+```
+
+</TabItem>
+
+<TabItem value="js" label="JS" default>
+
+```ts
+const APP_ID = "XXXX";
+const code = "XXXX";
+const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      code: code,
+    }),
+  }
+).then(res => res.json());
+
+// Print the user info
+console.log(result.user_profile);
+```
+
+</TabItem>
+
+</Tabs>
+
+:::tip
+
+We're using the `/token` endpoint here. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
+
+That was all that was needed from you. We can now see this in action and test it.
+
+## Try it!
+
+### Start your app
+
+### Navigate to /login
+
+### Get redirected to Nblocks Login
+Here we show how nice it looks. Youtube? Images? etc.
+
+The user signs up or logs in.
+
+### Get back to your app as a logged in user
+
+## Next steps
+Nblocks has a lot to offer. Here's some ideas on what to try next.
+- Add SSO alternatives to your login experience
+- Understand the mechanics of user tokens and how you can trust them in your app.
+- Protect your frontend and backend with these tokens.
+- Add Nblocks user management self service views to your app.
+- Look at the checklist before going live.
