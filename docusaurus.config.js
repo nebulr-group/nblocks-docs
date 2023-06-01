@@ -30,7 +30,7 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-        googleAnalytics: {
+        gtag: {
           trackingID: "G-FP4F30X25W",
           anonymizeIP: true,
         },
@@ -93,7 +93,7 @@ const config = {
         copyright: `© ${new Date().getFullYear()} Nblocks. A Nebulr product. All Rights Reserved`,
       },
       prism: {
-        theme: lightCodeTheme,
+        theme: darkCodeTheme,
         darkTheme: darkCodeTheme,
       },
     }),
