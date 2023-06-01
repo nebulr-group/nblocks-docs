@@ -24,22 +24,22 @@ After you're done with this guide your application will have a login flow with s
 
 <details><summary>Not using http://localhost:8080?</summary>
 
-Nblocks is using sensible defaults to development and integrations simpler. 
+Nblocks is using sensible defaults to make development and integrations simpler. 
 To use another application address you need to change your app profile configuration.
 
 **Step 1. Open `app-configuration.json`.**   
-This was downloaded when you signed up Nblocks through terminal.
+This json file was downloaded when you signed up for Nblocks through terminal.
 
 **Step 2. Change the Oauth 2.0 callback uris.**   
 In the json file, change the defaultCallbackUri and redirectUris to the correct address for your application.
 ```json
+"defaultCallbackUri": "http://localhost:3000/auth/oauth-callback",
 "redirectUris": [
 	"http://localhost:3000/auth/oauth-callback"
 ],
-"defaultCallbackUri": "http://localhost:3000/auth/oauth-callback",
 ```
 
-**Step 3. Save the changes by uploading the updated configuration**
+**Step 3. Save the changes by pushing the updated configuration back to Nblocks**
 ```console
 npx @nebulr-group/nblocks-cli push-app
 ```
