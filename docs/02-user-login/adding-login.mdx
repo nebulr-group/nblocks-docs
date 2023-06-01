@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-sidebar_label: Quickstart login
+sidebar_label: Quickstart User Login
 tags:
     - guide
     - quickstart
@@ -9,15 +9,15 @@ tags:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Quickstart User login
-Integrate with Nblocks hosted login in any stack and have your users authenticate in no time. You can do this in your frontend or backend. You will apply a few lines of code using redirects using the familiar Open Id Connect, and OAuth2 flows.
+# Quickstart User Login
+On this page you will integrate an app in any stack with Nblocks hosted login and have your users authenticate in no time. You can do this in your frontend or backend. You will apply a few lines of code using redirects using the familiar Open Id Connect, and OAuth2 flows.
 
 After you're done with this guide your application will have a login flow with sign in, sign up, and SSO. 
 
 :::info Prerequisites
 
-1. You have [signed up](/docs/getting-started/signup) for Nblocks and have access to your [app id](/docs/getting-started/id-and-keys) 
-1. You have a web project in any stack that can run on http://localhost:8080
+1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys) 
+1. You need a web project in any stack that can run on http://localhost:8080
 
 :::
 
@@ -27,11 +27,11 @@ You can view example projects using the code from this guide [here](/docs/gettin
 
 :::
 
-## Step 1: Open your project code base
-Open your project source code in any editor of your choice.
+## Step 1: Redirect the user to Nblocks login
+We now want your app to navigate a user to Nblocks login. 
 
-## Step 2: Redirect the user to Nblocks Login
-The idea is that your app should navigate user to Nblocks Login. 
+### Open your project code base
+Open your project source code in an editor of your choice.
 
 ### Add a login route
 Add a new route in your app and redirect your user to the Nblocks Login entrypoint.
@@ -63,19 +63,19 @@ router.get("/login", (req, res) => {
 
 :::tip
 
-We're using the `/authorize` endpoint here. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
+Here we're using the `/authorize` endpoint. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
 
 :::
 
-That's enough for this step. The user will be redirected away from your app and we can proceed to next step.
+Now the user will be redirected from your app to Nblocksl Login.
 
-## Step 3: Recieve the user back
-When the user completes authentication with Nblocks login, the user is redirected back to your app with a code that we will resolve into something more useful.
+## Step 3: Recieve the user back to your app
+When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code that we will resolve into something more useful.
 The URL looks like this: 
 `http://localhost:8080/auth/oauth-callback?code=eyJh....`
 
 ### Add a callback route
-Add a new route in your app that act as a handler when the user is returned. Your code must be able to retrieve the code parameter from the URL. 
+Add a new route in your app that acts as a handler when the user is returned. Your code must be able to retrieve the code parameter from the URL mentioned above. 
 
 #### Pseudo code
 <Tabs>
@@ -99,8 +99,8 @@ router.get("/auth/oauth-callback", (req, res) => {
 </Tabs>
 
 ### Exchange the code for tokens
-With the code now successfully obtained we can exchange it for some more useful profile information. 
-Your app should make a API call to make this exchange. 
+With the code now successfully obtained we can exchange it for more useful profile information. 
+Your app should make an API call in order to make this exchange. 
 The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
 
 <Tabs>
@@ -157,29 +157,28 @@ console.log(result.user_profile);
 
 :::tip
 
-We're using the `/token` endpoint here. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+Here we're using the `/token` endpoint. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
 
 :::
 
-That was all that was needed from you. We can now see this in action and test it.
+## Step 4: Test it
+You should now be able to see Nblocks Login in action by testing it.
 
-## Try it!
+### 1. Start your app
 
-### Start your app
+### 2. Navigate to /login
 
-### Navigate to /login
-
-### Get redirected to Nblocks Login
+### 3. Get redirected to Nblocks Login
 Here we show how nice it looks. Youtube? Images? etc.
 
 The user signs up or logs in.
 
-### Get back to your app as a logged in user
+### 4. Get back to your app as a logged in user
 
 ## Next steps
-Nblocks has a lot to offer. Here's some ideas on what to try next.
-- Add SSO alternatives to your login experience
+
+- Add SSO alternatives to your login experience.
 - Understand the mechanics of user tokens and how you can trust them in your app.
-- Protect your frontend and backend with these tokens.
-- Add Nblocks user management self service views to your app.
-- Look at the checklist before going live.
+- Protect your frontend and backend with user tokens.
+- Add Nblocks hosted user management to your app.
+- Go through the checklist before going live.
