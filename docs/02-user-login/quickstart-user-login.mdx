@@ -10,10 +10,14 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Quickstart User Login
-On this page you will integrate your web application with Nblocks hosted login and have your users authenticate in no time. You can do this in your frontend or backend which can be in any stack or framework. 
-You will apply a few lines of code to make redirects using the familiar OpenId Connect and OAuth 2.0 flows.
+On this page you will integrate your web application with Nblocks hosted login and have your users authenticate in no time. You will apply a few lines of code to make redirects using the familiar OpenId Connect and OAuth 2.0 flows.
+The integration essentially consists of two parts where the first part is where you redirect the user's browser to Nblocks and the second one is where the user is redirected back to your app with profile information.
 
-After you're done with this guide your application will have a login flow with sign in, sign up, and SSO. 
+This can be implemented in your frontend or backend according to your use case. After you're done with this guide your application will have a login flow with sign in, sign up, and SSO. 
+
+The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
+However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
+
 
 :::info Prerequisites
 
@@ -57,42 +61,54 @@ You can view example projects using the code from this guide [here](/docs/gettin
 
 ### Add a redirect action
 Open your project source code in an editor of your choice. 
-Then add an action in your app that will redirect the user to the Nblocks Login entrypoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
-Preferrably you can add this action to the route `/login`, so that when you access `http://localhost:8080/login` the redirect is triggered.
+Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
+
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed.
 
 
-Below are pseudocode depending if you're implementing this for a frontend or backend.
-
-#### Pseudocode
+#### Example code
 <Tabs>
-<TabItem value="frontend" label="Frontend" default>
+<TabItem value="reactjs" label="ReactJS" default>
 
+Create a new component that we call LoginComponent.
 ```ts
-var APP_ID = "XXX";
-// Immediately redirect the web browser to Nblocks login
-window.location.href = `https://auth-stage.nblocks.cloud/url/login/${APP_ID}`;
+export default function LoginComponent() {
 
+  const APP_ID = "XXX";
+  useEffect(() => {
+    // Immediately redirect the web browser to Nblocks login
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  })
+
+  return ("");
+}
+
+
+```
+
+Adding a new route that renders the LoginComponent can be done with `react-router` plugin.
+```ts
+<Routes>
+  <Route path="/login" element={<LoginComponent />}></Route>
+</Routes>
 ```
 
 </TabItem>
 
-<TabItem value="backend" label="Backend" default>
+<TabItem value="pseudo" label="Can't find your stack?" default>
 
-```ts
-var APP_ID = "XXX";
-// Create an api endpoint "/login"
-router.get("/login", (req, res) => {
-    // Redirect the web browser to Nblocks login
-    res.redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`)
-})
-```
+If you cannot find your stack in the example code you need to integrate this part manually.
 
+Essentially you should redirect the user to the url described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize) for the `/url/login` endpoint.
+
+Don't forget to make a request and we'll be happy to add this stack as an example.
 </TabItem>
+
 </Tabs>
 
 :::tip
 
-Here we're using the `/authorize` endpoint. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
+Curious in what more ways you can use the  `/url/login` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
 
 :::
 
@@ -103,45 +119,126 @@ The URL containing the code parameter will look like this: `http://localhost:808
 ### Add a callback route
 Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should add source code that retrieves the code parameter from the URL mentioned above and save it.
 
-Below are pseudocode depending if you're implementing this for a frontend or backend.
-#### Pseudocode
+#### Example code
 <Tabs>
-<TabItem value="frontend" label="Frontend" default>
+<TabItem value="reactjs" label="ReactJS" default>
 
 ```ts
-// Grab the code parameter from current URL
-var code = (new URL(window.location.href)).searchParams.get('code');
+// Users will get back to this component after finishing login
+export default function CallbackComponent() {
+
+  const location = useLocation();
+  const urlSearch = new URLSearchParams(location.search);
+  const code = urlSearch.get("code");
+
+  useEffect(() => {
+    if (code) {
+      handleCallback(code);
+    }
+  }, [code]);
+
+  const handleCallback = async (code) => {
+    // Here we'll be using the code in next step  
+  };
+
+  return (<p>Not logged in</p>);
+}
+```
+
+Adding a new route that renders the CallbackComponent can be done with `react-router` plugin.
+```ts
+<Routes>
+  <Route path="/auth/oauth-callback" element={<CallbackComponent />}></Route>
+</Routes>
 ```
 
 </TabItem>
 
-<TabItem value="backend" label="Backend" default>
+<TabItem value="pseudo" label="Can't find your stack?" default>
 
-```ts
-// Create an api endpoint "/auth/oauth-callback"
-router.get("/auth/oauth-callback", (req, res) => {
-    // Grab the code query parameter from the request
-    var code = req.query.code;
-})
-```
+If you cannot find your stack in the example code you need to integrate this part manually.
 
+You should implement the nessesary steps to get hold of the `code` parameter in the URL. This code should be saved into a variable before moving to next step.
+
+Don't forget to make a request and we'll be happy to add this stack as an example.
 </TabItem>
+
 </Tabs>
 
 ### Use the code to exchange for user tokens
 With the code now successfully obtained we can exchange it for more useful user profile information. 
-Your app should make an API call in order to make this exchange. 
+Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
 
+#### Example code
 <Tabs>
-<TabItem value="rest" label="Rest" default>
+<TabItem value="reactjs" label="ReactJS" default>
 
-**Request**
+Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+
 ```ts
-POST https://auth-stage.nblocks.cloud/token/code/APP_ID
+// Users will get back to this component after finishing login
+export default function CallbackComponent() {
+
+  const location = useLocation();
+  const urlSearch = new URLSearchParams(location.search);
+  const code = urlSearch.get("code");
+
+  // highlight-start
+  const APP_ID = "XXX";
+  const [tokens, setTokens] = useState();
+  // highlight-end
+
+  useEffect(() => {
+    if (code) {
+      handleCallback(code);
+    }
+  }, [code]);
+
+  const handleCallback = async (code) => {
+    // highlight-start
+    // Make the API call to Nblocks
+    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: code,
+        }),
+      }
+    ).then(res => res.json());
+  };
+
+  if (tokens)
+    return (<p>Hello {tokens.user_profile.name}</p>);
+  else
+    return (<p>Not logged in</p>);
+  // highlight-end
+}
 ```
 
-**Response**
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+Essentially you should make a call to the `/token/code` endpoint described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens).
+
+Don't forget to make a request and we'll be happy to add this stack as an example.
+</TabItem>
+
+</Tabs>
+
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
+
+**Response example**
 ```json
 {
   "token_type": "Bearer",
@@ -157,41 +254,6 @@ POST https://auth-stage.nblocks.cloud/token/code/APP_ID
   }
 }
 ```
-
-</TabItem>
-
-<TabItem value="js" label="JS" default>
-
-```ts
-const APP_ID = "XXXX";
-const code = "XXXX"; // This is the code you just obtained
-
-// Make the API call to Nblocks
-const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      code: code,
-    }),
-  }
-).then(res => res.json());
-
-// Print the user info to console
-console.log(result.user_profile);
-```
-
-</TabItem>
-
-</Tabs>
-
-:::tip
-
-Here we're using the `/token` endpoint. For more details see the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
-
-:::
 
 ## Step 4: Test it
 
