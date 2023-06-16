@@ -95,6 +95,25 @@ Adding a new route that renders the LoginComponent can be done with `react-route
 
 </TabItem>
 
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call LoginComponent.
+```ts
+@Component({
+  template: '',
+})
+export class LoginComponent {
+  constructor(
+  ) {
+    const APP_ID = "XXX";
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  }
+}
+
+```
+
+</TabItem>
+
 <TabItem value="pseudo" label="Can't find your stack?" default>
 
 If you cannot find your stack in the example code you need to integrate this part manually.
@@ -123,6 +142,8 @@ Add a new route `/auth/oauth-callback` in your app that will act as a handler wh
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
+Create a new component that we call CallbackComponent.
+
 ```ts
 // Users will get back to this component after finishing login
 export default function CallbackComponent() {
@@ -150,6 +171,37 @@ Adding a new route that renders the CallbackComponent can be done with `react-ro
 <Routes>
   <Route path="/auth/oauth-callback" element={<CallbackComponent />}></Route>
 </Routes>
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call CallbackComponent.
+
+```ts
+// Users will get back to this component after finishing login
+@Component({
+  template: '<p>Not logged in</p>',
+})
+export class CallbackComponent {
+  constructor(
+    private route: ActivatedRoute,
+  ) {
+    combineLatest([
+      this.route.queryParams
+    ]).pipe(
+      takeUntilDestroyed(),
+    ).subscribe(([queryParams]) =>
+      this.handleCallback(queryParams['code'])
+    );
+  }
+
+  handleCallback(code: string) {
+    // Here we'll be using the code in next step 
+  }
+}
+
 ```
 
 </TabItem>
@@ -209,6 +261,9 @@ export default function CallbackComponent() {
         }),
       }
     ).then(res => res.json());
+
+    // Store the result in component state
+    setTokens(result);
   };
 
   if (tokens)
@@ -217,6 +272,58 @@ export default function CallbackComponent() {
     return (<p>Not logged in</p>);
   // highlight-end
 }
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+
+```ts
+
+// highlight-start
+@Component({
+  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
+})
+// highlight-end
+export class CallbackComponent {
+
+  // highlight-start
+  private tokens: any;
+  private APP_ID = "XXX";
+  // highlight-end
+
+  constructor(
+    private route: ActivatedRoute,
+    // highlight-start
+    private http: HttpClient,
+    // highlight-end
+  ) {
+    combineLatest([
+      this.route.queryParams
+    ]).pipe(
+      takeUntilDestroyed(),
+    ).subscribe(([queryParams]) =>
+      this.handleCallback(queryParams['code'])
+    );
+  }
+
+  handleCallback(code: string) {
+    // highlight-start
+    // Make the API call to Nblocks
+    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
+      code: code
+    }).pipe(
+      take(1),
+    ).subscribe((response) => {
+      // Store the result in component state
+      this.tokens = response;
+    });
+    // highlight-end
+  }
+}
+
 ```
 
 </TabItem>
@@ -232,13 +339,8 @@ Don't forget to make a request and we'll be happy to add this stack as an exampl
 
 </Tabs>
 
-:::tip
-
-Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
-
-:::
-
-**Response example**
+**Token Response example**   
+This is shows the structure of the token response.
 ```json
 {
   "token_type": "Bearer",
@@ -254,6 +356,12 @@ Curious in what more ways you can use the  `/token/code` endpoint? See the [API 
   }
 }
 ```
+
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
 
 ## Step 4: Test it
 
