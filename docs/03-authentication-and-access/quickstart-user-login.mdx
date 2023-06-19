@@ -106,8 +106,6 @@ export class LoginComponent {
 
 </TabItem>
 
-
-
 <TabItem value="pseudo" label="Can't find your stack?" default>
 
 If you cannot find your stack in the example code you need to integrate this part manually.
@@ -135,6 +133,8 @@ Add a new route `/auth/oauth-callback` in your app that will act as a handler wh
 #### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call CallbackComponent.
 
 ```ts
 // Users will get back to this component after finishing login
@@ -247,6 +247,9 @@ export default function CallbackComponent() {
         }),
       }
     ).then(res => res.json());
+
+    // Store the result in component state
+    setTokens(result);
   };
 
   if (tokens)
@@ -314,13 +317,8 @@ Don't forget to make a request and we'll be happy to add this stack as an exampl
 
 </Tabs>
 
-:::tip
-
-Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
-
-:::
-
-**Response example**
+**Token Response example**   
+This is shows the structure of the token response.
 ```json
 {
   "token_type": "Bearer",
@@ -337,17 +335,23 @@ Curious in what more ways you can use the  `/token/code` endpoint? See the [API 
 }
 ```
 
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
+
 ## Step 4: Test it
 
 ### 1. Start your app
 Start your application so that it is accessible on [http://localhost:8080](http://localhost:8080)
 
-### 2. Navigate to /login
+### 2. Navigate to /login and get redirected to Nblocks Login
 Navigate to [http://localhost:8080/login](http://localhost:8080/login)
 
-### 3. Get redirected to Nblocks Login
+### 3. Create a new account
 ![Nblocks Login](../assets/nblocks-login/login-screen.png)
-This is Nblocks Login. Since you don't have a previous user account click "**Create one**".
+Since you don't have a previous user account click "**Create one**".
 You can signup with your email or use Google or Microsoft SSO for a faster process.
 
 ![Nblocks Google SSO](../assets/nblocks-login/google-screen.png)
@@ -360,8 +364,6 @@ After logging in, you get redirected back to your application again.
 Observe that we now see the user information beeing printed out in the console.
 ## Next steps
 
-- Add SSO alternatives to your login experience.
-- Understand the mechanics of user tokens and how you can trust them in your app.
 - Protect your frontend and backend with user tokens.
 - Add Nblocks hosted user management to your app.
-- Go through the checklist before going live.
+- Add SSO alternatives to your login experience.
