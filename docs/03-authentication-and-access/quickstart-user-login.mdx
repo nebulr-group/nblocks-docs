@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 sidebar_label: Quickstart User Login
 tags:
     - guide
@@ -70,7 +70,7 @@ A good practice is to add a new app route `/login` that triggers this action, so
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Create a new component that we call LoginComponent.
+Create a new component that we call LoginComponent. Routes can be created with [react-router](https://reactrouter.com/) plugin
 ```ts
 export default function LoginComponent() {
 
@@ -83,17 +83,30 @@ export default function LoginComponent() {
   return ("");
 }
 
-
-```
-
-Adding a new route that renders the LoginComponent can be done with `react-router` plugin.
-```ts
-<Routes>
-  <Route path="/login" element={<LoginComponent />}></Route>
-</Routes>
 ```
 
 </TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call LoginComponent.
+```ts
+@Component({
+  template: '',
+})
+export class LoginComponent {
+  constructor(
+  ) {
+    const APP_ID = "XXX";
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  }
+}
+
+```
+
+</TabItem>
+
+
 
 <TabItem value="pseudo" label="Can't find your stack?" default>
 
@@ -150,6 +163,31 @@ Adding a new route that renders the CallbackComponent can be done with `react-ro
 <Routes>
   <Route path="/auth/oauth-callback" element={<CallbackComponent />}></Route>
 </Routes>
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call CallbackComponent.
+
+```ts
+// Users will get back to this component after finishing login
+@Component({
+  template: '<p>Not logged in</p>',
+})
+export class CallbackComponent {
+  constructor(
+    private route: ActivatedRouteSnapshot,
+  ) {
+    this.handleCallback(this.route.queryParams['code'])
+  }
+  
+  private handleCallback(code: string) {
+    // Here we'll be using the code in next step 
+  }
+}
+
 ```
 
 </TabItem>
@@ -217,6 +255,50 @@ export default function CallbackComponent() {
     return (<p>Not logged in</p>);
   // highlight-end
 }
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+
+```ts
+
+// highlight-start
+@Component({
+  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
+})
+// highlight-end
+export class CallbackComponent {
+
+  // highlight-start
+  private tokens: any;
+  private APP_ID = "XXX";
+  // highlight-end
+
+  constructor(
+    private route: ActivatedRouteSnapshot,
+    // highlight-start
+    private http: HttpClient,
+    // highlight-end
+  ) {
+    this.handleCallback(this.route.queryParams['code'])
+  }
+
+  private handleCallback(code: string) {
+    // highlight-start
+    // Make the API call to Nblocks
+    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
+      code: code
+    }).subscribe((response) => {
+      // Store the result in component state
+      this.tokens = response;
+    });
+    // highlight-end
+  }
+}
+
 ```
 
 </TabItem>
