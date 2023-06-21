@@ -69,11 +69,19 @@ const config = {
                 label: "What is Nblocks?",
                 to: "/docs/getting-started/what-is-nblocks",
               },
+              {
+                label: "Signup for Nblocks",
+                to: "/docs/getting-started/signup",
+              },
             ],
           },
           {
             title: "Community",
             items: [
+              {
+                label: "Discord",
+                href: "https://discord.gg/kjWYdZ6f6G",
+              },
               {
                 label: "Stack Overflow",
                 href: "https://stackoverflow.com/questions/tagged/nblocks",
@@ -81,8 +89,21 @@ const config = {
             ],
           },
           {
+            title: "Need help?",
+            items: [
+              {
+                label: "Support",
+                href: "mailto:support@nblocks.dev",
+              },
+            ],
+          },
+          {
             title: "More",
             items: [
+              {
+                label: "Back to Web",
+                href: "https:/nblocks.dev",
+              },
               {
                 label: "GitHub",
                 href: "https://github.com/nebulr-group",
