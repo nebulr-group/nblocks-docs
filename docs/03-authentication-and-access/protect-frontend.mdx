@@ -116,18 +116,14 @@ export default function ProtectedContent({roles, privileges, children}) {
     const accessToken = window.localStorage.getItem('access_token');
     if (accessToken) {
       const decoded = decodeJwt(accessToken);
-      setGranted(hasRole(decoded) || hasPrivilege(decoded));
+      setGranted(hasRoleOrPrivilege(decoded));
     }
   }, []);
 
-  // Helper method to see if the users token contains any of the roles 
-  const hasRole = (decoded) => {
-    return roles ? roles.includes(decoded.role) : false;
-  }
-
-  // Helper method to see if the users token contains any of the privileges 
-  const hasPrivilege = (decoded) => {
-    return privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
+  // Helper method to see if the users token contains any of the required roles or privileges 
+  const hasRoleOrPrivilege = (decoded) => {
+    return roles ? roles.includes(decoded.role) : false || 
+          privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
   }
 
   // Only if granted should we render the component children
@@ -153,9 +149,11 @@ Now you can use this component in your side menu to make the link to `/analytics
             <a href="/home">Home</a>
         </li>
         <li>
+            // highlight-start
             <ProtectedContent privileges={['ANALYTICS_READ']}>
                 <a href="/analytics">Analytics</a>
             </ProtectedContent>
+            // highlight-end
         </li>
         <li>
             <a href="/profile">Profile</a>
@@ -237,18 +235,14 @@ export default function ProtectedRoute({roles, privileges, children}) {
     const accessToken = window.localStorage.getItem('access_token');
     if (accessToken) {
       const decoded = decodeJwt(accessToken);
-      setGranted(hasRole(decoded) || hasPrivilege(decoded));
+      setGranted(hasRoleOrPrivilege(decoded));
     }
   }, []);
 
-  // Helper method to see if the users token contains any of the roles 
-  const hasRole = (decoded) => {
-    return roles ? roles.includes(decoded.role) : false;
-  }
-
-  // Helper method to see if the users token contains any of the privileges 
-  const hasPrivilege = (decoded) => {
-    return privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
+  // Helper method to see if the users token contains any of the required roles or privileges 
+  const hasRoleOrPrivilege = (decoded) => {
+    return roles ? roles.includes(decoded.role) : false || 
+          privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
   }
 
   // Only if granted should we render the component children
@@ -269,9 +263,13 @@ Now you can use this component in your app routing like this:
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
         <Route path="/home" element={<HomeComponent />}></Route>
         <Route path="/analytics" element={
+            // highlight-start
             <ProtectedRoute privileges={['ANALYTICS_READ']}>
                 <AnalyticsComponent />
-            </ProtectedRoute>}></Route>
+            </ProtectedRoute>
+            // highlight-end
+            }>
+          </Route>
         <Route path="/settings" element={<SettingsComponent />}></Route>
     </Routes>
 </BrowserRouter>

@@ -1,0 +1,736 @@
+---
+sidebar_position: 2
+sidebar_label: Quickstart User Ready
+tags:
+    - guide
+    - quickstart
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Quickstart User Ready
+On this page you will integrate your web application with Nblocks hosted login and have your users authenticate in no time. You will apply a few lines of code to make redirects using the familiar OpenId Connect and OAuth 2.0 flows.
+The integration essentially consists of two parts where the first part is where you redirect the user's browser to Nblocks and the second one is where the user is redirected back to your app with profile information.
+
+This can be implemented for multiple use cases such as if you have:
+- A frontend only
+- A backend only
+- A frontend and a backend in which case we recommend that you implement it in your backend.
+
+After you're done with this guide your application will have a login flow with sign in, sign up, and SSO.
+
+The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
+However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
+
+
+:::info Prerequisites
+
+1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys) 
+1. An existing web application that can run on http://localhost:8080.
+
+:::
+
+<details><summary>Not using http://localhost:8080?</summary>
+
+Nblocks is using sensible defaults to make development and integrations simpler. 
+To use another application address you need to change your app profile configuration.
+
+**Step 1. Open `app-configuration.json`.**   
+This json file was downloaded when you signed up for Nblocks through terminal.
+
+**Step 2. Change the Oauth 2.0 callback uris.**   
+In the json file, change the defaultCallbackUri and redirectUris to the correct address for your application.
+```json
+"defaultCallbackUri": "http://localhost:3000/auth/oauth-callback",
+"redirectUris": [
+	"http://localhost:3000/auth/oauth-callback"
+],
+```
+
+**Step 3. Save the changes by pushing the updated configuration back to Nblocks**
+```console
+npx @nebulr-group/nblocks-cli push-app
+```
+
+</details>
+
+:::tip Code examples
+
+You can view example projects using the code from this guide [here](/docs/getting-started/example-projects).
+
+:::
+
+
+## Step 1: Redirect users to Nblocks login
+
+### Add a redirect action
+Open your project source code in an editor of your choice. 
+Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
+
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed.
+
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call LoginComponent. Routes can be created with [react-router](https://reactrouter.com/) plugin
+```tsx
+export default function LoginComponent() {
+
+  const APP_ID = "XXX";
+  useEffect(() => {
+    // Immediately redirect the web browser to Nblocks login
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  })
+
+  return ("");
+}
+
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call LoginComponent.
+```ts
+@Component({
+  template: '',
+})
+export class LoginComponent {
+  constructor(
+  ) {
+    const APP_ID = "XXX";
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+Essentially you should redirect the user to the url described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize) for the `/url/login` endpoint.
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
+</TabItem>
+
+</Tabs>
+
+:::tip
+
+Curious in what more ways you can use the  `/url/login` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
+
+:::
+
+## Step 2: Recieve the user back to your app
+When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code that we will resolve into something more useful.
+The URL containing the code parameter will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
+
+### Add a callback route
+Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should add source code that retrieves the code parameter from the URL mentioned above and save it.
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call CallbackComponent.
+
+```tsx
+// Users will get back to this component after finishing login
+export default function CallbackComponent() {
+
+  const location = useLocation();
+  const urlSearch = new URLSearchParams(location.search);
+  const code = urlSearch.get("code");
+
+  useEffect(() => {
+    if (code) {
+      handleCallback(code);
+    }
+  }, [code]);
+
+  const handleCallback = async (code) => {
+    // Here we'll be using the code in next step  
+  };
+
+  return (<p>Not logged in</p>);
+}
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call CallbackComponent.
+
+```ts
+// Users will get back to this component after finishing login
+@Component({
+  template: '<p>Not logged in</p>',
+})
+export class CallbackComponent {
+  constructor(
+    private route: ActivatedRouteSnapshot,
+  ) {
+    this.handleCallback(this.route.queryParams['code'])
+  }
+  
+  private handleCallback(code: string) {
+    // Here we'll be using the code in next step 
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+You should implement the nessesary steps to get hold of the `code` parameter in the URL. This code should be saved into a variable before moving to next step.
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
+</TabItem>
+
+</Tabs>
+
+### Use the code to exchange for user tokens
+With the code now successfully obtained we can exchange it for more useful user profile information. 
+Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
+The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+
+```ts
+// Users will get back to this component after finishing login
+export default function CallbackComponent() {
+
+  const location = useLocation();
+  const urlSearch = new URLSearchParams(location.search);
+  const code = urlSearch.get("code");
+
+  // highlight-start
+  const APP_ID = "XXX";
+  const [tokens, setTokens] = useState();
+  // highlight-end
+
+  useEffect(() => {
+    if (code) {
+      handleCallback(code);
+    }
+  }, [code]);
+
+  const handleCallback = async (code) => {
+    // highlight-start
+    // Make the API call to Nblocks
+    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: code,
+        }),
+      }
+    ).then(res => res.json());
+
+    // Store the result in component state and localstorage
+    setTokens(result);
+    window.localStorage.setItem('access_token', result.access_token);
+  };
+
+  if (tokens)
+    return (<p>Hello {tokens.user_profile.name}</p>);
+  else
+    return (<p>Not logged in</p>);
+  // highlight-end
+}
+```
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+
+```ts
+
+// highlight-start
+@Component({
+  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
+})
+// highlight-end
+export class CallbackComponent {
+
+  // highlight-start
+  private tokens: any;
+  private APP_ID = "XXX";
+  // highlight-end
+
+  constructor(
+    private route: ActivatedRouteSnapshot,
+    // highlight-start
+    private http: HttpClient,
+    // highlight-end
+  ) {
+    this.handleCallback(this.route.queryParams['code'])
+  }
+
+  private handleCallback(code: string) {
+    // highlight-start
+    // Make the API call to Nblocks
+    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
+      code: code
+    }).subscribe((response) => {
+      // Store the result in component state and localstorage
+      this.tokens = response;
+      window.localStorage.setItem('access_token', result.access_token);
+    });
+    // highlight-end
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+Essentially you should make a call to the `/token/code` endpoint described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens).
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
+</TabItem>
+
+</Tabs>
+
+**Token Response example**   
+This is shows the structure of the token response.
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "access_token": "eyJhbGciOiJQ...",
+  "refresh_token": "eyJhbGciOiJQ...",
+  "id_token": "eyJhbGciOiJQ...",
+  "user_profile": {
+    "name": "John Doe",
+    "family_name": "Doe",
+    "given_name": "John",
+    ...
+  }
+}
+```
+
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
+
+## Step 4: Test it
+
+### 1. Start your app
+Start your application so that it is accessible on [http://localhost:8080](http://localhost:8080)
+
+### 2. Navigate to /login and get redirected to Nblocks Login
+Navigate to [http://localhost:8080/login](http://localhost:8080/login). Your code redirects the user to Nblocks Login.
+![Nblocks Login](../assets/nblocks-login/login-screen.png)
+
+### 3. Create a new account
+Since you don't have a previous user account click "**Create one**".
+
+![Nblocks Signup](../assets/nblocks-login/signup-screen.png)
+
+You can signup with your email or use Google or Microsoft SSO for a faster process. These SSO's are available as Demo integrations from Nblocks from start.
+
+![Nblocks Google SSO](../assets/nblocks-login/google-screen.png)
+
+Here we have clicked to signup with Google. The Google login screen is shown.
+
+### 4. Get redirected back to your app as a logged in user
+After logging in, you get redirected back to your application again and we see the name of the logged in user.
+![Callback](../assets/nblocks-login/callback-screen.png)
+
+:::tip Didn't the callback work?
+
+Make sure your application is running on port 8080. That is the most common misstake.
+If not, check the prerequisites section again to learn how to use another port than 8080.
+
+:::
+
+**That's all! You've completed the integration quickstart.**
+
+# Protect your frontend
+
+Securing your frontent when you have logged in users is crucial. 
+Here's some examples that points out why this is important.
+* You only want logged in users to access the app, otherwise they should be prompted with a login.
+* You have views or components that only some users should be able to access. E.g. an analytics view for only users with the privilege `ANALYTICS_READ`.
+
+In this guide we'll be showing you how easy it is to secure your application frontend with Nblocks. You will apply protection in two ways by using the tokens obtained from the logged in user.
+These ways are:
+1. **Protect a route**, that only some users can access and others are redirected back.
+
+After you're done with this guide your application frontend will be able to show/hide content depending on what user login.
+
+The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
+However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
+
+:::info Prerequisites
+
+1. You have completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) and have access to the tokens obtained from the logged in user.
+
+:::
+
+## Short info about the access token
+When you completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) you got hold of a couple of tokens.
+One of them, the access token holds the users access information and this information can be used to protect your app.
+The token is encoded in a format called [JWT](https://jwt.io) for greater portability and security. If we decode the access token it looks like this:
+
+```json
+
+{
+    "aid": "63d2ab029e23db0afb07a5a7",
+    "tid": "63d2b5c18892e10022e08399",
+    // highlight-start
+    "scope": "AUTHENTICATED USER_READ USER_WRITE TENANT_READ TENANT_WRITE",
+    "role": "OWNER",
+    // highlight-end
+    "plan": "FREE",
+    "iat": 1685648418,
+    "exp": 1685652018,
+    "aud": [
+        "63d2ab029e23db0afb07a5a7",
+        "https://app-stage.nblocks.cloud"
+    ],
+    "iss": "https://auth-stage.nblocks.cloud",
+    "sub": "63d2b5c18892e10022e083a2"
+}
+
+```
+
+:::tip Decoding JWTs
+
+JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
+We'll be using one of these in our code examples.
+:::
+
+In the structure above we highlighted the parts that we'll be focusing on in this guide. 
+* The `role` property tells the role of the user.
+* The `scope` property tells what privileges the user obtained when logging in as a that role. This can be used for more fine grained protection and role based access control on individual features.
+
+## Step 2. Protect a route
+
+Protecting a whole route is as simple as protecting part of the web page. 
+But instead of hiding/showing content we can redirect the user to another page if the requirements are not met.
+
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Imaging you have a React router structure like this.
+
+```jsx
+<BrowserRouter>
+    <Routes>
+        <Route path="/auth/login" element={<LoginComponent />} />
+        <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
+        <Route path="/home" element={<HomeComponent />}></Route>
+        <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+        <Route path="/settings" element={<SettingsComponent />}></Route>
+    </Routes>
+</BrowserRouter>
+
+```
+We want to restrict the route `/analytics` for only users with suffient rights to access it, otherwise they should be redirected back to `/home`. Therefore we need to use the access token to protect this route conditionally. 
+This can easily be done likt this: 
+
+Create a new component that we call ProtectedRoute.
+```tsx
+import { useEffect, useState } from "react";
+import { decodeJwt } from "jose";
+import { Navigate } from 'react-router-dom';
+
+export default function ProtectedRoute({roles, privileges, children}) {
+
+  // This will be our variable telling if the user is granted access or if we should redirect to login
+  // Initially this variable is true since we don't want to redirect before resolving the 
+  const [granted, setGranted] = useState(true);
+  
+  // This is the path which users without access should be redirect to
+  const redirectPath = "/home";
+
+  useEffect(() => {
+    // Retrieve the access token JWT from localstorage
+    const accessToken = window.localStorage.getItem('access_token');
+    if (accessToken) {
+      const decoded = decodeJwt(accessToken);
+      setGranted(hasRoleOrPrivilege(decoded));
+    }
+  }, []);
+
+  // Helper method to see if the users token contains any of the required roles or privileges 
+  const hasRoleOrPrivilege = (decoded) => {
+    return roles ? roles.includes(decoded.role) : false || 
+          privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
+  }
+
+  // Only if granted should we render the component children
+  if (granted)
+    return (children);
+  else
+    return (<Navigate to={redirectPath} replace />);
+}
+
+```
+
+Now you can use this component in your app routing like this:
+
+```jsx
+<BrowserRouter>
+    <Routes>
+        <Route path="/auth/login" element={<LoginComponent />} />
+        <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
+        <Route path="/home" element={<HomeComponent />}></Route>
+        <Route path="/analytics" element={
+            // highlight-start
+            <ProtectedRoute privileges={['ANALYTICS_READ']}>
+                <AnalyticsComponent />
+            </ProtectedRoute>
+            // highlight-end
+            }>
+          </Route>
+        <Route path="/settings" element={<SettingsComponent />}></Route>
+    </Routes>
+</BrowserRouter>
+
+```
+
+<details><summary>More examples</summary>
+
+Our ProtectedRoute can also protect a wildcard route like `/analytics/*`, that means `/analytics/dashboard`, `/analytics/create` etc.  Here's how that would look.
+
+```jsx
+<BrowserRouter>
+    <Routes>
+        <Route path="/auth/login" element={<LoginComponent />} />
+        <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
+        <Route
+          path="/analytics/*"
+          element={
+            <ProtectedRoute privileges={['ANALYTICS_READ', 'ANALYTICS_WRITE']}>
+                <Routes> 
+                    <Route path="dashboard" element={<AnalyticsDashboardComponent />}></Route>
+                    <Route path="create" element={<AnalyticsCreateComponent />}></Route>
+                </Routes>
+            </ProtectedRoute>
+          }
+        />
+    </Routes>
+</BrowserRouter>
+```
+
+</details>
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+</TabItem>
+
+</Tabs>
+
+**That's all!** With this guide we've show the best practises how you can protect your frontend application using the tokens generated from Nblocks Login
+
+# Protect your backend
+
+Securing your backend is even more important than securing your frontend since the backend usually holds sensitive and important information that we never want to return to a user that is either not logged in or not the rightful recipient of that information.
+
+In this guide we'll be showing you how easy it is to secure your application backend with Nblocks. You will apply protection in two ways by using the tokens obtained from the logged in user.
+These ways are:
+1. **Protect an endpoint with role based access control**, so that only users with the right privilege can query it.
+
+After you're done with this guide you will have an application backend that is secure and ready for production.
+
+## How will the user provide the token to the backend on each request?
+
+* If your developing an application with both a backend and a frontend it is best practise to let the frontend attach the access token as an `Authorization` header on each request to the backend.
+* When developing a backend only application you could either still resort to clients providing the `Authorization` header in each request or store the accessToken in a session cookie once you obtained it in the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login). Clients will provide this cookie automatically on every future request.
+
+## Step 1. Protect an endpoint with role based access control
+
+<Tabs>
+<TabItem value="expressjs" label="ExpressJS" default>
+
+Imagine you have declared two endpoints, `/dashboardData` and `/analyticsData` in your express app like this.
+```ts
+const app = express();
+
+app.get('/dashboardData', (req, res) => {
+  ...
+});
+
+app.get('/analyticsData', (req, res) => {
+  ...
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+```
+
+We want both of the endpoints to require the user to be logged in before rendering a result. 
+The `/analyticsData` endpoint should only be accessable for users with the privilege `ANALYTICS_READ`.
+All this can easily be done with Express middlewares:
+
+Create a new file in which we declare two middlewares.
+```ts
+import { decodeJwt } from 'jose';
+
+// Decodes the access token from the Authorization header
+const jwtMiddleware = (req, res, next) => {
+  if (req.headers['Authorization'])
+    // Store the decoded information in a variable user that can be used by other middlewares
+    req.user = decodeJwt(req.headers['Authorization']);
+
+  next();
+};
+
+// Grants or denies access based on the decoded token from jwtMiddleware
+const protectedRoute = ({ roles, privileges }) => {
+  return (req, res, next) => {
+    if (req.user) {
+      if (
+        roles
+          ? roles.includes(req.user.role)
+          : false || privileges
+          ? privileges.some((scope) => req.user.scope.includes(scope))
+          : false
+      ) {
+        next();
+      } else {
+        res.status(403).send({ message: 'Forbidden' });
+      }
+    } else {
+      res.status(401).send({ message: 'Unauthorized' });
+    }
+  };
+};
+
+export { jwtMiddleware, protectedRoute }
+```
+
+:::tip Handling users not logged in
+
+If you're building a backend only app, you might want to redirect users to `/auth/login` instead of rendering a `401 Unauthorized` error in case they're unauthorized for a better user experience.
+:::
+
+Heading back to the initial express app file we can now make use of these middleware to start protecting the endpoints!
+
+```ts
+// highlight-start
+import { jwtMiddleware, protectedRoute } from './middlewares'
+// highlight-end
+
+const app = express();
+
+// highlight-start
+// First middleware that decodes tokens
+app.use(jwtMiddleware);
+
+// Restrict all endpoints globally with protectedRoute to require authenticated users
+app.use(protectedRoute({privileges: 'AUTHENTICATED'}));
+// highlight-end
+
+app.get('/dashboardData', (req, res) => {
+  ...
+});
+
+// highlight-start
+// Restrict /analyticsData with protectedRoute to require users with ANALYTICS_READ privilege
+app.get('/analyticsData', protectedRoute({privileges: 'ANALYTICS_READ'}), (req, res) => {
+// highlight-end
+  ...
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+```
+
+<details><summary>More examples</summary>
+
+Our `protectedRoute` middleware can be activated in other ways, like this:
+
+```ts
+// Protect all endpoints
+app.use(protectedRoute({privileges: 'AUTHENTICATED'}));
+
+// Protect /analyticsData
+app.use("/analyticsData", protectedRoute({privileges: 'AUTHENTICATED'}));
+
+// Protect using wildcards
+app.use("/secret/*", protectedRoute({roles: 'ADMIN'}));
+
+```
+
+</details>
+
+</TabItem>
+
+<TabItem value="nestjs" label="NestJS" default>
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+</TabItem>
+
+</Tabs>
+
+## Step 2. Protect an endpoint with data filter
+
+<Tabs>
+<TabItem value="expressjs" label="ExpressJS" default>
+
+<details><summary>More examples</summary>
+
+</details>
+
+</TabItem>
+
+<TabItem value="nestjs" label="NestJS" default>
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+</TabItem>
+
+</Tabs>
+
+**That's all!** With this guide we've show the best practises how you can protect your backend application using the tokens generated from Nblocks Login
+
+## Next steps
+
+- Add SSO alternatives to your login experience, replacing the Demo integrations.
+
+
+If you haven't already, join our [Discord](https://discord.gg/kjWYdZ6f6G)
