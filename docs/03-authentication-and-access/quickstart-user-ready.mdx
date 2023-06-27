@@ -10,7 +10,11 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Quickstart User Ready
-On this page you will integrate your web application with Nblocks hosted login and have your users authenticate in no time. You will apply a few lines of code to make redirects using the familiar OpenId Connect and OAuth 2.0 flows.
+On this page you will integrate your web application with Nblocks hosted login, add protection to your app and have your users authenticate to get access. We call this beeing user ready and you will accomplish this in no time. 
+In each step you will apply a few lines of code to make redirects using the familiar OpenId Connect / OAuth 2.0 flows, obtain user tokens, protect your app and make use of our prebuilt fully flexible user portal.
+
+## Nblocks login
+
 The integration essentially consists of two parts where the first part is where you redirect the user's browser to Nblocks and the second one is where the user is redirected back to your app with profile information.
 
 This can be implemented for multiple use cases such as if you have:
@@ -18,7 +22,7 @@ This can be implemented for multiple use cases such as if you have:
 - A backend only
 - A frontend and a backend in which case we recommend that you implement it in your backend.
 
-After you're done with this guide your application will have a login flow with sign in, sign up, and SSO.
+After you're done with this part your application will have a login flow with sign in, sign up, and SSO.
 
 The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
 However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
@@ -372,32 +376,18 @@ If not, check the prerequisites section again to learn how to use another port t
 
 :::
 
-**That's all! You've completed the integration quickstart.**
+**That's all!** You've completed integrating with Nblock Login. Next step is to add protection to your app so that only logged in users can access its content.
 
-# Protect your frontend
+## Protect your app
 
-Securing your frontent when you have logged in users is crucial. 
-Here's some examples that points out why this is important.
+Securing your app when you have logged in users is crucial. Here's some examples that points out why this is important.
 * You only want logged in users to access the app, otherwise they should be prompted with a login.
-* You have views or components that only some users should be able to access. E.g. an analytics view for only users with the privilege `ANALYTICS_READ`.
+* You have frontend views, components or backend endpoints that only some users should be able to access. E.g. an analytics view for only users with the privilege `ANALYTICS_READ`.
 
-In this guide we'll be showing you how easy it is to secure your application frontend with Nblocks. You will apply protection in two ways by using the tokens obtained from the logged in user.
-These ways are:
-1. **Protect a route**, that only some users can access and others are redirected back.
+Below we'll show how easily you can add protection to your app by using the tokens obtained from the logged in user.
 
-After you're done with this guide your application frontend will be able to show/hide content depending on what user login.
-
-The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
-However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
-
-:::info Prerequisites
-
-1. You have completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) and have access to the tokens obtained from the logged in user.
-
-:::
-
-## Short info about the access token
-When you completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) you got hold of a couple of tokens.
+### Short info about the access token
+When you completed the Nblocks login part of this quickstart you got hold of a couple of tokens.
 One of them, the access token holds the users access information and this information can be used to protect your app.
 The token is encoded in a format called [JWT](https://jwt.io) for greater portability and security. If we decode the access token it looks like this:
 
@@ -429,11 +419,25 @@ JWTs is a well known concept in security. That means there are plenty of librari
 We'll be using one of these in our code examples.
 :::
 
-In the structure above we highlighted the parts that we'll be focusing on in this guide. 
+In the structure above we highlighted the parts that we'll be focusing on in this part of the guide. 
 * The `role` property tells the role of the user.
 * The `scope` property tells what privileges the user obtained when logging in as a that role. This can be used for more fine grained protection and role based access control on individual features.
 
-## Step 2. Protect a route
+
+### Protect your frontend
+
+:::tip Don't have a frontend?
+
+You can skip this part if you don't have a frontend.
+
+:::
+
+In this part we'll be showing you how easy it is to secure your application frontend with Nblocks. 
+You'll **Protect a route**, that only some users can access and others will be redirected back.
+
+After you're done with this part your application frontend will be able to show/hide content depending on what user login.
+
+#### Protect a route
 
 Protecting a whole route is as simple as protecting part of the web page. 
 But instead of hiding/showing content we can redirect the user to another page if the requirements are not met.
@@ -557,24 +561,26 @@ Our ProtectedRoute can also protect a wildcard route like `/analytics/*`, that m
 
 </Tabs>
 
-**That's all!** With this guide we've show the best practises how you can protect your frontend application using the tokens generated from Nblocks Login
+### Protect your backend
 
-# Protect your backend
+:::tip Don't have a backend?
+
+You can skip this part if you don't have a backend.
+
+:::
 
 Securing your backend is even more important than securing your frontend since the backend usually holds sensitive and important information that we never want to return to a user that is either not logged in or not the rightful recipient of that information.
 
-In this guide we'll be showing you how easy it is to secure your application backend with Nblocks. You will apply protection in two ways by using the tokens obtained from the logged in user.
-These ways are:
-1. **Protect an endpoint with role based access control**, so that only users with the right privilege can query it.
+In this part we'll be showing you how easy it is to secure your application backend with Nblocks. You will **protect an endpoint with role based access control**, so that only users with the right privilege can query it.
 
-After you're done with this guide you will have an application backend that is secure and ready for production.
+After you're done with this part you will have an application backend that is secure and ready for production.
 
-## How will the user provide the token to the backend on each request?
+#### How will the user provide the token to the backend on each request?
 
 * If your developing an application with both a backend and a frontend it is best practise to let the frontend attach the access token as an `Authorization` header on each request to the backend.
-* When developing a backend only application you could either still resort to clients providing the `Authorization` header in each request or store the accessToken in a session cookie once you obtained it in the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login). Clients will provide this cookie automatically on every future request.
+* When developing a backend only application you could either still resort to clients providing the `Authorization` header in each request or store the accessToken in a session cookie once you obtained it in the Nblocks Login part of this quickstart. Clients will provide this cookie automatically on every future request.
 
-## Step 1. Protect an endpoint with role based access control
+#### Protect an endpoint with role based access control
 
 <Tabs>
 <TabItem value="expressjs" label="ExpressJS" default>
@@ -690,27 +696,6 @@ app.use("/analyticsData", protectedRoute({privileges: 'AUTHENTICATED'}));
 app.use("/secret/*", protectedRoute({roles: 'ADMIN'}));
 
 ```
-
-</details>
-
-</TabItem>
-
-<TabItem value="nestjs" label="NestJS" default>
-
-</TabItem>
-
-<TabItem value="pseudo" label="Can't find your stack?" default>
-
-</TabItem>
-
-</Tabs>
-
-## Step 2. Protect an endpoint with data filter
-
-<Tabs>
-<TabItem value="expressjs" label="ExpressJS" default>
-
-<details><summary>More examples</summary>
 
 </details>
 
