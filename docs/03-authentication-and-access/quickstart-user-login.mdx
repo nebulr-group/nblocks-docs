@@ -76,7 +76,7 @@ A good practice is to add a new app route `/login` that triggers this action, so
 <TabItem value="reactjs" label="ReactJS" default>
 
 Create a new component that we call LoginComponent. Routes can be created with [react-router](https://reactrouter.com/) plugin
-```ts
+```tsx
 export default function LoginComponent() {
 
   const APP_ID = "XXX";
@@ -141,7 +141,7 @@ Add a new route `/auth/oauth-callback` in your app that will act as a handler wh
 
 Create a new component that we call CallbackComponent.
 
-```ts
+```tsx
 // Users will get back to this component after finishing login
 export default function CallbackComponent() {
 
@@ -161,13 +161,6 @@ export default function CallbackComponent() {
 
   return (<p>Not logged in</p>);
 }
-```
-
-Adding a new route that renders the CallbackComponent can be done with `react-router` plugin.
-```ts
-<Routes>
-  <Route path="/auth/oauth-callback" element={<CallbackComponent />}></Route>
-</Routes>
 ```
 
 </TabItem>
@@ -253,8 +246,9 @@ export default function CallbackComponent() {
       }
     ).then(res => res.json());
 
-    // Store the result in component state
+    // Store the result in component state and localstorage
     setTokens(result);
+    window.localStorage.setItem('access_token', result.access_token);
   };
 
   if (tokens)
@@ -300,8 +294,9 @@ export class CallbackComponent {
     this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
       code: code
     }).subscribe((response) => {
-      // Store the result in component state
+      // Store the result in component state and localstorage
       this.tokens = response;
+      window.localStorage.setItem('access_token', result.access_token);
     });
     // highlight-end
   }
@@ -367,11 +362,17 @@ You can signup with your email or use Google or Microsoft SSO for a faster proce
 Here we have clicked to signup with Google. The Google login screen is shown.
 
 ### 4. Get redirected back to your app as a logged in user
-After logging in, you get redirected back to your application again.
+After logging in, you get redirected back to your application again and we see the name of the logged in user.
 ![Callback](../assets/nblocks-login/callback-screen.png)
-Observe that we now see the user information beeing printed out in the console.
 
-That's all! You've completed the integration quickstart. 
+:::tip Didn't the callback work?
+
+Make sure your application is running on port 8080. That is the most common misstake.
+If not, check the prerequisites section again to learn how to use another port than 8080.
+
+:::
+
+**That's all! You've completed the integration quickstart.**
 
 ## Next steps
 
