@@ -454,12 +454,11 @@ Imaging you have a React router structure like this.
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
         <Route path="/home" element={<HomeComponent />}></Route>
         <Route path="/analytics" element={<AnalyticsComponent />}></Route>
-        <Route path="/settings" element={<SettingsComponent />}></Route>
     </Routes>
 </BrowserRouter>
 
 ```
-We want to restrict the route `/analytics` for only users with suffient rights to access it, otherwise they should be redirected back to `/home`. Therefore we need to use the access token to protect this route conditionally. 
+We want to protect all routes for only logged in users, otherwise they should be redirected back to Login again. Therefore we need to use the access token to protect this route conditionally. 
 This can easily be done likt this: 
 
 Create a new component that we call ProtectedRoute.
@@ -468,14 +467,14 @@ import { useEffect, useState } from "react";
 import { decodeJwt } from "jose";
 import { Navigate } from 'react-router-dom';
 
-export default function ProtectedRoute({roles, privileges, children}) {
+export default function ProtectedRoute({roles, privileges, redirectTo, children}) {
 
   // This will be our variable telling if the user is granted access or if we should redirect to login
   // Initially this variable is true since we don't want to redirect before resolving the 
   const [granted, setGranted] = useState(true);
   
   // This is the path which users without access should be redirect to
-  const redirectPath = "/home";
+  const redirectPath = redirectTo ? redirectTo : "/auth/login";
 
   useEffect(() => {
     // Retrieve the access token JWT from localstorage
@@ -483,13 +482,14 @@ export default function ProtectedRoute({roles, privileges, children}) {
     if (accessToken) {
       const decoded = decodeJwt(accessToken);
       setGranted(hasRoleOrPrivilege(decoded));
+    } else {
+      setGranted(false);
     }
   }, []);
 
   // Helper method to see if the users token contains any of the required roles or privileges 
   const hasRoleOrPrivilege = (decoded) => {
-    return roles ? roles.includes(decoded.role) : false || 
-          privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
+    return roles ? roles.includes(decoded.role) : false || privileges ? privileges.some(scope => decoded.scope.includes(scope)) : false;
   }
 
   // Only if granted should we render the component children
@@ -508,41 +508,54 @@ Now you can use this component in your app routing like this:
     <Routes>
         <Route path="/auth/login" element={<LoginComponent />} />
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
-        <Route path="/home" element={<HomeComponent />}></Route>
-        <Route path="/analytics" element={
-            // highlight-start
-            <ProtectedRoute privileges={['ANALYTICS_READ']}>
-                <AnalyticsComponent />
+        // highlight-start
+        <Route path="*" element={
+            <ProtectedRoute privileges={["AUTHENTICATED"]}>
+              <Routes>
+              // highlight-end
+                <Route path="/home" element={<HomeComponent />} />
+                <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+                // highlight-start
+              </Routes>
             </ProtectedRoute>
-            // highlight-end
-            }>
-          </Route>
-        <Route path="/settings" element={<SettingsComponent />}></Route>
+          }
+        ></Route>
+        // highlight-end
     </Routes>
 </BrowserRouter>
 
 ```
 
+If you now try to navigate to either `/home` or `/analytics`, you will be redirected to login.
+
+
 <details><summary>More examples</summary>
 
-Our ProtectedRoute can also protect a wildcard route like `/analytics/*`, that means `/analytics/dashboard`, `/analytics/create` etc.  Here's how that would look.
+Our ProtectedRoute can do more like redirecting to a forbidden page if the user is logged in but are missing a required privilege.  Here's how that would look:
 
 ```jsx
 <BrowserRouter>
     <Routes>
         <Route path="/auth/login" element={<LoginComponent />} />
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
-        <Route
-          path="/analytics/*"
-          element={
-            <ProtectedRoute privileges={['ANALYTICS_READ', 'ANALYTICS_WRITE']}>
-                <Routes> 
-                    <Route path="dashboard" element={<AnalyticsDashboardComponent />}></Route>
-                    <Route path="create" element={<AnalyticsCreateComponent />}></Route>
-                </Routes>
+        <Route path="/forbidden" element={<ForbiddenComponent />} />
+        <Route path="*" element={
+            <ProtectedRoute privileges={["AUTHENTICATED"]}>
+              <Routes>
+                <Route path="/home" element={<HomeComponent />} />
+                <Route path="/analytics" element={
+                    <ProtectedRoute
+                      privileges={["ANALYTICS"]}
+                      redirectTo="/forbidden"
+                    >
+                      <AnalyticsComponent />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+              </Routes>
             </ProtectedRoute>
           }
-        />
+        ></Route>
     </Routes>
 </BrowserRouter>
 ```
