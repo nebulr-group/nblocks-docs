@@ -66,20 +66,20 @@ You can view example projects using the code from this guide [here](/docs/gettin
 :::
 
 
-## Step 1: Redirect users to Nblocks login
+### Step 1: Redirect users to Nblocks login
 
-### Add a redirect action
+#### Add a redirect action
 Open your project source code in an editor of your choice. 
 Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
 
 A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed.
 
 
-#### Example code
+##### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Create a new component that we call LoginComponent. Routes can be created with [react-router](https://reactrouter.com/) plugin
+Create a new component that we call `LoginComponent`. Routes can be created with [react-router](https://reactrouter.com/) plugin
 ```tsx
 export default function LoginComponent() {
 
@@ -98,7 +98,7 @@ export default function LoginComponent() {
 
 <TabItem value="angular" label="Angular" default>
 
-Create a new component that we call LoginComponent.
+Create a new component that we call `LoginComponent`.
 ```ts
 @Component({
   template: '',
@@ -132,18 +132,18 @@ Curious in what more ways you can use the  `/url/login` endpoint? See the [API r
 
 :::
 
-## Step 2: Recieve the user back to your app
+### Step 2: Recieve the user back to your app
 When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code that we will resolve into something more useful.
 The URL containing the code parameter will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
 
-### Add a callback route
+#### Add a callback route
 Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should add source code that retrieves the code parameter from the URL mentioned above and save it.
 
-#### Example code
+##### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Create a new component that we call CallbackComponent.
+Create a new component that we call `CallbackComponent`.
 
 ```tsx
 // Users will get back to this component after finishing login
@@ -171,7 +171,7 @@ export default function CallbackComponent() {
 
 <TabItem value="angular" label="Angular" default>
 
-Create a new component that we call CallbackComponent.
+Create a new component that we call `CallbackComponent`.
 
 ```ts
 // Users will get back to this component after finishing login
@@ -205,12 +205,12 @@ Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWY
 
 </Tabs>
 
-### Use the code to exchange for user tokens
+#### Use the code to exchange for user tokens
 With the code now successfully obtained we can exchange it for more useful user profile information. 
 Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
 
-#### Example code
+##### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
@@ -345,16 +345,16 @@ Curious in what more ways you can use the  `/token/code` endpoint? See the [API 
 
 :::
 
-## Step 4: Test it
+### Step 3: Test it
 
-### 1. Start your app
+#### 1. Start your app
 Start your application so that it is accessible on [http://localhost:8080](http://localhost:8080)
 
-### 2. Navigate to /login and get redirected to Nblocks Login
+#### 2. Navigate to /login and get redirected to Nblocks Login
 Navigate to [http://localhost:8080/login](http://localhost:8080/login). Your code redirects the user to Nblocks Login.
 ![Nblocks Login](../assets/nblocks-login/login-screen.png)
 
-### 3. Create a new account
+#### 3. Create a new account
 Since you don't have a previous user account click "**Create one**".
 
 ![Nblocks Signup](../assets/nblocks-login/signup-screen.png)
@@ -365,7 +365,7 @@ You can signup with your email or use Google or Microsoft SSO for a faster proce
 
 Here we have clicked to signup with Google. The Google login screen is shown.
 
-### 4. Get redirected back to your app as a logged in user
+#### 4. Get redirected back to your app as a logged in user
 After logging in, you get redirected back to your application again and we see the name of the logged in user.
 ![Callback](../assets/nblocks-login/callback-screen.png)
 
@@ -452,8 +452,8 @@ Imaging you have a React router structure like this.
     <Routes>
         <Route path="/auth/login" element={<LoginComponent />} />
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
-        <Route path="/home" element={<HomeComponent />}></Route>
-        <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+        <Route path="/home" element={<HomeComponent />} />
+        <Route path="/analytics" element={<AnalyticsComponent />} />
     </Routes>
 </BrowserRouter>
 
@@ -461,7 +461,7 @@ Imaging you have a React router structure like this.
 We want to protect all routes for only logged in users, otherwise they should be redirected back to Login again. Therefore we need to use the access token to protect this route conditionally. 
 This can easily be done likt this: 
 
-Create a new component that we call ProtectedRoute.
+Create a new component that we call `ProtectedRoute`.
 ```tsx
 import { useEffect, useState } from "react";
 import { decodeJwt } from "jose";
@@ -514,12 +514,12 @@ Now you can use this component in your app routing like this:
               <Routes>
               // highlight-end
                 <Route path="/home" element={<HomeComponent />} />
-                <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+                <Route path="/analytics" element={<AnalyticsComponent />} />
                 // highlight-start
               </Routes>
             </ProtectedRoute>
           }
-        ></Route>
+        />
         // highlight-end
     </Routes>
 </BrowserRouter>
@@ -551,11 +551,11 @@ Our ProtectedRoute can do more like redirecting to a forbidden page if the user 
                       <AnalyticsComponent />
                     </ProtectedRoute>
                   }
-                ></Route>
+                />
               </Routes>
             </ProtectedRoute>
           }
-        ></Route>
+        />
     </Routes>
 </BrowserRouter>
 ```
@@ -724,7 +724,93 @@ app.use("/secret/*", protectedRoute({roles: 'ADMIN'}));
 
 </Tabs>
 
-**That's all!** With this guide we've show the best practises how you can protect your backend application using the tokens generated from Nblocks Login
+**That's all!** With this part we've show the best practises how you can protect your backend application using the tokens generated from Nblocks Login. Next up is how we can let the logged in users invite others.
+
+## User list
+In the last last part of the quickstart we're adding a user management view to let the users manage and invite others to their workspace.
+
+You can embedd this view straight into your app either by using Iframes or redirecting the user to it. It looks like this:
+
+![Nblocks Login](../assets/user-management/user-list.png)
+
+### Implement it
+
+:::tip
+
+The url can either be rendered as an Iframe or you can redirect the user to it.
+:::
+
+There will be two Nblocks endpoints involved when requesting to render the user list.
+1. First we need to get the [handover code](https://nebulr-group.github.io/nblocks-api-docs/#handover-code) which is unique to the user. This is done using `/handover/code` endpoint.
+1. Then we will use the code to render the [user list view](https://nebulr-group.github.io/nblocks-api-docs/#user-management-portal-users) using the `/user-management-portal/users` endpoint.
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call `UserList`.
+
+```tsx
+export default function UserList() {
+  const [url, setUrl] = useState();
+
+  const APP_ID = "XXX";
+
+  useEffect(() => {
+    createUrl();
+  }, []);
+
+    const createUrl = async () => {
+    // Retrieve the access token JWT from localstorage
+    const accessToken = window.localStorage.getItem("access_token");
+
+    // Get the handover code from Nblocks
+    const result = await fetch(
+      `https://auth-stage.nblocks.cloud/handover/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accessToken,
+        }),
+      }
+    ).then((res) => res.json());
+
+    // Create the user management portal url
+    setUrl(
+      `https://backendless-stage.nblocks.cloud/user-management-portal/users?code=${result.code}`
+    );
+  };
+
+  // Render the url as an iframe
+  return <iframe width="100%" height="500px" src={url}></iframe>;
+}
+
+```
+
+Now you can render the `UserList` component anywhere you want to have the user access it.
+
+:::tip How to get the access token?
+
+In the User Login Quickstart, we stored the access token into Localstorage as a fast and easy way later retrieve it again. Other ways could be to save in-memory in a global state or React context.
+:::
+
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+
+</TabItem>
+
+</Tabs>
+
+**Now your done!**   
+That was the last step of the quickstart and we've covered the three things that has made your app user ready.
 
 ## Next steps
 

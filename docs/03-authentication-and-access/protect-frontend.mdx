@@ -95,6 +95,8 @@ Imaging you have a side menu that contains links to different features and route
 But we don't want to show the link to Analytics feature if the user don't have the suffient rights to access it. Therefore we need to use the access token to start render this link conditionally. 
 This can easily be done likt this: 
 
+#### Example code
+
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
@@ -205,8 +207,8 @@ Imaging you have a React router structure like this.
     <Routes>
         <Route path="/auth/login" element={<LoginComponent />} />
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
-        <Route path="/home" element={<HomeComponent />}></Route>
-        <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+        <Route path="/home" element={<HomeComponent />} />
+        <Route path="/analytics" element={<AnalyticsComponent />} />
     </Routes>
 </BrowserRouter>
 
@@ -267,12 +269,12 @@ Now you can use this component in your app routing like this:
               <Routes>
               // highlight-end
                 <Route path="/home" element={<HomeComponent />} />
-                <Route path="/analytics" element={<AnalyticsComponent />}></Route>
+                <Route path="/analytics" element={<AnalyticsComponent />} />
                 // highlight-start
               </Routes>
             </ProtectedRoute>
           }
-        ></Route>
+        />
         // highlight-end
     </Routes>
 </BrowserRouter>
@@ -303,11 +305,11 @@ Our ProtectedRoute can do more like redirecting to a forbidden page if the user 
                       <AnalyticsComponent />
                     </ProtectedRoute>
                   }
-                ></Route>
+                />
               </Routes>
             </ProtectedRoute>
           }
-        ></Route>
+        />
     </Routes>
 </BrowserRouter>
 ```
