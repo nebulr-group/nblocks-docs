@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunknblocks_docs=self.webpackChunknblocks_docs||[]).push([[3237],{3808:(e,c,s)=>{s.r(c),s.d(c,{default:()=>t});var n=s(7294);s(9960),s(2263);function t(){return(0,n.useEffect)((()=>{window.location.replace("/nblocks-docs/docs/getting-started/what-is-nblocks")}),[]),n.createElement("div",null)}}}]);
