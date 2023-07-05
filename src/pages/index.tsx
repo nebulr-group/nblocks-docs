@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
@@ -26,15 +26,21 @@ function HomepageHeader() {
 }
 
 export default function Home(): JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
-    </Layout>
-  );
+
+  useEffect(() => {
+    window.location.replace("/nblocks-docs/docs/getting-started/what-is-nblocks");
+  }, []);
+  
+  return (<div></div>);
+  // const {siteConfig} = useDocusaurusContext();
+  // return (
+  //   <Layout
+  //     title={`Hello from ${siteConfig.title}`}
+  //     description="Description will go into a meta tag in <head />">
+  //     <HomepageHeader />
+  //     <main>
+  //       <HomepageFeatures />
+  //     </main>
+  //   </Layout>
+  // );
 }
