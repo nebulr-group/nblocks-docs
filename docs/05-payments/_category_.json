@@ -1,3 +1,4 @@
 {
-  "label": "Payments"
+  "label": "Payments",
+  "className": "hidden"
 }

@@ -1,3 +1,4 @@
 {
-  "label": "Feature flags"
+  "label": "Feature flags",
+  "className": "hidden"
 }

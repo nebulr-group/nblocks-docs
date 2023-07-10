@@ -1,3 +1,4 @@
 {
-  "label": "Admin dashboard"
+  "label": "Admin dashboard",
+  "className": "hidden"
 }

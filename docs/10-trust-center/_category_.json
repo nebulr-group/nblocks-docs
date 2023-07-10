@@ -1,3 +1,4 @@
 {
-  "label": "Trust center"
+  "label": "Trust center",
+  "className": "hidden"
 }

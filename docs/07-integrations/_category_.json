@@ -1,3 +1,4 @@
 {
-  "label": "Integrations"
+  "label": "Integrations",
+  "className": "hidden"
 }

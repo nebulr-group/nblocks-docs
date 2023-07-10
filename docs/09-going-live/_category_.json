@@ -1,3 +1,4 @@
 {
-  "label": "Going live"
+  "label": "Going live",
+  "className": "hidden"
 }
