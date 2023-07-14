@@ -5,13 +5,20 @@ tags:
     - guide
 ---
 
-# Signup for Nblocks
-This page is in progress.
+# Signup for nblocks
+
+## Signup via Nblocks Admin
+Go to [Nblocks Admin](https://admin-stage.nblocks.cloud) and click create account.
+
+Once you have logged in to your new account you will be able to create your first Nblocks App. 
+Use the API key and the App ID to start calling our APIs.
+
 ## Signup through terminal
-Signup for Nblocks using our interactive terminal tool. Run the following command:
+Signup for Nblocks using our interactive terminal tool. The following command will create a new Nblocks app and also signup with access to Nblocks Admin
+
 ```console
 npx @nebulr-group/nblocks-cli create-app
 ```
 
-The NPX tool will create a new folder and place a `.env` file containing your Nblocks API key and download a copy of your app profile into a file `app-configuration.json`.
+The NPX tool will ask for an app name and your email address and then create a new folder and place a `.env` file containing your Nblocks API key and download a copy of your app profile into a file `app-configuration.json`.
 Use this API key from the env file and the App ID from your app profile to start calling our APIs.
