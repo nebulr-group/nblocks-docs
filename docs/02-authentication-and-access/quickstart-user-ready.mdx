@@ -75,6 +75,8 @@ A good practice is to add a new app route `/login` that triggers this action, so
 
 Create a new component that we call `LoginComponent`. Routes can be created with [react-router](https://reactrouter.com/) plugin
 ```tsx
+import { useEffect } from "react";
+
 export default function LoginComponent() {
 
   const APP_ID = "XXX";
@@ -88,6 +90,22 @@ export default function LoginComponent() {
 
 ```
 
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS" default>
+
+Create a new file `/app/auth/login.jsx`
+
+```tsx
+import { redirect } from 'next/navigation'
+ 
+export default function Login() {
+
+  const APP_ID = "XXX";
+  // Immediately redirect the web browser to Nblocks login
+  redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+}
+```
 </TabItem>
 
 <TabItem value="angular" label="Angular" default>
@@ -113,7 +131,8 @@ export class LoginComponent {
 
 If you cannot find your stack in the example code you need to integrate this part manually.
 
-Essentially you should redirect the user to the url described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize) for the `/url/login` endpoint.
+Essentially you should redirect the user to the url described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize) for the `/url/login` endpoint. 
+You can use the other language tabs to get an idea how this can be done.
 
 Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
 </TabItem>
@@ -140,6 +159,9 @@ Add a new route `/auth/oauth-callback` in your app that will act as a handler wh
 Create a new component that we call `CallbackComponent`.
 
 ```tsx
+import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
+
 // Users will get back to this component after finishing login
 export default function CallbackComponent() {
 
@@ -161,6 +183,37 @@ export default function CallbackComponent() {
 }
 ```
 
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS" default>
+
+Create a new file `/app/auth/oauth-callback.jsx`
+
+```tsx
+'use client'
+
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Users will get back to this page after finishing login
+export default function Callback() {
+
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code) {
+      handleCallback(code);
+    }
+  }, [searchParams]);
+
+  const handleCallback = async (code) => {
+    // Here we'll be using the code in next step  
+  };
+
+  return (<p>Not logged in</p>);
+}
+```
 </TabItem>
 
 <TabItem value="angular" label="Angular" default>
@@ -192,7 +245,8 @@ export class CallbackComponent {
 
 If you cannot find your stack in the example code you need to integrate this part manually.
 
-You should implement the nessesary steps to get hold of the `code` parameter in the URL. This code should be saved into a variable before moving to next step.
+You should implement the nessesary steps to get hold of the `code` parameter in the URL. This code should be saved into a variable before moving to next step. 
+You can use the other language tabs to get an idea how this can be done.
 
 Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
 </TabItem>
@@ -211,6 +265,9 @@ The returning response contains secure token data and a resolved user profile wh
 Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
 
 ```ts
+import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
+
 // Users will get back to this component after finishing login
 export default function CallbackComponent() {
 
@@ -257,6 +314,63 @@ export default function CallbackComponent() {
 }
 ```
 
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS" default>
+
+Here we evolve on the Callback page we created in the step before. The new additions has been highlighted.
+
+```tsx
+'use client'
+
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Users will get back to this component after finishing login
+export default function Callback() {
+
+  const searchParams = useSearchParams();
+
+  // highlight-start
+  const APP_ID = "XXX";
+  const [tokens, setTokens] = useState();
+  // highlight-end
+
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code) {
+      handleCallback(code);
+    }
+  }, [searchParams]);
+
+  const handleCallback = async (code) => {
+    // highlight-start
+    // Make the API call to Nblocks
+    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: code,
+        }),
+      }
+    ).then(res => res.json());
+
+    // Store the result in component state and localstorage
+    setTokens(result);
+
+    window.localStorage.setItem('access_token', result.access_token);
+  };
+
+  if (tokens)
+    return (<p>Hello {tokens.user_profile.name}</p>);
+  else
+    return (<p>Not logged in</p>);
+  // highlight-end
+}
+```
 </TabItem>
 
 <TabItem value="angular" label="Angular" default>
@@ -520,7 +634,7 @@ Now you can use this component in your app routing like this:
 
 ```
 
-If you now try to navigate to either `/home` or `/analytics`, you will be redirected to login.
+If you now try to navigate to either `/home` or `/analytics` without being logged in, you will be redirected to login.
 
 
 <details><summary>More examples</summary>
@@ -558,11 +672,131 @@ Our ProtectedRoute can do more like redirecting to a forbidden page if the user 
 
 </TabItem>
 
-<TabItem value="angular" label="Angular" default>
+<TabItem value="nextjs" label="NextJS" default>
+
+Imaging you have a NextJS page component that renders analytics data looking like this.
+
+```tsx title="/app/analytics/page.jsx"
+'use client'
+
+const AnalyticsPage = () => {
+    return (
+      <div>
+        <h1>Analytics</h1>
+        <DetailsGraph />
+        <RevenueTable />
+      </div>
+    )
+}
+
+export default AnalyticsPage;
+```
+
+We want to protect this page for only logged in users, otherwise they should be redirected back to Login again. 
+Therefore we need to use the access token to protect this route conditionally. 
+This can easily be done likt this:
+
+Create a new component `/components/protected-route.jsx`
+
+```tsx title="/components/protected-route.jsx"
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { decodeJwt } from "jose";
+
+function ProtectedRoute<T>(
+  Component: React.ComponentType<T>,
+  args: { roles?: string[]; privileges?: string[]; redirectTo?: string }
+) {
+  return (props: T) => {
+    // This is the path which users without access should be redirect to
+    const redirectTo = args.redirectTo || "/auth/login";
+    const { roles, privileges } = args;
+    const router = useRouter();
+
+    const [granted, setGranted] = useState(false);
+
+    useEffect(() => {
+      // Retrieve the access token JWT from localstorage
+      const accessToken = window.localStorage.getItem("access_token");
+      if (accessToken) {
+        const decoded = decodeJwt(accessToken);
+        if (hasRoleOrPrivilege(decoded)) {
+          setGranted(true);
+        } else {
+          router.push(redirectTo);
+        }
+      } else {
+        router.push(redirectTo);
+      }
+    }, []);
+
+    // Helper method to see if the users token contains any of the required roles or privileges 
+    const hasRoleOrPrivilege = (decoded: any) => {
+      return roles ? roles.includes(decoded.role) : false || privileges ? privileges.some((scope) => decoded.scope.includes(scope)) : false;
+    };
+
+    // Only if granted should we render component
+    if (granted)
+      return (
+        <>
+          <Component {...props!} />
+        </>
+      );
+  };
+}
+
+export default ProtectedRoute;
+```
+
+Now you can use this ProtectedRoute component to secure the AnalyticsPage like this:
+
+```tsx title="/app/analytics/page.jsx"
+'use client'
+
+// highlight-start
+import IsAuth from "@/components/protected-route";
+// highlight-end
+
+const AnalyticsPage = () => {
+    return (
+      <div>
+        <h1>Analytics</h1>
+        <DetailsGraph />
+        <RevenueTable />
+      </div>
+    )
+}
+// highlight-start
+export default ProtectedRoute(AnalyticsPage, {privileges: ["AUTHENTICATED"]);
+// highlight-end
+```
+
+If you now try to navigate to `/analytics` without being logged in, you will be redirected to login.
+
+<details><summary>More examples</summary>
+
+Our ProtectedRoute can do more like redirecting to a forbidden page if the user is logged in but are missing a required privilege. Here's how that would look:
+
+```jsx
+
+export default ProtectedRoute(AnalyticsPage, {privileges: ["ANALYTICS"], redirectTo="/forbidden");
+
+export default ProtectedRoute(AnalyticsPage, {roles: ["ADMIN"]);
+```
+
+</details>
 
 </TabItem>
 
 <TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+You can use the other language tabs to get an idea how this can be done.
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
 
 </TabItem>
 
@@ -708,11 +942,13 @@ app.use("/secret/*", protectedRoute({roles: 'ADMIN'}));
 
 </TabItem>
 
-<TabItem value="nestjs" label="NestJS" default>
-
-</TabItem>
-
 <TabItem value="pseudo" label="Can't find your stack?" default>
+
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+You can use the other language tabs to get an idea how this can be done.
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
 
 </TabItem>
 
@@ -745,6 +981,8 @@ There will be two Nblocks endpoints involved when requesting to render the user 
 Create a new component that we call `UserList`.
 
 ```tsx
+import { useEffect, useState } from "react";
+
 export default function UserList() {
   const [url, setUrl] = useState();
 
@@ -786,22 +1024,77 @@ export default function UserList() {
 
 Now you can render the `UserList` component anywhere you want to have the user access it.
 
-:::tip How to get the access token?
-
-In the User Login Quickstart, we stored the access token into Localstorage as a fast and easy way later retrieve it again. Other ways could be to save in-memory in a global state or React context.
-:::
-
 </TabItem>
 
-<TabItem value="angular" label="Angular" default>
+<TabItem value="nextjs" label="NextJS" default>
+
+Create a new file at `app/users/page.jsx`
+
+```tsx
+'use client'
+
+import { useState, useEffect } from "react";
+
+export default function UserList() {
+  const APP_ID = "XXX";
+
+const [url, setUrl] = useState();
+
+  useEffect(() => {
+    createUrl();
+  }, []);
+
+    const createUrl = async () => {
+    // Retrieve the access token JWT from localstorage
+    const accessToken = window.localStorage.getItem("access_token");
+
+    // Get the handover code from Nblocks
+    const result = await fetch(
+      `https://auth-stage.nblocks.cloud/handover/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accessToken,
+        }),
+      }
+    ).then((res) => res.json());
+
+    // Create the user management portal url
+    setUrl(
+      `https://backendless-stage.nblocks.cloud/user-management-portal/users?code=${result.code}`
+    );
+  };
+
+  // Render the url as an iframe
+  return <iframe width="100%" height="500px" src={url}></iframe>;
+}
+
+```
+
+Now you can navigate to `/users` and see the user list render.
+
 
 </TabItem>
 
 <TabItem value="pseudo" label="Can't find your stack?" default>
 
+If you cannot find your stack in the example code you need to integrate this part manually.
+
+You can use the other language tabs to get an idea how this can be done.
+
+Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
+
 </TabItem>
 
 </Tabs>
+
+:::tip How to get the access token?
+
+In the User Login Quickstart, we stored the access token into Localstorage as a fast and easy way later retrieve it again. Other ways could be to save in-memory in a global state or React context.
+:::
 
 **Now your done!**   
 That was the last step of the quickstart and we've covered the three things that has made your app user ready.
