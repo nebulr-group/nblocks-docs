@@ -94,9 +94,9 @@ export default function LoginComponent() {
 
 <TabItem value="nextjs" label="NextJS" default>
 
-Create a new file `/app/auth/login.jsx`
+Create a new file `/app/auth/login/page.jsx`
 
-```tsx
+```tsx title=/app/auth/login/page.jsx
 import { redirect } from 'next/navigation'
  
 export default function Login() {
@@ -187,9 +187,9 @@ export default function CallbackComponent() {
 
 <TabItem value="nextjs" label="NextJS" default>
 
-Create a new file `/app/auth/oauth-callback.jsx`
+Create a new file `/app/auth/oauth-callback/page.jsx`
 
-```tsx
+```tsx title=/app/auth/oauth-callback/page.jsx
 'use client'
 
 import { useSearchParams } from "next/navigation";
@@ -320,7 +320,7 @@ export default function CallbackComponent() {
 
 Here we evolve on the Callback page we created in the step before. The new additions has been highlighted.
 
-```tsx
+```tsx title=/app/auth/oauth-callback/page.jsx
 'use client'
 
 import { useSearchParams } from "next/navigation";
@@ -707,7 +707,7 @@ import { decodeJwt } from "jose";
 
 function ProtectedRoute<T>(
   Component: React.ComponentType<T>,
-  args: { roles?: string[]; privileges?: string[]; redirectTo?: string }
+  args: { roles, privileges, redirectTo }
 ) {
   return (props: T) => {
     // This is the path which users without access should be redirect to

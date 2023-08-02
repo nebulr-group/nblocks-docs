@@ -42,7 +42,20 @@ For the purpose of this quickstart we'll attach the user access token that will 
 ##### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
+Imagine you have a component that looks something like this:
 
+```tsx
+// We just want to render this if we're doing a release
+<h1>We're currently doing a release and will be back soon</h1>
+
+// We just want to render this for premium customers
+<span>This is premium content</span>
+
+// We just want to render this for beta customers 
+<a href="/beta">Button to beta feature</a>
+```
+
+To conditionally render these different elements we can create a simple component.
 Create a new component called `FeatureFlags`.
 
 ```tsx
@@ -140,18 +153,165 @@ Save yourself from multiple requests and check out `/flag/bulkEvaluate` endpoint
 :::
 
 Now we can use this component anywhere in your app to conditionally show content like pages or buttons in our React app.
-Like this:
+Like this, where the changes are highlighted:
 
 ```tsx
+  // highlight-start
 <FeatureFlag flag="release-announcement">
+  // highlight-end
     <h1>We're currently doing a release and will be back soon</h1>
+// highlight-start
 </FeatureFlag>
 <FeatureFlag flag="premium">
+  // highlight-end
     <span>This is premium content</span>
+  // highlight-start
 </FeatureFlag>
 <FeatureFlag flag="beta-feature">
+  // highlight-end
     <a href="/beta">Button to beta feature</a>
+  // highlight-start
 </FeatureFlag>
+  // highlight-end
+```
+
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS">
+
+Imagine you have a NextJS page component that contains elements like this:
+
+```tsx
+// We just want to render this if we're doing a release
+<h1>We're currently doing a release and will be back soon</h1>
+
+// We just want to render this for premium customers
+<span>This is premium content</span>
+
+// We just want to render this for beta customers 
+<a href="/beta">Button to beta feature</a>
+```
+
+To conditionally render these different elements we can create a simple component.
+Create a new component called `FeatureFlags`.
+
+```tsx title=/components/feature-flags.jsx
+'use client'
+
+import React, { useEffect, useState } from 'react';
+
+// The component takes the prop flag.
+export default function FeatureFlag({ flag, children}) {
+
+    // Replace this with your own APP ID
+  const APP_ID = 'XXX';
+
+  // This will be our variable telling if the feature is enabled or and we should render the component children
+  // Initially this variable is false
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    // Evaluate the flag
+    const accessToken = window.localStorage.getItem('access_token');
+    if (accessToken) {
+      evaluate(accessToken);
+    }
+  }, []);
+
+  const evaluate = async (accessToken) => {
+    const result = await fetch(
+      `https://backendless-stage.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accessToken,
+        }),
+      }
+    ).then((res) => res.json());
+    setEnabled(result.enabled);
+  };
+
+  // Only if enabled should we render the component children
+  if (enabled) return children;
+  else return '';
+}
+```
+
+<details><summary>Providing other information than access token?</summary>
+
+You can send whatever context information you want to the evaluation api. 
+But we've simplified it using a base structure so you can build the segment targets in Nblocks Admin more easily.
+
+The context object contains three areas, `user`, `org` and `device`. 
+
+* Each one of them contains the property `key`. You can assign any value to this property.
+* You can also assign any values you want to the other properties.
+* When building the segment targets you can define is the value should be equal (`==`), contain, beginWith or endWith the value.
+
+Structure of the body that can be sent to `/flags/evaluate`
+```json
+{
+    context: {
+        user: {
+            key: "useThisAsYouWant",
+            id: "63d2ab029e23db0afb07a5a7",
+            role: "ADMIN",
+            name: "John Doe";
+        }
+
+        org: {
+            key: "useThisAsYouWant",
+            id: "63d2ab029e23db0afb07a5a7",
+            plan: "PREMIUM",
+            name: "My Workspace"
+        }
+
+        device: {
+            key: "iphone"
+        }
+    },
+    accessToken: "XXXXXX"
+}
+```
+
+:::tip
+
+Providing the access token will automatically resolve all values for `user` and `org` so you don't have to. Read more in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-a-flag)
+
+:::
+
+</details>
+
+:::tip
+
+Save yourself from multiple requests and check out `/flag/bulkEvaluate` endpoint in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk)
+
+:::
+
+Now we can use this component anywhere in your app to conditionally show content like pages or buttons in our app.
+Like this, where the changes are highlighted:
+
+```tsx
+  // highlight-start
+<FeatureFlag flag="release-announcement">
+  // highlight-end
+    <h1>We're currently doing a release and will be back soon</h1>
+// highlight-start
+</FeatureFlag>
+<FeatureFlag flag="premium">
+  // highlight-end
+    <span>This is premium content</span>
+  // highlight-start
+</FeatureFlag>
+<FeatureFlag flag="beta-feature">
+  // highlight-end
+    <a href="/beta">Button to beta feature</a>
+  // highlight-start
+</FeatureFlag>
+  // highlight-end
 ```
 
 </TabItem>
@@ -186,7 +346,7 @@ Flags are inactive by default protect you from making misstakes. Click on the In
 
 ## Testing it
 We can now test this by logging into your app with the workspace we selected as target in the "beta-customer" segment.
-You should see the content that was set with the flag `beta-feature`. 
+You should see the content that was set with the flag `beta-feature`. Now you can try creating flags for the other elements.
 
 
 **That's it, your now done with this quickstart**
