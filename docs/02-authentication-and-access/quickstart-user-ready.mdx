@@ -79,7 +79,10 @@ import { useEffect } from "react";
 
 export default function LoginComponent() {
 
+  // highlight-start
   const APP_ID = "XXX";
+  // highlight-end
+
   useEffect(() => {
     // Immediately redirect the web browser to Nblocks login
     window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
@@ -87,7 +90,6 @@ export default function LoginComponent() {
 
   return ("");
 }
-
 ```
 
 </TabItem>
@@ -101,7 +103,10 @@ import { redirect } from 'next/navigation'
  
 export default function Login() {
 
+  // highlight-start
   const APP_ID = "XXX";
+  // highlight-end
+
   // Immediately redirect the web browser to Nblocks login
   redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
 }
@@ -118,11 +123,13 @@ Create a new component that we call `LoginComponent`.
 export class LoginComponent {
   constructor(
   ) {
+    // highlight-start
     const APP_ID = "XXX";
+    // highlight-end
+
     window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
   }
 }
-
 ```
 
 </TabItem>
@@ -146,115 +153,13 @@ Curious in what more ways you can use the  `/url/login` endpoint? See the [API r
 :::
 
 ### Step 2: Recieve the user back to your app
-When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code that we will resolve into something more useful.
-The URL containing the code parameter will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
+When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code token that we will resolve into something more useful.
+The URL containing the code token will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
 
-#### Add a callback route
-Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should add source code that retrieves the code parameter from the URL mentioned above and save it.
+#### Add a callback route and use the code to exchange for user tokens
+Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
 
-##### Example code
-<Tabs>
-<TabItem value="reactjs" label="ReactJS" default>
-
-Create a new component that we call `CallbackComponent`.
-
-```tsx
-import { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
-
-// Users will get back to this component after finishing login
-export default function CallbackComponent() {
-
-  const location = useLocation();
-  const urlSearch = new URLSearchParams(location.search);
-  const code = urlSearch.get("code");
-
-  useEffect(() => {
-    if (code) {
-      handleCallback(code);
-    }
-  }, [code]);
-
-  const handleCallback = async (code) => {
-    // Here we'll be using the code in next step  
-  };
-
-  return (<p>Not logged in</p>);
-}
-```
-
-</TabItem>
-
-<TabItem value="nextjs" label="NextJS" default>
-
-Create a new file `/app/auth/oauth-callback/page.jsx`
-
-```tsx title=/app/auth/oauth-callback/page.jsx
-'use client'
-
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-// Users will get back to this page after finishing login
-export default function Callback() {
-
-  const searchParams = useSearchParams();
-  
-  useEffect(() => {
-    const code = searchParams.get('code');
-    if (code) {
-      handleCallback(code);
-    }
-  }, [searchParams]);
-
-  const handleCallback = async (code) => {
-    // Here we'll be using the code in next step  
-  };
-
-  return (<p>Not logged in</p>);
-}
-```
-</TabItem>
-
-<TabItem value="angular" label="Angular" default>
-
-Create a new component that we call `CallbackComponent`.
-
-```ts
-// Users will get back to this component after finishing login
-@Component({
-  template: '<p>Not logged in</p>',
-})
-export class CallbackComponent {
-  constructor(
-    private route: ActivatedRouteSnapshot,
-  ) {
-    this.handleCallback(this.route.queryParams['code'])
-  }
-  
-  private handleCallback(code: string) {
-    // Here we'll be using the code in next step 
-  }
-}
-
-```
-
-</TabItem>
-
-<TabItem value="pseudo" label="Can't find your stack?" default>
-
-If you cannot find your stack in the example code you need to integrate this part manually.
-
-You should implement the nessesary steps to get hold of the `code` parameter in the URL. This code should be saved into a variable before moving to next step. 
-You can use the other language tabs to get an idea how this can be done.
-
-Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
-</TabItem>
-
-</Tabs>
-
-#### Use the code to exchange for user tokens
-With the code now successfully obtained we can exchange it for more useful user profile information. 
+Then we will exchange this code token it for more useful user profile information. 
 Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data and a resolved user profile which you can print to the console or display on your frontend page.
 
@@ -262,7 +167,7 @@ The returning response contains secure token data and a resolved user profile wh
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+Create a new component that we call `CallbackComponent`.
 
 ```ts
 import { useEffect, useState } from "react";
@@ -277,8 +182,9 @@ export default function CallbackComponent() {
 
   // highlight-start
   const APP_ID = "XXX";
-  const [tokens, setTokens] = useState();
   // highlight-end
+
+  const [tokens, setTokens] = useState();
 
   useEffect(() => {
     if (code) {
@@ -287,7 +193,6 @@ export default function CallbackComponent() {
   }, [code]);
 
   const handleCallback = async (code) => {
-    // highlight-start
     // Make the API call to Nblocks
     const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
       {
@@ -310,7 +215,6 @@ export default function CallbackComponent() {
     return (<p>Hello {tokens.user_profile.name}</p>);
   else
     return (<p>Not logged in</p>);
-  // highlight-end
 }
 ```
 
@@ -333,8 +237,9 @@ export default function Callback() {
 
   // highlight-start
   const APP_ID = "XXX";
-  const [tokens, setTokens] = useState();
   // highlight-end
+
+  const [tokens, setTokens] = useState();
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -344,7 +249,6 @@ export default function Callback() {
   }, [searchParams]);
 
   const handleCallback = async (code) => {
-    // highlight-start
     // Make the API call to Nblocks
     const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
       {
@@ -368,7 +272,6 @@ export default function Callback() {
     return (<p>Hello {tokens.user_profile.name}</p>);
   else
     return (<p>Not logged in</p>);
-  // highlight-end
 }
 ```
 </TabItem>
@@ -378,30 +281,26 @@ export default function Callback() {
 Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
 
 ```ts
-
-// highlight-start
 @Component({
   template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
 })
-// highlight-end
+
 export class CallbackComponent {
 
   // highlight-start
-  private tokens: any;
   private APP_ID = "XXX";
   // highlight-end
 
+  private tokens: any;
+
   constructor(
     private route: ActivatedRouteSnapshot,
-    // highlight-start
     private http: HttpClient,
-    // highlight-end
   ) {
     this.handleCallback(this.route.queryParams['code'])
   }
 
   private handleCallback(code: string) {
-    // highlight-start
     // Make the API call to Nblocks
     this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
       code: code
@@ -410,7 +309,6 @@ export class CallbackComponent {
       this.tokens = response;
       window.localStorage.setItem('access_token', result.access_token);
     });
-    // highlight-end
   }
 }
 
