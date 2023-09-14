@@ -32,18 +32,18 @@ However, if you have a specific need not covered by this quickstart yet, you'll 
 :::
 
 ## Short info about the access token
-When you completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) you got hold of a couple of tokens.
+When you completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) you got hold of a couple of tokens that was signed securely by Nblocks.
 One of them, the access token holds the users access information and this information can be used to protect your app.
 The token is encoded in a format called [JWT](https://jwt.io) for greater portability and security. If we decode the access token it looks like this:
 
 ```json
 
 {
+    "aid": "63d2ab029e23db0afb07a5a7",
+    "tid": "63d2b5c18892e10022e08399",
     // highlight-start
     "scope": "AUTHENTICATED USER_READ USER_WRITE TENANT_READ TENANT_WRITE",
     "role": "OWNER",
-    "sub": "63d2b5c18892e10022e083a2"
-    "tid": "63d2b5c18892e10022e08399",
     // highlight-end
     "plan": "FREE",
     "iat": 1685648418,
@@ -53,14 +53,14 @@ The token is encoded in a format called [JWT](https://jwt.io) for greater portab
         "https://app-stage.nblocks.cloud"
     ],
     "iss": "https://auth-stage.nblocks.cloud",
-    "aid": "63d2ab029e23db0afb07a5a7",
+    "sub": "63d2b5c18892e10022e083a2"
 }
 
 ```
 
-:::tip Decoding JWTs
+:::tip Decoding and verifying JWTs
 
-JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
+JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode and verify them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
 We'll be using one of these in our code examples.
 :::
 
