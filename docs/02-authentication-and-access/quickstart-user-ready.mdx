@@ -393,7 +393,7 @@ Securing your app when you have logged in users is crucial. Here's some examples
 Below we'll show how easily you can add protection to your app by using the tokens obtained from the logged in user.
 
 ### Short info about the access token
-When you completed the Nblocks login part of this quickstart you got hold of a couple of tokens.
+When you completed the Nblocks login part of this quickstart you got hold of a couple of tokens that was signed securely by Nblocks
 One of them, the access token holds the users access information and this information can be used to protect your app.
 The token is encoded in a format called [JWT](https://jwt.io) for greater portability and security. If we decode the access token it looks like this:
 
@@ -419,9 +419,9 @@ The token is encoded in a format called [JWT](https://jwt.io) for greater portab
 
 ```
 
-:::tip Decoding JWTs
+:::tip Decoding and verifying JWTs
 
-JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
+JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode and verify them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
 We'll be using one of these in our code examples.
 :::
 
@@ -753,19 +753,14 @@ import { jwtVerify, createRemoteJWKSet } from 'jose';
 const jwtMiddleware = async (req, res, next) => {
   if (req.headers['authorization']) {
     try {
-      // Get the public key to verify the token
+      // Get the public key to verify the token signed by Nblocks
       const JWKS = createRemoteJWKSet(
         new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
       );
 
-      // Deconstruct user from the verified token
-      // And store the decoded information in a variable that can be used by other middlewares
+      // Deconstruct user from the verified token and store the decoded information in a variable that can be used by other middlewares
       const { payload: user } = await jwtVerify(
-        req.headers['authorization'],
-        JWKS,
-        {
-          issuer: 'https://auth-stage.nblocks.cloud',
-        }
+        req.headers['authorization'], JWKS, { issuer: 'https://auth-stage.nblocks.cloud' }
       );
       req.user = user;
       next();
