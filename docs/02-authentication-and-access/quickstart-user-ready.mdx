@@ -169,9 +169,10 @@ The returning response contains secure token data and a resolved user profile wh
 
 Create a new component that we call `CallbackComponent`.
 
-```ts
+```jsx
 import { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
 // Users will get back to this component after finishing login
 export default function CallbackComponent() {
@@ -180,11 +181,9 @@ export default function CallbackComponent() {
   const urlSearch = new URLSearchParams(location.search);
   const code = urlSearch.get("code");
 
-  // highlight-start
   const APP_ID = "XXX";
-  // highlight-end
 
-  const [tokens, setTokens] = useState();
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     if (code) {
@@ -206,13 +205,23 @@ export default function CallbackComponent() {
       }
     ).then(res => res.json());
 
+    // Verify the result using public keys from Nblocks JWKS
+    const { access_token, refresh_token, id_token } = tokens;
+    const { payload } = await jwtVerify(
+      access_token, createRemoteJWKSet(
+          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
+      ), { issuer: 'https://auth-stage.nblocks.cloud' }
+    );
+
     // Store the result in component state and localstorage
-    setTokens(result);
-    window.localStorage.setItem('access_token', result.access_token);
+    setAccessToken(payload);
+    window.localStorage.setItem('access_token', access_token);
+    window.localStorage.setItem('refresh_token', refresh_token);
+    window.localStorage.setItem('id_token', id_token);
   };
 
-  if (tokens)
-    return (<p>Hello {tokens.user_profile.name}</p>);
+  if (accessToken)
+    return (<p>Logged in</p>);
   else
     return (<p>Not logged in</p>);
 }
@@ -222,7 +231,7 @@ export default function CallbackComponent() {
 
 <TabItem value="nextjs" label="NextJS" default>
 
-Here we evolve on the Callback page we created in the step before. The new additions has been highlighted.
+Create a new page that we call `Callback`.
 
 ```tsx title=/app/auth/oauth-callback/page.jsx
 'use client'
@@ -235,9 +244,7 @@ export default function Callback() {
 
   const searchParams = useSearchParams();
 
-  // highlight-start
   const APP_ID = "XXX";
-  // highlight-end
 
   const [tokens, setTokens] = useState();
 
@@ -278,7 +285,7 @@ export default function Callback() {
 
 <TabItem value="angular" label="Angular" default>
 
-Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
+Create a new component that we call `CallbackComponent`.
 
 ```ts
 @Component({
@@ -287,9 +294,7 @@ Here we evolve on the CallbackComponent we created in the step before. The new a
 
 export class CallbackComponent {
 
-  // highlight-start
   private APP_ID = "XXX";
-  // highlight-end
 
   private tokens: any;
 
@@ -360,18 +365,18 @@ Start your application so that it is accessible on [http://localhost:8080](http:
 Navigate to [http://localhost:8080/login](http://localhost:8080/login). Your code redirects the user to Nblocks Login.
 ![Nblocks Login](../assets/nblocks-login/login-screen.png)
 
-#### 3. Create a new account
-Since you don't have a previous user account click "**Create one**".
+#### 3. Sign up for a new account
+Since you don't have a previous user account click "**Sign up**".
 
-![Nblocks Signup](../assets/nblocks-login/signup-screen.png)
+![Nblocks Sign up](../assets/nblocks-login/signup-screen.png)
 
-You can signup with your email or use Google or Microsoft SSO for a faster process. These SSO's are available as Demo integrations from Nblocks from start.
+You can sign up with your email or use Google or Microsoft SSO for a faster process. These SSO's are available as Demo integrations from Nblocks from start.
 
 ![Nblocks Google SSO](../assets/nblocks-login/google-screen.png)
 
-Here we have clicked to signup with Google. The Google login screen is shown.
+Here we have clicked to sign up with Google. The Google login screen is shown.
 
-#### 4. Get redirected back to your app as a logged in user
+#### 4. Return to your app as a logged in user
 After logging in, you get redirected back to your application again and we see the name of the logged in user.
 ![Callback](../assets/nblocks-login/callback-screen.png)
 
@@ -872,13 +877,14 @@ In the last last part of the quickstart we're adding a user management view to l
 
 You can embedd this view straight into your app either by using Iframes or redirecting the user to it. It looks like this:
 
-![Nblocks Login](../assets/user-management/user-list.png)
+![User list](../assets/user-management/user-list.png)
 
 ### Implement it
 
 :::tip
 
 The url can either be rendered as an Iframe or you can redirect the user to it.
+
 :::
 
 There will be two Nblocks endpoints involved when requesting to render the user list.

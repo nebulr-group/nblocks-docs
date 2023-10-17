@@ -70,7 +70,7 @@ const config = {
                 to: "/docs/getting-started/what-is-nblocks",
               },
               {
-                label: "Signup for Nblocks",
+                label: "Sign up for Nblocks",
                 to: "/docs/getting-started/signup",
               },
             ],
