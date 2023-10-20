@@ -20,14 +20,14 @@ This allows you add a paywall and start recieving money through subscriptions fr
 :::info Prerequisites
 
 1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys)
-1. Completed the [Quickstart User Ready](/docs/authentication-and-access/quickstart-user-ready) since we'll be using the magic of access tokens in this quickstart
+1. Completed the [Quickstart User Ready](/docs/authentication-and-access/quickstart-user-ready) since we'll be evolving on the token callback handler in this quickstart
 
 :::
 
 ## Integrating in your code
 
 ### Step 1. Create subscription button
-We will code a component that will redirect the user to the Nblocks hosted Select plan view and add a button so that a user can manage their subscription.
+In this step we will coding a button and component that will redirect the user to the Nblocks hosted Select plan view to manage can manage their current plan and subscription.
 
 There will be two Nblocks endpoints involved when requesting to render the select plan.
 1. First we need to get the [handover code](https://nebulr-group.github.io/nblocks-api-docs/#handover-code) which is unique to the user. This is done using `/handover/code` endpoint.
@@ -288,6 +288,13 @@ Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWY
 </TabItem>
 
 </Tabs>
+
+:::tip 
+
+Nblocks will attach payment information to the access token you recieve on the callback router. 
+If `shouldSelectPlan` or `shouldSetupPayments` is set to `true` you should redirect the user to `/selectPlan`.
+
+:::
 
 ## Create plans in Nblocks Admin
 When signing up for Nblocks you also got access to Nblocks Admin where you can customize and make changes to your app configuration and access other features.
