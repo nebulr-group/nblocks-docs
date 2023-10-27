@@ -232,20 +232,20 @@ Click the flags tab and create a new flag. Call it "beta-feature" since this is 
 
 Now let's add conditions to this flag so it can be evaluated when the right user tries accessing it. 
 
-### Step 2. Create segment
-With segments we can build reusable conditions that can be attached to our different feature flags. 
-Think of this as you'd want to target an individual tenant / workspace, user or a group of roles. That's what Segments are for. 
+### Step 2. Create group
+With groups we can build reusable conditions that can be attached to our different feature flags. 
+Think of this as you'd want to target an individual tenant, user or a group of roles. That's what groups are for. 
 
-Navigate to Feature flags and click the segments tab. 
-Click add segment and name it "beta-customer" and specify to match on org id using the operator "Equals" and choose one of the current workspaces that has signed up for your app.  
+Navigate to Feature flags and click the groups tab. 
+Click add group and name it "beta-customer" and specify to match on "Workspace ID" using the operator "Equals" and choose one of the current tenants that has signed up for your app.  
 
-![Adding a segment](../assets/feature-flags/add-segment-org-id.png)
+![Adding a group](../assets/feature-flags/add-segment-org-id.png)
 
-### Step 3. Attach the segmentent to the flag
+### Step 3. Attach the group to the flag
 Get back to the flags tab and click edit on the "beta-feature" flag we created earlier.
 
-Add the "beta-customer" segment and make sure that "Enabled if match" is set to true. 
-This means that the flag will be evaluated to `enabled: true` if any of the segments match on the current user.
+Add the "beta-customer" group and make sure that "Enabled if match" is set to true. 
+This means that the flag will be evaluated to `enabled: true` if any of the groups match on the current user.
 
 ![Adding a flag](../assets/feature-flags/add-flag.png)
 
@@ -253,7 +253,7 @@ This means that the flag will be evaluated to `enabled: true` if any of the segm
 Flags are inactive by default protect you from making misstakes. Click on the Inactive status and toggle it to Active and click save.
 
 ## Testing it
-We can now test this by logging into your app with the workspace we selected as target in the "beta-customer" segment.
+We can now test this by logging into your app with the tenant we selected as target in the "beta-customer" group.
 You should see the content that was set with the flag `beta-feature`. Now you can try creating flags for the other elements.
 
 
@@ -262,13 +262,13 @@ You should see the content that was set with the flag `beta-feature`. Now you ca
 <details><summary>Can I provide other information than access token?</summary>
 
 You can send whatever context information you want to the evaluation api. 
-But we've simplified it using a base structure so you can build segments in Nblocks Admin more easily.
+But we've simplified it using a base structure so you can build groups in Nblocks Admin more easily.
 
 The context object contains three areas, `user`, `org` and `device`. 
 
 * Each one of them contains the property `key`. You can assign any value to this property.
 * You can also assign any values you want to the other properties.
-* When building the segment targets you can define is the value should be equal (`==`), contain, beginWith or endWith the value.
+* When building the group targets you can define is the value should be equal (`==`), contain, beginWith or endWith the value.
 
 Structure of the body that can be sent to `/flags/evaluate`
 ```json
