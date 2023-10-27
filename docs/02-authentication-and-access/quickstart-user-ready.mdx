@@ -40,6 +40,12 @@ However, if you have a specific need not covered by this quickstart yet, you'll 
 Nblocks is using sensible defaults to make development and integrations simpler. 
 To use another application address you need to change your app profile configuration.
 
+**Using the Nblocks Admin portal**
+
+The easiest way to do so is configuring your callback URLs in the [authentication settings](./authentication-settings#security)
+
+**Using the terminal tool**
+
 **Step 1. Open `app-configuration.json`.**   
 This json file was downloaded when you signed up for Nblocks through terminal.
 
@@ -152,7 +158,7 @@ Curious in what more ways you can use the  `/url/login` endpoint? See the [API r
 
 :::
 
-### Step 2: Recieve the user back to your app
+### Step 2: Receive the user back to your app
 When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code token that we will resolve into something more useful.
 The URL containing the code token will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
 
