@@ -1,0 +1,355 @@
+---
+sidebar_position: 3
+sidebar_label: Quickstart
+tags:
+    - tutorial
+    - quickstart
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import PseudoCode from '../templates/_pseudo-code.mdx';
+
+# Quickstart
+On this page you will integrate your web application with Nblocks to get login, signup, plans and payments functionality for your users out of the box. We call this beeing user ready and you will accomplish this in no time. 
+In each step you will apply a few lines of code to make redirects using the familiar OpenId Connect / OAuth 2.0 flows, obtain user tokens, protect your app and make use of our prebuilt fully flexible user portal.
+
+## Two actions to handle
+
+The integration essentially consists of two parts where the first part is where you redirect the user's browser to Nblocks and the second one is where the user is redirected back to your app with profile information.
+
+This can be implemented for multiple use cases such as if you have:
+- A frontend only
+- A backend only
+- A frontend and a backend in which case we recommend that you implement it in your backend.
+
+After you're done with this part your application will have a login flow with sign in, sign up, and SSO.
+
+The Nblocks team provides, maintains, and adds code examples for popular languages continuously. 
+However, if you have a specific need not covered by this quickstart yet, you'll find documentation on how to use Nblocks with any language in our API reference [API reference](https://nebulr-group.github.io/nblocks-api-docs).
+
+
+:::info Prerequisites
+
+1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys) 
+1. An existing web application that can run on http://localhost:8080.
+
+:::
+
+<details><summary>Not using http://localhost:8080?</summary>
+
+Nblocks is using sensible defaults to make development and integrations simpler. 
+To use another application address you need to change your app profile configuration.
+
+**Using [Nblocks Admin](https://admin-stage.nblocks.cloud)**
+
+The easiest way to do so is configuring your callback URLs in the [authentication settings](./authentication-settings#security)
+
+**Using the terminal tool**
+
+**Step 1. Open `app-configuration.json`.**   
+This json file was downloaded when you signed up for Nblocks through terminal.
+
+**Step 2. Change the Oauth 2.0 callback uris.**   
+In the json file, change the defaultCallbackUri and redirectUris to the correct address for your application.
+```json
+"defaultCallbackUri": "http://localhost:3000/auth/oauth-callback",
+"redirectUris": [
+	"http://localhost:3000/auth/oauth-callback"
+],
+```
+
+**Step 3. Save the changes by pushing the updated configuration back to Nblocks**
+```console
+npx @nebulr-group/nblocks-cli push-app
+```
+
+</details>
+
+
+## Step 1: Redirect users to Nblocks login
+
+### Add a redirect action
+Open your project source code in an editor of your choice. 
+Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
+
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed.
+
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call `LoginComponent`. Routes can be created with [react-router](https://reactrouter.com/) plugin
+```tsx
+import { useEffect } from "react";
+
+export default function LoginComponent() {
+
+  // highlight-start
+  const APP_ID = "XXX";
+  // highlight-end
+
+  useEffect(() => {
+    // Immediately redirect the web browser to Nblocks login
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  })
+
+  return ("");
+}
+```
+
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS" default>
+
+Create a new file `/app/auth/login/page.jsx`
+
+```tsx title=/app/auth/login/page.jsx
+import { redirect } from 'next/navigation'
+ 
+export default function Login() {
+
+  // highlight-start
+  const APP_ID = "XXX";
+  // highlight-end
+
+  // Immediately redirect the web browser to Nblocks login
+  redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+}
+```
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call `LoginComponent`.
+```ts
+@Component({
+  template: '',
+})
+export class LoginComponent {
+  constructor(
+  ) {
+    // highlight-start
+    const APP_ID = "XXX";
+    // highlight-end
+
+    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  }
+}
+```
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+  <PseudoCode/>
+</TabItem>
+
+</Tabs>
+
+:::tip
+
+Curious in what more ways you can use the  `/url/login` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
+
+:::
+
+## Step 2: Receive the user back to your app
+When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code token that we will resolve into something more useful.
+The URL containing the code token will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
+
+### Add a callback route and use the code to exchange for user tokens
+Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
+
+Then we will exchange this code token it for more useful user profile information. 
+Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
+The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
+
+#### Example code
+<Tabs>
+<TabItem value="reactjs" label="ReactJS" default>
+
+Create a new component that we call `CallbackComponent`.
+
+```jsx
+import React, { useEffect, useState } from "react";
+import { Navigate, useLocation } from 'react-router-dom';
+import { jwtVerify, createRemoteJWKSet } from "jose";
+
+// Users will get back to this component after finishing login
+export default function CallbackComponent() {
+
+  // Replace this with your own APP ID
+  // highlight-start
+  const APP_ID = "XXX";
+  // highlight-end
+
+  const location = useLocation();
+  const [accessToken, setAccessToken] = useState();
+
+  useEffect(() => {
+    const code = new URLSearchParams(location.search).get("code");
+    if (code) {
+      handleCallback(code);
+    }
+  }, []);
+
+  const handleCallback = async (code) => {
+    // Get tokens
+    const tokens = await fetch(`${NBLOCKS_AUTH}/token/code/${APP_ID}`,
+      {
+        method: "POST", headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ code }),
+      }
+    ).then(res => res.json());
+
+    // Verify the tokens result using public keys from Nblocks JWKS
+    const { access_token, refresh_token, id_token } = tokens;
+    const { payload } = await jwtVerify(
+      access_token, createRemoteJWKSet(
+          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
+      ), { issuer: 'https://auth-stage.nblocks.cloud' }
+    );
+
+    // Store the result in component state and localstorage
+    window.localStorage.setItem('access_token', access_token);
+    window.localStorage.setItem('refresh_token', refresh_token);
+    window.localStorage.setItem('id_token', id_token);
+    setAccessToken(payload);
+    console.log("User access token", payload);
+  };
+
+  if (accessToken)
+      return (<Navigate to={"/"}/>);
+  else
+    return (<p>Not logged in</p>);
+}
+```
+
+</TabItem>
+
+<TabItem value="nextjs" label="NextJS" default>
+
+Create a new page that we call `Callback`.
+
+```tsx title=/app/auth/oauth-callback/page.jsx
+'use client'
+
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Users will get back to this component after finishing login
+export default function Callback() {
+
+  const searchParams = useSearchParams();
+
+  // highlight-start
+  const APP_ID = "XXX";
+  // highlight-end
+
+  const [tokens, setTokens] = useState();
+
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code) {
+      handleCallback(code);
+    }
+  }, [searchParams]);
+
+  const handleCallback = async (code) => {
+    // Make the API call to Nblocks
+    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: code,
+        }),
+      }
+    ).then(res => res.json());
+
+    // Store the result in component state and localstorage
+    setTokens(result);
+
+    window.localStorage.setItem('access_token', result.access_token);
+  };
+
+  if (tokens)
+    return (<p>Hello {tokens.user_profile.name}</p>);
+  else
+    return (<p>Not logged in</p>);
+}
+```
+</TabItem>
+
+<TabItem value="angular" label="Angular" default>
+
+Create a new component that we call `CallbackComponent`.
+
+```ts
+@Component({
+  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
+})
+
+export class CallbackComponent {
+
+  // highlight-start
+  private APP_ID = "XXX";
+  // highlight-end
+
+  private tokens: any;
+
+  constructor(
+    private route: ActivatedRouteSnapshot,
+    private http: HttpClient,
+  ) {
+    this.handleCallback(this.route.queryParams['code'])
+  }
+
+  private handleCallback(code: string) {
+    // Make the API call to Nblocks
+    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
+      code: code
+    }).subscribe((response) => {
+      // Store the result in component state and localstorage
+      this.tokens = response;
+      window.localStorage.setItem('access_token', result.access_token);
+    });
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="pseudo" label="Can't find your stack?" default>
+  <PseudoCode/>
+</TabItem>
+
+</Tabs>
+
+**Tokens Response example**   
+This is shows the structure of the token response.
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "access_token": "eyJhbGciOiJQ...",
+  "refresh_token": "eyJhbGciOiJQ...",
+  "id_token": "eyJhbGciOiJQ...",
+}
+```
+
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::
+
+## Step 4: Test it
+
+### Login to dashboard
+### See all the nice stuff
+### Get signup link and signup
+### See the console that the user is logged in

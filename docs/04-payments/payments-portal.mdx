@@ -1,6 +1,10 @@
 ---
 sidebar_position: 1
-sidebar_label: Quickstart Payments
+sidebar_label: Payments portal (tutorial)
+tags:
+    - tutorial
+    - frontend
+    - user management
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,8 +12,9 @@ import TabItem from '@theme/TabItem';
 import PseudoCode from '../templates/_pseudo-code.mdx';
 
 
-# Quickstart Payments
-On this page you will integrate your web application with Nblocks Payments. 
+# Payments portal
+On this page you will integrate your web application with Nblocks Payments portal.   
+The payments portal exists so you can embedd ready made payments views straight into your app either by using Iframes or redirecting the user to it.
 This allows you add a paywall and start recieving money through subscriptions from your customers in matter of minutes.
  
 **The content of this quickstart**
@@ -20,7 +25,7 @@ This allows you add a paywall and start recieving money through subscriptions fr
 :::info Prerequisites
 
 1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys)
-1. Completed the [Quickstart User Ready](/docs/authentication-and-access/quickstart-user-ready) since we'll be evolving on the token callback handler in this quickstart
+1. Completed the [Quickstart](/docs/getting-started/quickstart) since we'll be evolving on the token callback handler in this quickstart
 
 :::
 
@@ -103,188 +108,6 @@ Great! When you render this component the user will be redirected to select plan
 
 <TabItem value="pseudo" label="Can't find your stack?" default>
   <PseudoCode/>
-</TabItem>
-
-</Tabs>
-
-### Step 2. Improved callback
-This part is very simple and we're going to add a few lines of conditional code to the way you obtained the user tokens in [Quickstart User Ready](/docs/authentication-and-access/quickstart-user-ready).
-
-The tokens will contain payment information and we can easily redirect to the Select plan view should they tell us to.
-
-##### Example code
-<Tabs>
-<TabItem value="reactjs" label="ReactJS" default>
-
-Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
-
-```jsx
-import { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
-import { jwtVerify, createRemoteJWKSet } from "jose";
-
-// Users will get back to this component after finishing login
-export default function CallbackComponent() {
-
-  const location = useLocation();
-  const urlSearch = new URLSearchParams(location.search);
-  const code = urlSearch.get("code");
-
-  const APP_ID = "XXX";
-
-  const [accessToken, setAccessToken] = useState();
-
-  useEffect(() => {
-    if (code) {
-      handleCallback(code);
-    }
-  }, [code]);
-
-  const handleCallback = async (code) => {
-    // Make the API call to Nblocks
-    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: code,
-        }),
-      }
-    ).then(res => res.json());
-
-    // Verify the result using public keys from Nblocks JWKS
-    const { access_token, refresh_token, id_token } = tokens;
-    const { payload } = await jwtVerify(
-      access_token, createRemoteJWKSet(
-          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
-      ), { issuer: 'https://auth-stage.nblocks.cloud' }
-    );
-
-    // Store the result in component state and localstorage
-    setAccessToken(payload);
-    window.localStorage.setItem('access_token', access_token);
-    window.localStorage.setItem('refresh_token', refresh_token);
-    window.localStorage.setItem('id_token', id_token);
-  };
-
-// highlight-start
-  if (accessToken)
-    if (
-        accessToken.shouldSelectPlan || 
-        accessToken.shouldSetupPayments
-    )
-      return (<Navigate to={"/selectPlan"}/>);
-    else
-      return (<Navigate to={"/"}/>);
-  else
-    return (<p>Not logged in</p>);
-    // highlight-end
-}
-```
-
-</TabItem>
-
-<TabItem value="nextjs" label="NextJS" default>
-
-Here we evolve on the Callback page we created in the step before. The new additions has been highlighted.
-
-```tsx title=/app/auth/oauth-callback/page.jsx
-'use client'
-
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-// Users will get back to this component after finishing login
-export default function Callback() {
-
-  const searchParams = useSearchParams();
-
-  const APP_ID = "XXX";
-
-  const [tokens, setTokens] = useState();
-
-  useEffect(() => {
-    const code = searchParams.get('code');
-    if (code) {
-      handleCallback(code);
-    }
-  }, [searchParams]);
-
-  const handleCallback = async (code) => {
-    // Make the API call to Nblocks
-    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: code,
-        }),
-      }
-    ).then(res => res.json());
-
-    // Store the result in component state and localstorage
-    setTokens(result);
-
-    window.localStorage.setItem('access_token', result.access_token);
-  };
-
-  if (tokens)
-    return (<p>Hello {tokens.user_profile.name}</p>);
-  else
-    return (<p>Not logged in</p>);
-}
-```
-</TabItem>
-
-<TabItem value="angular" label="Angular" default>
-
-Here we evolve on the CallbackComponent we created in the step before. The new additions has been highlighted.
-
-```ts
-@Component({
-  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
-})
-
-export class CallbackComponent {
-
-  private APP_ID = "XXX";
-
-  private tokens: any;
-
-  constructor(
-    private route: ActivatedRouteSnapshot,
-    private http: HttpClient,
-  ) {
-    this.handleCallback(this.route.queryParams['code'])
-  }
-
-  private handleCallback(code: string) {
-    // Make the API call to Nblocks
-    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
-      code: code
-    }).subscribe((response) => {
-      // Store the result in component state and localstorage
-      this.tokens = response;
-      window.localStorage.setItem('access_token', result.access_token);
-    });
-  }
-}
-
-```
-
-</TabItem>
-
-<TabItem value="pseudo" label="Can't find your stack?" default>
-
-If you cannot find your stack in the example code you need to integrate this part manually.
-
-Essentially you should make a call to the `/token/code` endpoint described in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens).
-
-Don't forget to make a request, by joining our [Discord](https://discord.gg/kjWYdZ6f6G) and spell it out, and we'll be happy to add this stack as an example.
 </TabItem>
 
 </Tabs>
