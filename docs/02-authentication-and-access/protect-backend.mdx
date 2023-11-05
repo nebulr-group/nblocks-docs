@@ -9,15 +9,14 @@ tags:
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import PseudoCode from '../templates/_pseudo-code.mdx';
 
 # Protect your backend
 
 Securing your backend is even more important than securing your frontend since the backend usually holds sensitive and important information that we never want to return to a user that is either not logged in or not the rightful recipient of that information.
 
-In this guide we'll be showing you how easy it is to secure your application backend with Nblocks. You will apply protection in two ways by using the tokens obtained from the logged in user.
-These ways are:
-1. **Protect an endpoint with role based access control**, so that only users with the right privilege can query it.
-1. **Protect an endpoint with data filter**, so that we can filter and return the correct data to a certain user.
+In this guide we'll be showing you how easy it is to secure your application backend with Nblocks. You will apply protection by using the tokens obtained from the logged in user.
+Below we will Protect an endpoint with role based access control, so that only users with the right privilege can query it.
 
 After you're done with this guide you will have an application backend that is secure and ready for production.
 
@@ -207,38 +206,11 @@ app.use("/secret/*", protectedRoute({roles: ['ADMIN']}));
 
 </TabItem>
 
-<TabItem value="nestjs" label="NestJS" default>
-
-</TabItem>
-
 <TabItem value="pseudo" label="Can't find your stack?" default>
-
+  <PseudoCode/>
 </TabItem>
 
 </Tabs>
-
-## Step 2. Protect an endpoint with data filter
-
-<Tabs>
-<TabItem value="expressjs" label="ExpressJS" default>
-
-<details><summary>More examples</summary>
-
-</details>
-
-</TabItem>
-
-<TabItem value="nestjs" label="NestJS" default>
-
-</TabItem>
-
-<TabItem value="pseudo" label="Can't find your stack?" default>
-
-</TabItem>
-
-</Tabs>
-
-**That's all!** With this guide we've show the best practises how you can protect your backend application using the tokens generated from Nblocks Login
 
 ## Next steps
 
