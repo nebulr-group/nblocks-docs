@@ -12,7 +12,7 @@ import PseudoCode from '../templates/_pseudo-code.mdx';
 
 # Quickstart
 On this page you will integrate your web application with Nblocks to get login, signup, plans and payments functionality for your users out of the box. We call this beeing user ready and you will accomplish this in no time. 
-In each step you will apply a few lines of code to make redirects using the familiar OpenId Connect / OAuth 2.0 flows, obtain user tokens, protect your app and make use of our prebuilt fully flexible user portal.
+In each step you will apply a few lines of code to make redirects using the familiar OpenID Connect / OAuth 2.0 flows to obtain user tokens that will be used to protect your app and make use of our prebuilt fully flexible user portal.
 
 ## Two actions to handle
 
@@ -73,28 +73,25 @@ npx @nebulr-group/nblocks-cli push-app
 Open your project source code in an editor of your choice. 
 Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
 
-A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed.
-
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing common concept and available for most framework.
 
 #### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Create a new component that we call `LoginComponent`. Routes can be created with [react-router](https://reactrouter.com/) plugin
+Create a new component that we call `Login` and add this to the `/login` route. In React routes can be created with [react-router](https://reactrouter.com/) plugin.
 ```tsx
 import { useEffect } from "react";
 
-export default function LoginComponent() {
+export default function Login() {
 
+  // Replace this with your own APP ID
   // highlight-start
   const APP_ID = "XXX";
   // highlight-end
 
-  useEffect(() => {
-    // Immediately redirect the web browser to Nblocks login
-    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
-  })
-
+  // Immediately redirect the web browser to Nblocks login
+  window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
   return ("");
 }
 ```
@@ -103,13 +100,14 @@ export default function LoginComponent() {
 
 <TabItem value="nextjs" label="NextJS" default>
 
-Create a new file `/app/auth/login/page.jsx`
+Create a new file `/app/login/page.jsx` and call this component `Login`. This will add a new route to `/login` by the framework.
 
-```tsx title=/app/auth/login/page.jsx
+```tsx title=/app/login/page.jsx
 import { redirect } from 'next/navigation'
  
 export default function Login() {
 
+  // Replace this with your own APP ID
   // highlight-start
   const APP_ID = "XXX";
   // highlight-end
@@ -122,18 +120,20 @@ export default function Login() {
 
 <TabItem value="angular" label="Angular" default>
 
-Create a new component that we call `LoginComponent`.
+Create a new component that we call `Login` and add this to the `/login` route. In Angular routes can be created with the built in **RouterModule**.
 ```ts
 @Component({
   template: '',
 })
-export class LoginComponent {
+export class Login {
   constructor(
   ) {
+    // Replace this with your own APP ID
     // highlight-start
     const APP_ID = "XXX";
     // highlight-end
 
+    // Immediately redirect the web browser to Nblocks login
     window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
   }
 }
@@ -164,11 +164,17 @@ Then we will exchange this code token it for more useful user profile informatio
 Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
 
+:::tip Decoding and verifying JWTs
+
+JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode and verify them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
+We'll be using one of these in our code examples.
+:::
+
 #### Example code
 <Tabs>
 <TabItem value="reactjs" label="ReactJS" default>
 
-Create a new component that we call `CallbackComponent`.
+Create a new component that we call `Callback` and add this to the `/auth/oauth-callback` route. In React routes can be created with [react-router](https://reactrouter.com/) plugin.
 
 ```jsx
 import React, { useEffect, useState } from "react";
@@ -176,7 +182,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
 // Users will get back to this component after finishing login
-export default function CallbackComponent() {
+export default function Callback() {
 
   // Replace this with your own APP ID
   // highlight-start
@@ -195,7 +201,7 @@ export default function CallbackComponent() {
 
   const handleCallback = async (code) => {
     // Get tokens
-    const tokens = await fetch(`${NBLOCKS_AUTH}/token/code/${APP_ID}`,
+    const tokens = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
       {
         method: "POST", headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ code }),
@@ -229,24 +235,25 @@ export default function CallbackComponent() {
 
 <TabItem value="nextjs" label="NextJS" default>
 
-Create a new page that we call `Callback`.
+Create a new file `/app/auth/oauth-callback/page.jsx` and call this component `Callback`. This will add a new route to `/auth/oauth-callback` by the framework.
 
 ```tsx title=/app/auth/oauth-callback/page.jsx
 'use client'
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
 // Users will get back to this component after finishing login
 export default function Callback() {
 
-  const searchParams = useSearchParams();
-
+  // Replace this with your own APP ID
   // highlight-start
   const APP_ID = "XXX";
   // highlight-end
 
-  const [tokens, setTokens] = useState();
+  const searchParams = useSearchParams();
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -256,27 +263,32 @@ export default function Callback() {
   }, [searchParams]);
 
   const handleCallback = async (code) => {
-    // Make the API call to Nblocks
-    const result = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+    // Get tokens
+    const tokens = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: code,
-        }),
+        method: "POST", headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ code }),
       }
     ).then(res => res.json());
 
-    // Store the result in component state and localstorage
-    setTokens(result);
+    // Verify the tokens result using public keys from Nblocks JWKS
+    const { access_token, refresh_token, id_token } = tokens;
+    const { payload } = await jwtVerify(
+      access_token, createRemoteJWKSet(
+          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
+      ), { issuer: 'https://auth-stage.nblocks.cloud' }
+    );
 
-    window.localStorage.setItem('access_token', result.access_token);
+    // Store the result in component state and localstorage
+    window.localStorage.setItem('access_token', access_token);
+    window.localStorage.setItem('refresh_token', refresh_token);
+    window.localStorage.setItem('id_token', id_token);
+    setAccessToken(payload);
+    console.log("User access token", payload);
   };
 
-  if (tokens)
-    return (<p>Hello {tokens.user_profile.name}</p>);
+  if (accessToken)
+      redirect("/");
   else
     return (<p>Not logged in</p>);
 }
@@ -285,20 +297,23 @@ export default function Callback() {
 
 <TabItem value="angular" label="Angular" default>
 
-Create a new component that we call `CallbackComponent`.
+Create a new component that we call `Callback` and add this to the `/auth/` route. In Angular routes can be created with the built in **RouterModule**.
 
 ```ts
+import { jwtVerify, createRemoteJWKSet } from "jose";
+
 @Component({
   template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
 })
 
-export class CallbackComponent {
+export class Callback {
 
+  // Replace this with your own APP ID
   // highlight-start
   private APP_ID = "XXX";
   // highlight-end
 
-  private tokens: any;
+  private accessToken: any;
 
   constructor(
     private route: ActivatedRouteSnapshot,
@@ -308,13 +323,24 @@ export class CallbackComponent {
   }
 
   private handleCallback(code: string) {
-    // Make the API call to Nblocks
+    // Get tokens
     this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
       code: code
-    }).subscribe((response) => {
+    }).subscribe((tokens) => {
+      // Verify the tokens result using public keys from Nblocks JWKS
+      const { access_token, refresh_token, id_token } = tokens;
+      const { payload } = await jwtVerify(
+        access_token, createRemoteJWKSet(
+            new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
+        ), { issuer: 'https://auth-stage.nblocks.cloud' }
+      );
+
       // Store the result in component state and localstorage
-      this.tokens = response;
-      window.localStorage.setItem('access_token', result.access_token);
+      window.localStorage.setItem('access_token', access_token);
+      window.localStorage.setItem('refresh_token', refresh_token);
+      window.localStorage.setItem('id_token', id_token);
+      accessToken = payload;
+      console.log("User access token", payload);
     });
   }
 }
@@ -329,17 +355,21 @@ export class CallbackComponent {
 
 </Tabs>
 
+<details><summary>What is included in the tokens response?</summary>
+
 **Tokens Response example**   
-This is shows the structure of the token response.
+This is the anatomy of the tokens response.
 ```json
 {
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "access_token": "eyJhbGciOiJQ...",
-  "refresh_token": "eyJhbGciOiJQ...",
-  "id_token": "eyJhbGciOiJQ...",
+  "token_type": "Bearer", // Token type
+  "expires_in": 3600, // How long the access token is valid (in seconds)
+  "access_token": "eyJhbGciOiJQ...", // The access token
+  "refresh_token": "eyJhbGciOiJQ...", // The refresh token used to generate new access tokens
+  "id_token": "eyJhbGciOiJQ...", // The OpenID token (user profile)
 }
 ```
+
+</details>
 
 :::tip
 
@@ -353,3 +383,9 @@ Curious in what more ways you can use the  `/token/code` endpoint? See the [API 
 ### See all the nice stuff
 ### Get signup link and signup
 ### See the console that the user is logged in
+:::tip Didn't the callback work?
+
+Make sure your application is running on port 8080. That is the most common misstake.
+If not, check the prerequisites section again to learn how to use another port than 8080.
+
+:::
