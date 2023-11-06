@@ -51,7 +51,7 @@ export default function UserList() {
 
     // Get the handover code from Nblocks
     const result = await fetch(
-      `https://auth-stage.nblocks.cloud/handover/code/${APP_ID}`,
+      `https://auth.nblocks.cloud/handover/code/${APP_ID}`,
       {
         method: "POST",
         headers: {
@@ -65,7 +65,7 @@ export default function UserList() {
 
     // Create the user management portal url
     setUrl(
-      `https://backendless-stage.nblocks.cloud/user-management-portal/users?code=${result.code}`
+      `https://backendless.nblocks.cloud/user-management-portal/users?code=${result.code}`
     );
   };
 

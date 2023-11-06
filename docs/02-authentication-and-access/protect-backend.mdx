@@ -48,9 +48,9 @@ The token is encoded in a format called [JWT](https://jwt.io) for greater portab
     "exp": 1685652018,
     "aud": [
         "63d2ab029e23db0afb07a5a7",
-        "https://app-stage.nblocks.cloud"
+        "https://app.nblocks.cloud"
     ],
-    "iss": "https://auth-stage.nblocks.cloud",
+    "iss": "https://auth.nblocks.cloud",
     "sub": "63d2b5c18892e10022e083a2"
 }
 
@@ -109,12 +109,12 @@ const jwtMiddleware = async (req, res, next) => {
     try {
       // Get the public key to verify the token signed by Nblocks
       const JWKS = createRemoteJWKSet(
-        new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
+        new URL('https://auth.nblocks.cloud/.well-known/jwks.json')
       );
 
       // Deconstruct user from the verified token and store the decoded information in a variable that can be used by other middlewares
       const { payload: user } = await jwtVerify(
-        req.headers['authorization'], JWKS, { issuer: 'https://auth-stage.nblocks.cloud' }
+        req.headers['authorization'], JWKS, { issuer: 'https://auth.nblocks.cloud' }
       );
       req.user = user;
       next();

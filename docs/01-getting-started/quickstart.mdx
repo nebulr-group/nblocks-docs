@@ -41,7 +41,7 @@ However, if you have a specific need not covered by this quickstart yet, you'll 
 Nblocks is using sensible defaults to make development and integrations simpler. 
 To use another application address you need to change your app profile configuration.
 
-**Using [Nblocks Admin](https://admin-stage.nblocks.cloud)**
+**Using [Nblocks Admin](https://admin.nblocks.cloud)**
 
 The easiest way to do so is configuring your callback URLs in the [authentication settings](./authentication-settings#security)
 
@@ -71,7 +71,7 @@ npx @nebulr-group/nblocks-cli push-app
 
 ### Add a redirect action
 Open your project source code in an editor of your choice. 
-Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth-stage.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
+Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
 
 A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing common concept and available for most framework.
 
@@ -91,7 +91,7 @@ export default function Login() {
   // highlight-end
 
   // Immediately redirect the web browser to Nblocks login
-  window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  window.location.replace(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
   return ("");
 }
 ```
@@ -113,7 +113,7 @@ export default function Login() {
   // highlight-end
 
   // Immediately redirect the web browser to Nblocks login
-  redirect(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+  redirect(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
 }
 ```
 </TabItem>
@@ -134,7 +134,7 @@ export class Login {
     // highlight-end
 
     // Immediately redirect the web browser to Nblocks login
-    window.location.replace(`https://auth-stage.nblocks.cloud/url/login/${APP_ID}`);
+    window.location.replace(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
   }
 }
 ```
@@ -161,7 +161,7 @@ The URL containing the code token will look like this: `http://localhost:8080/au
 Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
 
 Then we will exchange this code token it for more useful user profile information. 
-Your app should make an API call to the Nblocks "Token" endpoint at `https://auth-stage.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
+Your app should make an API call to the Nblocks "Token" endpoint at `https://auth.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
 
 :::tip Decoding and verifying JWTs
@@ -201,7 +201,7 @@ export default function Callback() {
 
   const handleCallback = async (code) => {
     // Get tokens
-    const tokens = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+    const tokens = await fetch(`https://auth.nblocks.cloud/token/code/${APP_ID}`,
       {
         method: "POST", headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ code }),
@@ -212,8 +212,8 @@ export default function Callback() {
     const { access_token, refresh_token, id_token } = tokens;
     const { payload } = await jwtVerify(
       access_token, createRemoteJWKSet(
-          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
-      ), { issuer: 'https://auth-stage.nblocks.cloud' }
+          new URL('https://auth.nblocks.cloud/.well-known/jwks.json')
+      ), { issuer: 'https://auth.nblocks.cloud' }
     );
 
     // Store the result in component state and localstorage
@@ -264,7 +264,7 @@ export default function Callback() {
 
   const handleCallback = async (code) => {
     // Get tokens
-    const tokens = await fetch(`https://auth-stage.nblocks.cloud/token/code/${APP_ID}`,
+    const tokens = await fetch(`https://auth.nblocks.cloud/token/code/${APP_ID}`,
       {
         method: "POST", headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ code }),
@@ -275,8 +275,8 @@ export default function Callback() {
     const { access_token, refresh_token, id_token } = tokens;
     const { payload } = await jwtVerify(
       access_token, createRemoteJWKSet(
-          new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
-      ), { issuer: 'https://auth-stage.nblocks.cloud' }
+          new URL('https://auth.nblocks.cloud/.well-known/jwks.json')
+      ), { issuer: 'https://auth.nblocks.cloud' }
     );
 
     // Store the result in component state and localstorage
@@ -324,15 +324,15 @@ export class Callback {
 
   private handleCallback(code: string) {
     // Get tokens
-    this.http.post(`https://auth-stage.nblocks.cloud/token/code/${this.APP_ID}`, {
+    this.http.post(`https://auth.nblocks.cloud/token/code/${this.APP_ID}`, {
       code: code
     }).subscribe((tokens) => {
       // Verify the tokens result using public keys from Nblocks JWKS
       const { access_token, refresh_token, id_token } = tokens;
       const { payload } = await jwtVerify(
         access_token, createRemoteJWKSet(
-            new URL('https://auth-stage.nblocks.cloud/.well-known/jwks.json')
-        ), { issuer: 'https://auth-stage.nblocks.cloud' }
+            new URL('https://auth.nblocks.cloud/.well-known/jwks.json')
+        ), { issuer: 'https://auth.nblocks.cloud' }
       );
 
       // Store the result in component state and localstorage

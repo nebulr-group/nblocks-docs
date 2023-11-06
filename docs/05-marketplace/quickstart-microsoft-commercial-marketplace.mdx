@@ -67,7 +67,7 @@ Click "Azure Active Directory" -> "App registrations" -> "New registration" once
 
 Name the new app to anything you want but remember that users will see this name when they login with Microsoft.
 Select "Multitenant" as the supported account type.
-Under "Redirect URI" select "Web" and add the URI `https://auth-stage.nblocks.cloud/federated/ms-azure-ad/return` and click "Register".
+Under "Redirect URI" select "Web" and add the URI `https://auth.nblocks.cloud/federated/ms-azure-ad/return` and click "Register".
 
 ![Create app](../assets/microsoft-marketplace/create-app-sso.png)
 
@@ -87,7 +87,7 @@ Copy the below cURL code and paste it into your terminal fr om anywhere.
 You'll need to add your own [app api key](/docs/getting-started/id-and-keys) to the `x-api-key` header.
 
 ```shell
-curl --request PUT 'https://account-api-stage.nebulr-core.com/app/credentials' \
+curl --request PUT 'https://account-api.nebulr-core.com/app/credentials' \
 --header 'x-api-key: YOUR_APP_API_KEY' \
 --data-raw '{
     "microsoftAzureADClientId": "XXXXXXX",
@@ -121,8 +121,8 @@ Click "New offer", select "Software as a Service" and name your offer to anythin
 
 In your new offer, click "Technical configuration".
 
-- In "Landing page URL", add your unique landing page url which is `https://account-api-stage.nebulr-core.com/ms-azure-marketplace/signup/APP_ID`
-- In "Connection webhook" add your unique webhook url which is `https://account-api-stage.nebulr-core.com/ms-azure-marketplace/webhook/APP_ID`
+- In "Landing page URL", add your unique landing page url which is `https://account-api.nebulr-core.com/ms-azure-marketplace/signup/APP_ID`
+- In "Connection webhook" add your unique webhook url which is `https://account-api.nebulr-core.com/ms-azure-marketplace/webhook/APP_ID`
 - In "Azure Active Directory tenant ID" add your marketplace integration app tenant id.
 - In "Azure Active Directory application ID" add your marketplace integration app client id.
 

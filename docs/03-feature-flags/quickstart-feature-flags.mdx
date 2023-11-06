@@ -34,7 +34,7 @@ Some use cases for feature flags are:
 The integration essentially consists of requesting an evaluation of a flag by providing information about the current user and then handling the evaluation response.
 For the purpose of this quickstart we'll attach the user access token that will have Nblocks automatically resolve all the information that's necessary for evaluating a flag.
 
-Here's an [example](https://backendless-stage.nblocks.cloud/flags/evaluate/APP_ID/flag) of the anatomy of a evaluation response.
+Here's an [example](https://backendless.nblocks.cloud/flags/evaluate/APP_ID/flag) of the anatomy of a evaluation response.
 
 Now, let's integrate this into our app!
 
@@ -81,7 +81,7 @@ export default function FeatureFlag({ flag, children }) {
 
   const evaluate = async (accessToken) => {
     const result = await fetch(
-      `https://backendless-stage.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
+      `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
       {
         method: 'POST',
         headers: {
@@ -169,7 +169,7 @@ export default function FeatureFlag({ flag, children}) {
 
   const evaluate = async (accessToken) => {
     const result = await fetch(
-      `https://backendless-stage.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
+      `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
       {
         method: 'POST',
         headers: {
@@ -221,7 +221,7 @@ Now when we have the flag names sorted out and integrated in the code we can go 
 ## Managing flags in Nblocks Admin
 When signing up for Nblocks you also got access to Nblocks Admin where you can customize and make changes to your app configuration and access other features.
 
-Go to [Nblocks Admin](https://admin-stage.nblocks.cloud) and login.
+Go to [Nblocks Admin](https://admin.nblocks.cloud) and login.
 
 In this part we'll be creating a feature flag that matches your flag ID in code and define who should have access to it
 
