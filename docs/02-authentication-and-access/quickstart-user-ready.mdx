@@ -319,6 +319,8 @@ export class CallbackComponent {
       // Store the result in component state and localstorage
       this.tokens = response;
       window.localStorage.setItem('access_token', result.access_token);
+      window.localStorage.setItem('refresh_token', result.refresh_token);
+      window.localStorage.setItem('id_token', result.id_token);
     });
   }
 }
