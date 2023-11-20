@@ -300,48 +300,53 @@ export default function Callback() {
 Create a new component that we call `Callback` and add this to the `/auth/` route. In Angular routes can be created with the built in **RouterModule**.
 
 ```ts
-import { jwtVerify, createRemoteJWKSet } from "jose";
+import { jwtVerify, createRemoteJWKSet } from 'jose';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 
 @Component({
-  template: '<div><p *ngIf="!tokens">Not logged in</p><p *ngIf="tokens">Hello {{tokens.user_profile.name}}</p></div>',
+  template: '<div>Logging in...</div>',
 })
-
 export class Callback {
-
   // Replace this with your own APP ID
   // highlight-start
-  private APP_ID = "XXX";
+  const APP_ID = "XXX";
   // highlight-end
 
   private accessToken: any;
 
-  constructor(
-    private route: ActivatedRouteSnapshot,
-    private http: HttpClient,
-  ) {
-    this.handleCallback(this.route.queryParams['code'])
+  constructor(private activatedRoute: ActivatedRoute, private http: HttpClient) {
+    const code = this.activatedRoute.queryParams['code'];
+    if (code) {
+      this.handleCallback(this.activatedRoute.queryParams['code']);
+    }
   }
 
   private handleCallback(code: string) {
     // Get tokens
-    this.http.post(`https://auth.nblocks.cloud/token/code/${this.APP_ID}`, {
-      code: code
-    }).subscribe((tokens) => {
-      // Verify the tokens result using public keys from Nblocks JWKS
-      const { access_token, refresh_token, id_token } = tokens;
-      const { payload } = await jwtVerify(
-        access_token, createRemoteJWKSet(
+    this.http
+      .post(`https://auth.nblocks.cloud/token/code/${this.APP_ID}`, {
+        code: code,
+      })
+      .subscribe(async (tokens: any) => {
+        // Verify the tokens result using public keys from Nblocks JWKS
+        const { access_token, refresh_token, id_token } = tokens;
+        const { payload } = await jwtVerify(
+          access_token,
+          createRemoteJWKSet(
             new URL('https://auth.nblocks.cloud/.well-known/jwks.json')
-        ), { issuer: 'https://auth.nblocks.cloud' }
-      );
+          ),
+          { issuer: 'https://auth.nblocks.cloud' }
+        );
 
-      // Store the result in component state and localstorage
-      window.localStorage.setItem('access_token', access_token);
-      window.localStorage.setItem('refresh_token', refresh_token);
-      window.localStorage.setItem('id_token', id_token);
-      accessToken = payload;
-      console.log("User access token", payload);
-    });
+        // Store the result in component state and localstorage
+        window.localStorage.setItem('access_token', access_token);
+        window.localStorage.setItem('refresh_token', refresh_token);
+        window.localStorage.setItem('id_token', id_token);
+        this.accessToken = payload;
+        console.log('User access token', payload);
+      });
   }
 }
 
@@ -418,10 +423,38 @@ If not, check the prerequisites section again to learn how to use another port t
 
 :::
 
+## Step 4: Exploring the dashboard in Nblocks Admin
+Congratulations! You’ve successfully integrated Nblocks into your app, enabling seamless user authentication and plan selection. Now, let’s dive into the dashboard, where you can further customize and manage your application’s features.
+
+### Admin Overview:
+- **Alternative Authentication Methods:** Choose from a variety of authentication options, including social logins and two-factor authentication, to enhance security and user convenience.
+- **Payment Method Setup:** Easily integrate your preferred payment methods to streamline the billing process.
+- **User Role Management:** Define and manage user roles, tailoring access and permissions to fit your application’s needs.
+- **Branding Customization:** Adjust the look and feel of your login and signup flows from the Branding tab to align with your app’s aesthetic.
+
+![Nblocks Admin overview](../assets/dev-onboarding/nblocks-admin-overview.gif)
+
+### Feature Flags:
+One of the most powerful tools in your arsenal, feature flags, allows you to control feature access based on payment plans, user roles, or even specific users or workspaces. 
+Learn how to get started with feature flags [here](/docs/feature-flags/quickstart-feature-flags).
+
+![Nblocks Admin overview](../assets/feature-flags/feature-flags-overview.png)
+
+### Workspace and User Management:
+Get a comprehensive view of all Workspaces and the users within each, enabling efficient management and oversight.
+
+## Next Steps:
+- Explore each section of the dashboard to familiarize yourself with its capabilities.
+- Experiment with different settings to find what works best for your application.
+
+If you need help or have questions, connect to us via our [support](mailto:support@nblocks.dev) and [community forum](https://discord.gg/kjWYdZ6f6G).
+
+We’re excited to see how you leverage Nblocks to enhance your application. If you have any feedback or suggestions, please let us know!
+
 That concludes this quickstart. You have just added all these capabilities with only two app routes and you signed up as a new user.
 
-## Next steps
+## Related articles
 * Add [feature flags](/docs/feature-flags/quickstart-feature-flags) to conditionally show and hide content to your users.
-* Fine tune how users can login and sign up via [Authentication Settings](/docs/authentication-and-access/authentication-settings).
+* Fine tune how users can login and sign up via [authentication settings](/docs/authentication-and-access/authentication-settings).
 * See best practices on how to use tokens to protect your [frontend](/docs/authentication-and-access/protect-frontend) or [backend](/docs/authentication-and-access/protect-backend).
 * Customize the appearance with [branding](/docs/branding/quickstart-branding).
