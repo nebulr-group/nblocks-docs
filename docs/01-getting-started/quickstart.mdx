@@ -387,20 +387,13 @@ Curious in what more ways you can use the  `/token/code` endpoint? See the [API 
 ### 1. Start your app
 Start your application so that it is accessible on [http://localhost:8080](http://localhost:8080)
 
-### 2. Login to Nblocks Admin and copy your app's signup link.
-Open a browser tab and login to [Nblocks Admin](https://admin.nblocks.cloud).
+### 2. Navigate to /login and get redirected to Nblocks Login
+Open a browser tab and navigate to your apps' login url [http://localhost:8080/login](http://localhost:8080/login).
 
-Nblocks has created a nice set of default data like app roles and payment plans that we will use in this test. Go ahead and have a look around.
-If you click *Workspaces* you'll see that no one has signed up for your app yet. This is what we'll be changing now.
+Your new code redirects the user to Nblocks Login.
 
-Click *Authentication* and choose the *Signup* tab. Click *Signup link without plan* to copy the link to your clipboard.
-
-![Signup links](../assets/dev-onboarding/signup-links.png)
-
-### 3. Use the link to sign up as a new user to your app
-The link you've copied is a unique sign up link for new users to sign up to your app.
-
-Open a new browser tab and paste the link into the address bar and hit enter.
+### 3. Sign up as a new user and return back to your app
+Click "Sign up"  button on the bottom of the login screen and you come to the signup screen.
 
 ![Sign up](../assets/nblocks-login/signup-screen.png)
 
@@ -409,10 +402,9 @@ Click to sign up with Google or Microsoft. If you don't have a Google or MS emai
 Straight after sign up you will be presented with the payment screen that asks you to pick one of your app's plans.
 ![Pick a plan](../assets/payments/select-plan-screen.png)
 
-### 4. Return to your app as a logged in user
 After selecting a plan you get redirected back to your application again, to the callback route. 
 The secure code gets exchanged to secure tokens and you're now authenticated. 
-Open the console and you should see the full access token that we're printing from the component.
+Open the console and you should see user profile information that we're printing from the component.
 
 This user and the new workspace is now listed on the *Workspaces* page in [Nblocks Admin](https://admin.nblocks.cloud).
 
