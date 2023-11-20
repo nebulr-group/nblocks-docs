@@ -25,12 +25,12 @@ However, if you have a specific need not covered by this quickstart yet, you'll 
 
 :::info Prerequisites
 
-1. You have completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) and have access to the tokens obtained from the logged in user.
+1. You have completed the [Quickstart](/docs/getting-started/quickstart) and have access to the tokens obtained from the logged in user.
 
 :::
 
 ## Short info about the access token
-When you completed the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login) you got hold of a couple of tokens that was signed securely by Nblocks.
+When you completed the [Quickstart](/docs/getting-started/quickstart) you got hold of a couple of tokens that was signed securely by Nblocks.
 One of them, the access token holds the users access information and this information can be used to protect your app.
 The token is encoded in a format called [JWT](https://jwt.io) for greater portability and security. If we decode the access token it looks like this:
 
@@ -71,7 +71,7 @@ In the structure above we highlighted the parts that we'll be focusing on in thi
 ### How will the user provide the token to the backend on each request?
 
 * If your developing an application with both a backend and a frontend it is best practise to let the frontend attach the access token as an `authorization` header on each request to the backend.
-* When developing a backend only application you could either still resort to clients providing the `authorization` header in each request or store the accessToken in a session cookie once you obtained it in the [Quickstart User Login](/docs/authentication-and-access/quickstart-user-login). Clients will provide this cookie automatically on every future request.
+* When developing a backend only application you could either still resort to clients providing the `authorization` header in each request or store the accessToken in a session cookie once you obtained it in the [quickstart](/docs/getting-started/quickstart). Clients will provide this cookie automatically on every future request.
 
 ## Step 1. Protect an endpoint with role based access control
 
