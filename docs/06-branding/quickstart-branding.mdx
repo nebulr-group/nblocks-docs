@@ -1,9 +1,9 @@
 ---
-sidebar_position: 3
-sidebar_label: Quickstart Branding
+sidebar_position: 1
+sidebar_label: Branding
 tags:
     - frontend
-    - user management
+    - branding
     - tutorial
     - quickstart
 ---
@@ -11,159 +11,70 @@ tags:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Quickstart Branding
+# Branding
 
-In this quickstart we'll apply branding to the Nblocks hosted views like Nblock Login and User management portal.
+The **Customization** page within the [Nblocks Admin Portal](https://admin.nblocks.cloud) enables you to tailor the appearance of Nblocks-hosted views, such as the login and user management portal, to your brand guidelines.
 
-We'll accomplish this in three steps:
-1. Change the logo
-1. Change the colors and fonts using CSS
-1. Override a specific button text with our own text
-
-At the end of this quickstart you'll take the default brand from this.
+This quickstart will guide you from the default brand display:
 
 ![Without branding](../assets/branding/login-screen.png)
 
-To something like this:
+Into a customized, branded interface:
 
 ![With branding](../assets/branding/branding-example.png)
 
 :::info Prerequisites
 
-1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id and api key](/docs/getting-started/id-and-keys) 
+Before proceeding, ensure you have an account by [signing up](/docs/getting-started/signup) with Nblocks.
 
 :::
 
-## Step 1. Change your logo
-First up is changing the logo. Your logo is displayed on both Nblocks login and emails that Nblocks sends on your behalf. The logo is part of your app profile and can easily be changed by pushing an updated JSON body with the `logo` property to the `/app` endpoint.
+We will achieve this by:
+* Modifying our app properties, including the name and logo
+* Use the brand designer to set colors and fonts
 
-The `logo` property should be URL to a image on the internet. Here's an example:
+## App Properties
+![App properties](../assets/branding/app-properties.png)
 
-```json
-{
-    "logo": "https://nebulr-public-assets.s3.eu-west-1.amazonaws.com/acme-logo.png"
-}
-```
-
-#### Example code
-
-<Tabs>
-<TabItem value="curl" label="cURL" default>
-
-Copy the below cURL code and paste it into your terminal from anywhere.
-
-You'll need to add your own [app api key](/docs/getting-started/id-and-keys) to the `x-api-key` header.
-
-```shell
-curl --location --request PUT 'https://account-api.nebulr-core.com/app' \
---header 'x-api-key: XXXX' \
---header 'Content-Type: application/json' \
---data '{
-    "logo": "https://nebulr-public-assets.s3.eu-west-1.amazonaws.com/acme-logo.png"
-}'
-```
+Here, you can update your app's name and provide links to your privacy policy and terms of service. Additionally, you have the option to upload your own logo, which will be displayed on the Nblocks login and in the emails Nblocks sends on your behalf.
+![Upload logo](../assets/branding/upload-logo.png)
 
 :::tip
 
-Curious in what more ways you can use the  `/app` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#update-app-profile)
+Interested in exploring more app properties? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#update-app-profile).
 
 :::
-</TabItem>
 
-</Tabs>
+## Brand Designer
+![Brand designer](../assets/branding/brand-designer.png)
 
-## Step 2. Change the styling using custom CSS
+To easily customize your Nblocks theme, use the brand designer. Here, you can adjust:
+* **Font**
+* **Colors** for the background, text, and buttons
+* **Border Radius** in your preferred unit
+* **Drop Shadow** for input fields and buttons
 
-We're going to change the brand primary color, the body background and also the font-family. This can be done with a CSS file like this:
+Your changes will appear in the preview to the right.
 
-```css
-html,body { background-color: #00ff8629 !important; }
+Select *Reset to default* to revert to the original branding and remove all custom settings in the brand designer.
 
-:root {
-    --color-primary-50: 0 48 255;
-    --color-primary-100: 0 43 230;
-    --color-primary-200: 0 38 204;
-    --color-primary-300: 0 34 179;
-    --color-primary-400: 0 29 153;
-    --color-primary-500: 0 24 128;
-    --color-primary-600: 0 19 102;
-    --color-primary-700: 0 14 76;
-    --color-primary-800: 0 10 51;
-    --color-primary-900: 0 0 0;
+For more precise control beyond what the designer offers, switch to the *Custom mode*.
 
-    --font-body: monospace !important;
-    --font-paragraph: monospace !important;
-    --font-heading: monospace !important;
-}
-```
+### Custom Mode
+![Custom mode](../assets/branding/custom-mode.png)
+
+Custom Mode allows you to upload your own CSS file, offering complete control over your branding.
 
 :::tip
-You can see more examples and a base CSS file in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#set-custom-css)
+You can see how to accomplish this using the API and access an example CSS file in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#set-custom-css)
 :::
 
-#### Example code
+## Testing Your Branding
+To view your new branding, open a new browser tab and navigate to the Nblocks Login page.
+Copy the following link, paste it into a new tab, and substitute 'APP_ID' with your specific app identifier:
 
-<Tabs>
-<TabItem value="curl" label="cURL" default>
-
-Copy the below cURL code and paste it into your terminal from anywhere.
-
-You'll need to add your own [app api key](/docs/getting-started/id-and-keys) to the `x-api-key` header.
-
-```shell
-curl --location 'https://backendless.nblocks.cloud/brand/css' \
---header 'x-api-key: XXXX' \
---header 'Content-Type: application/json' \
---data '{
-    "content": "html,body { background-color: #00ff8629 !important; } :root { --color-primary-50: 0 48 255; --color-primary-100: 0 43 230; --color-primary-200: 0 38 204; --color-primary-300: 0 34 179; --color-primary-400: 0 29 153; --color-primary-500: 0 24 128; --color-primary-600: 0 19 102; --color-primary-700: 0 14 76; --color-primary-800: 0 10 51; --color-primary-900: 0 0 0; --font-body: monospace !important; --font-paragraph: monospace !important; --font-heading: monospace !important; }"
-}'
-```
-
-</TabItem>
-
-</Tabs>
-
-
-## Step 3. Change a text entry using custom translation
-In the final step, we're going to override the translations by providing a JSON body of key value pairs. Here we want to change the login button to say "Log in" instead of "Sign in".
-
-```json
-{
-    "Sign in": "Log in"
-}
-```
-:::tip
-You can see more examples and a complete translation file in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#set-custom-translations)
-:::
-
-#### Example code
-
-<Tabs>
-<TabItem value="curl" label="cURL" default>
-
-Copy the below cURL code and paste it into your terminal from anywhere.
-
-You'll need to add your own [app api key](/docs/getting-started/id-and-keys) to the `x-api-key` header.
-
-```shell
-curl --location 'https://backendless.nblocks.cloud/brand/translations' \
---header 'x-api-key: XXXX' \
---header 'Content-Type: application/json' \
---data '{
-    "Sign in": "Log in"
-}'
-```
-
-</TabItem>
-
-</Tabs>
-
-## Test it
-To see how the new branding was applied you can open up a new tab and navgigate to Nblocks Login.
-
-Copy this link, paste it into a new browser tab and replace the APP_ID to your own app id
 ```
 https://auth.nblocks.cloud/url/login/APP_ID
 ```
 
-**That's it!** You're done with this quickstart.
+**That's it!** You're now ready to start designing your app.
