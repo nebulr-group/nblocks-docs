@@ -1,0 +1,35 @@
+---
+sidebar_position: 3
+sidebar_label: Translations
+tags:
+    - frontend
+    - translations
+    - tutorial
+    - quickstart
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Custom Translations
+Override the default translations in Nblocks hosted views by supplying a JSON object with key-value pairs. For example, to alter the login button text from "Sign in" to "Log in," use the following JSON:
+
+```json
+{
+    "Sign in": "Log in"
+}
+```
+To apply these custom translations, execute the cURL command below in your terminal. Ensure you replace 'XXXX' with your actual app API key in the x-api-key header.
+
+```shell
+curl --location 'https://backendless.nblocks.cloud/brand/translations' \
+--header 'x-api-key: XXXX' \
+--header 'Content-Type: application/json' \
+--data '{
+    "Sign in": "Log in"
+}'
+```
+
+:::tip
+Explore additional examples and access the complete translation file in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#set-custom-translations).
+:::
