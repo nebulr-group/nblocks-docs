@@ -106,6 +106,111 @@ Add this component to render on the route `/selectPlan` and create a subscriptio
 Great! When you render this component the user will be redirected to select plan view. 
 </TabItem>
 
+<TabItem value="java" label="Java">
+
+Create a new servlet called `PaymentServlet`.
+
+```java
+package com.mycompany.app;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONObject;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class PaymentServlet extends HttpServlet {
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+    private static final String HANDOVER_URL = "https://auth.nblocks.cloud/handover/code/" + APP_ID;
+    private static final String PAYMENT_URL = "https://backendless.nblocks.cloud/subscription-portal/selectPlan?code=";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            // Extract the access token from the Authorization header
+            String authHeader = request.getHeader("Authorization");
+            String accessToken = authHeader.substring("Bearer ".length());
+
+            // Prepare the request
+            JSONObject requestBody = new JSONObject().put("accessToken", accessToken);
+
+            HttpRequest flagsRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(HANDOVER_URL))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                    .build();
+
+            // Send the request
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpResponse<String> handoverResponse = client.send(flagsRequest, HttpResponse.BodyHandlers.ofString());
+            // Extract handover code from response
+            JSONObject handover = new JSONObject(handoverResponse.body());
+            String handoverCode = handover.getString("code");
+            
+            if (handoverCode == null) {
+                throw new Exception("Handover code is null");
+            }
+            
+            // Redirect to Nblocks Payments
+            response.sendRedirect(PAYMENT_URL + handoverCode);
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+}
+```
+
+Add this servlet to your app under a `/payment` endpoint:
+```java
+package com.mycompany.app;
+
+import java.util.EnumSet;
+import java.util.List;
+
+import javax.servlet.DispatcherType;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+public class App {
+
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(8080);
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        server.setHandler(context);
+
+        // ... other endpoints
+        // highlight-start
+        context.addServlet(new ServletHolder(new PaymentServlet()), "/payment");
+        // highlight-end
+
+        server.start();
+        server.join();
+    }
+}
+```
+
+Great! When you call the `/payment` endpoint the user will be redirected to select plan view. 
+</TabItem>
+
 <TabItem value="pseudo" label="Can't find your stack?" default>
   <PseudoCode/>
 </TabItem>

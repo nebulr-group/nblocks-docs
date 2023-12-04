@@ -73,7 +73,7 @@ npx @nebulr-group/nblocks-cli push-app
 Open your project source code in an editor of your choice. 
 Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
 
-A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing common concept and available for most framework.
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing is a common concept and available for most frameworks.
 
 #### Example code
 <Tabs>
@@ -141,6 +141,37 @@ export class Login {
 
 </TabItem>
 
+<TabItem value="java" label="Java" default>
+
+Create a new class that we call `LoginServlet` and add this to the `/login` route. In Java, routes can be created in a **Jetty** web server.
+
+```java title=src/main/java/com/mycompany/app/LoginServlet.java
+package com.mycompany.app;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+class LoginServlet extends HttpServlet {
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+    private static final String LOGIN_URL = "https://auth.nblocks.cloud/url/login/";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(LOGIN_URL + APP_ID);
+    }
+}
+```
+
+</TabItem>
+
 <TabItem value="pseudo" label="Can't find your stack?" default>
   <PseudoCode/>
 </TabItem>
@@ -160,7 +191,7 @@ The URL containing the code token will look like this: `http://localhost:8080/au
 ### Add a callback route and use the code to exchange for user tokens
 Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
 
-Then we will exchange this code token it for more useful user profile information. 
+Then we will exchange this code token for more useful user profile information. 
 Your app should make an API call to the Nblocks "Token" endpoint at `https://auth.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
 The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
 
@@ -350,6 +381,97 @@ export class Callback {
   }
 }
 
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+Create a new class that we call `CallbackServlet` and add this to the `/auth/oauth-callback` route. In Java, routes can be created in a **Jetty** web server.
+
+```java title=src/main/java/com/mycompany/app/CallbackServlet.java
+package com.mycompany.app;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
+import org.json.JSONObject;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jwk.HttpsJwks;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwt.JwtClaims;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class CallbackServlet extends HttpServlet {
+
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+    private static final String JWKS_URL = "https://auth.nblocks.cloud/.well-known/jwks.json";
+    private static final String TOKEN_URL = "https://auth.nblocks.cloud/token/code/" + APP_ID;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String code = request.getParameter("code");
+
+        JSONObject requestBody = new JSONObject().put("code", code);
+
+        HttpRequest tokenRequest = HttpRequest.newBuilder()
+                .uri(URI.create(TOKEN_URL))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                .build();
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        try {
+            // Get tokens
+            HttpResponse<String> tokens = client.send(tokenRequest, HttpResponse.BodyHandlers.ofString());
+
+            String responseBody = tokens.body();
+            JSONObject responseJson = new JSONObject(responseBody);
+            String accessToken = responseJson.getString("access_token");
+
+            // Verify the tokens result using public keys from Nblocks JWKS
+            HttpsJwks httpsJkws = new HttpsJwks(JWKS_URL);
+            HttpsJwksVerificationKeyResolver httpsJwksKeyResolver = new HttpsJwksVerificationKeyResolver(httpsJkws);
+
+            JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                    .setVerificationKeyResolver(httpsJwksKeyResolver)
+                    .setExpectedIssuer("https://auth.nblocks.cloud")
+                    .setExpectedAudience(APP_ID)
+                    .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.PERMIT,
+                            AlgorithmIdentifiers.RSA_PSS_USING_SHA256))
+                    .build();
+
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(accessToken);
+
+            System.out.println("Token verified and processed: " + jwtClaims);
+
+            // Return token to client
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(accessToken);
+
+        } catch (InterruptedException | InvalidJwtException e) {
+            e.printStackTrace();
+        }
+    }
+}
 ```
 
 </TabItem>
