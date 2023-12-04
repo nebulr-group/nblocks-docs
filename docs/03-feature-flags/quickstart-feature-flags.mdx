@@ -214,6 +214,117 @@ Like this, where the changes are highlighted:
 
 </TabItem>
 
+<TabItem value="java" label="Java">
+
+Imagine you're developing a new AI-model, and want to easily switch between the new and the old model:
+
+```java
+if (useNewModel) {
+    // Logic for new model
+    response.getWriter().write("Running new model");
+    return;
+} else {
+    // Logic for old model
+    response.getWriter().write("Running old model");
+    return;
+}
+```
+
+To conditionally run the new model, we can create a new class called `FeatureFlags`:
+
+```java title=src/main/java/com/mycompany/app/FeatureFlag.java
+package com.mycompany.app;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONObject;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class FeatureFlag {
+
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+
+    private static final String FEATURE_FLAG_URL = "https://backendless.nblocks.cloud/flags/evaluate/" + APP_ID + "/";
+
+    public static Boolean evaluateFlag(String flagId, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            // Extract the access token from the Authorization header
+            String authHeader = request.getHeader("Authorization");
+            String accessToken = authHeader.substring("Bearer ".length());
+
+            // Prepare the request
+            JSONObject requestBody = new JSONObject().put("accessToken", accessToken);
+
+            HttpRequest flagsRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(FEATURE_FLAG_URL + flagId))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                    .build();
+
+            // Send the request
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpResponse<String> flagResponse = client.send(flagsRequest, HttpResponse.BodyHandlers.ofString());
+            // Extract flag status from response
+            String flagResponseBody = flagResponse.body();
+            JSONObject flag = new JSONObject(flagResponseBody);
+
+            return flag.getBoolean("enabled");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
+```
+
+Now we can use the `evaluateFlag` method anywhere in your app to conditionally run operations, such as the new model.
+Like in this `ModelServlet`:
+
+```java
+package com.mycompany.app;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class ModelServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            Boolean useNewModel = FeatureFlag.evaluateFlag("new-model", request, response);
+            if (useNewModel) {
+                // Logic for new model
+                response.getWriter().write("Running new model");
+                return;
+            } else {
+                // Logic for old model
+                response.getWriter().write("Running old model");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 Now when we have the flag names sorted out and integrated in the code we can go ahead and create them in Nblocks Admin.

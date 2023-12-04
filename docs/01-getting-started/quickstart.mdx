@@ -387,9 +387,9 @@ export class Callback {
 
 <TabItem value="java" label="Java">
 
-Create a new class that we call `Callback` and add this to the `/auth/oauth-callback` route. In Java, routes can be created in a **Jetty** web server.
+Create a new class that we call `CallbackServlet` and add this to the `/auth/oauth-callback` route. In Java, routes can be created in a **Jetty** web server.
 
-```java title=src/main/java/com/mycompany/app/Callback.java
+```java title=src/main/java/com/mycompany/app/CallbackServlet.java
 package com.mycompany.app;
 
 import java.io.IOException;
@@ -414,7 +414,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Callback extends HttpServlet {
+public class CallbackServlet extends HttpServlet {
 
     // Replace this with your own APP ID
     // highlight-start
@@ -439,13 +439,14 @@ public class Callback extends HttpServlet {
         HttpClient client = HttpClient.newHttpClient();
 
         try {
-
+            // Get tokens
             HttpResponse<String> tokens = client.send(tokenRequest, HttpResponse.BodyHandlers.ofString());
 
             String responseBody = tokens.body();
             JSONObject responseJson = new JSONObject(responseBody);
             String accessToken = responseJson.getString("access_token");
 
+            // Verify the tokens result using public keys from Nblocks JWKS
             HttpsJwks httpsJkws = new HttpsJwks(JWKS_URL);
             HttpsJwksVerificationKeyResolver httpsJwksKeyResolver = new HttpsJwksVerificationKeyResolver(httpsJkws);
 
@@ -461,6 +462,7 @@ public class Callback extends HttpServlet {
 
             System.out.println("Token verified and processed: " + jwtClaims);
 
+            // Return token to client
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(accessToken);

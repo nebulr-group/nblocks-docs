@@ -206,6 +206,268 @@ app.use("/secret/*", protectedRoute({roles: ['ADMIN']}));
 
 </TabItem>
 
+<TabItem value="java" label="Java">
+
+Imagine you have declared two endpoints, `/protected/dashboardData` and `/protected/analyticsData` in your Java app like this.
+```java
+package com.mycompany.app;
+
+import java.util.EnumSet;
+import java.util.List;
+
+import javax.servlet.DispatcherType;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(8080);
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        server.setHandler(context);
+
+        context.addServlet(new ServletHolder(new LoginServlet()), "/login");
+        context.addServlet(new ServletHolder(new CallbackServlet()), "/auth/oauth-callback");
+        // highlight-start
+        context.addServlet(new ServletHolder(new DashboardDataServlet()), "/protected/dashboardData");
+        context.addServlet(new ServletHolder(new AnalyticsDataServlet()), "/protected/analyticsData");
+        // highlight-end
+
+        server.start();
+        server.join();
+    }
+}
+```
+
+We want both of the endpoints to require the user to be logged in before rendering a result. 
+The `/analyticsData` endpoint should only be accessable for users with the privilege `ANALYTICS_READ`.
+All this can easily be done with two Java servlet filters:
+
+Create a new Filter class, `JwtFilter`, in which we declare the verification of JWTs:
+```java
+package com.mycompany.app;
+
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jwk.HttpsJwks;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class JwtFilter implements Filter {
+
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+
+    public static JwtClaims verifyJwt(String token) throws InvalidJwtException {
+        String JWKS_URL = "https://auth.nblocks.cloud/.well-known/jwks.json";
+
+        try {
+            // Verify the tokens result using public keys from Nblocks JWKS
+            HttpsJwks httpsJkws = new HttpsJwks(JWKS_URL);
+            HttpsJwksVerificationKeyResolver httpsJwksKeyResolver = new HttpsJwksVerificationKeyResolver(httpsJkws);
+
+            JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                    .setVerificationKeyResolver(httpsJwksKeyResolver)
+                    .setExpectedIssuer("https://auth.nblocks.cloud")
+                    .setExpectedAudience(APP_ID)
+                    .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.PERMIT,
+                            AlgorithmIdentifiers.RSA_PSS_USING_SHA256)) 
+                    .build();
+
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
+            return jwtClaims;
+        } catch (InvalidJwtException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String authHeader = httpRequest.getHeader("Authorization");
+        // Only run verficiation if Authorization header is present
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring("Bearer ".length());
+            try {
+                JwtClaims jwtClaims = verifyJwt(token);
+                httpRequest.setAttribute("user", jwtClaims.getClaimsMap());
+            } catch (Exception e) {
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
+            }
+        }
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Initialization logic here
+    }
+
+    @Override
+    public void destroy() {
+        // Cleanup logic here
+    }
+}
+```
+
+And create another Filter class, `AccessControlFilter`, in which we check the scopes of the requesting user:
+```java
+package com.mycompany.app;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class AccessControlFilter implements Filter {
+    private List<String> roles;
+    private List<String> privileges;
+
+    public AccessControlFilter(List<String> roles, List<String> privileges) {
+        this.roles = roles;
+        this.privileges = privileges;
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        Map<String, Object> user = (Map<String, Object>) httpRequest.getAttribute("user");
+        if (user != null) {
+            String role = (String) user.get("role");
+            String scope = (String) user.get("scope");
+            List<String> scopeList = List.of(scope.split(" "));
+            boolean roleCheck = roles != null ? roles.contains(role) : false;
+            boolean privilegeCheck = privileges != null ? scopeList.stream().anyMatch(privileges::contains) : false;
+            if (roleCheck || privilegeCheck) {
+                chain.doFilter(request, response);
+            } else {
+                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
+            }
+        } else {
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        }
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Initialization logic here
+    }
+
+    @Override
+    public void destroy() {
+        // Cleanup logic here
+    }
+}
+```
+:::tip Handling users not logged in
+
+If you're building a backend only app, you might want to redirect users to `/auth/login` instead of rendering a `401 Unauthorized` error in case they're unauthorized for a better user experience.
+:::
+
+Heading back to the initial Java app file, we can now make use of these filters to start protecting the endpoints!
+
+```java
+package com.mycompany.app;
+
+import java.util.EnumSet;
+import java.util.List;
+
+import javax.servlet.DispatcherType;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(8080);
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        server.setHandler(context);
+
+        context.addServlet(new ServletHolder(new LoginServlet()), "/login");
+        context.addServlet(new ServletHolder(new CallbackServlet()), "/auth/oauth-callback");
+        context.addServlet(new ServletHolder(new DashboardDataServlet()), "/protected/dashboardData");
+        context.addServlet(new ServletHolder(new AnalyticsDataServlet()), "/protected/analyticsData");
+        
+        //highlight-start
+        // Process all incoming requests with JwtFilter process and verify the JWT
+        context.addFilter(new FilterHolder(new JwtFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));
+
+        // Restrict all protected endpoints globally with AccessControlFilter to require authenticated users
+        context.addFilter(new FilterHolder(new AccessControlFilter(null, List.of("AUTHENTICATED"))),
+                "/protected/*", EnumSet.of(DispatcherType.REQUEST));
+
+        // Restrict /analyticsData with AccessControlFilter to require users with ANALYTICS_READ privilege
+        context.addFilter(new FilterHolder(new AccessControlFilter(null, List.of("ANALYTICS_READ"))),
+                "/protected/analyticsData/*", EnumSet.of(DispatcherType.REQUEST));
+        //highlight-end
+
+        server.start();
+        server.join();
+    }
+}
+```
+
+<details><summary>More examples</summary>
+
+Our `AccessControlFilter` filter can be activated in other ways, like this:
+
+```java
+// Protect all endpoints with AUTHENTICATED privilege
+context.addFilter(new FilterHolder(new AccessControlFilter(null, List.of("AUTHENTICATED"))),
+        "/*", EnumSet.of(DispatcherType.REQUEST));
+
+// Protect /protected/analyticsData with AUTHENTICATED privilege
+context.addFilter(new FilterHolder(new AccessControlFilter(null, List.of("AUTHENTICATED"))),
+        "/protected/analyticsData/", EnumSet.of(DispatcherType.REQUEST));
+
+// Protect using wildcards with ADMIN role
+context.addFilter(new FilterHolder(new AccessControlFilter(List.of("ADMIN"), null)),
+        "/secret/*", EnumSet.of(DispatcherType.REQUEST));
+```
+
+</details>
+
+</TabItem>
+
 <TabItem value="pseudo" label="Can't find your stack?" default>
   <PseudoCode/>
 </TabItem>
