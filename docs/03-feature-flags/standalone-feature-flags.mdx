@@ -1,38 +1,49 @@
 ---
-sidebar_position: 1
-sidebar_label: Quickstart Feature Flags
+sidebar_position: 2
+sidebar_label: Feature Flags Standalone
 tags:
     - tutorial
-    - quickstart
+    - standalone
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Quickstart Feature Flags
-On this page you will integrate your web application with Nblocks Feature Flags. This allows you to conditionally give access to or show / hide features or content to your users.
- 
+# Using Feature Flags Standalone
+On this page you will learn how to integrate your web application with Nblocks Feature Flags and use it standalone without other Nblocks features. 
+This allows you to conditionally give access to or show / hide features or content to your users.
+
 Some use cases for feature flags are: 
 * Restrict access to premium content that just users with a certain plan can access
 * Try beta features on a selection of customers
 * Show a message to all users during a scheduled release.
 * Protect a feature with Role based access controll (RBAC).
 
-**The content of this quickstart**
+**The content of this tutorial**
 1. First we'll go through how you will apply a few lines of code to conditionally show content in your app.
 1. Then we'll create the flags for the features in Nblocks Admin with conditions that should apply to it.
 
 :::info Prerequisites
 
 1. If you haven't already, [sign up](/docs/getting-started/signup) for Nblocks and get access to your [app id](/docs/getting-started/id-and-keys)
-1. Completed the [Quickstart](/docs/getting-started/quickstart) since we'll be using the magic of access tokens in this quickstart
+
+:::
+
+## What is Standalone?
+Everything within Nblocks can cherrypicked and used as standalone features. 
+This guide shows you how you can integrate Feature flags into your project without using authentication or user management from Nblocks.
+
+Use this as a way to tap into what Nblocks has to offer without going the whole route. But remember, it is when you use the features together the magic happens! 🚀
+
+:::tip
+
+If you have Nblocks manage your users, checkout the more simple approach using the magic of access tokens in [Feature flags Quickstart](/docs/feature-flags/quickstart-feature-flags)
 
 :::
 
 ## Integrating in your code
 
-The integration essentially consists of requesting an evaluation of a flag by providing information about the current user and then handling the evaluation response.
-For the purpose of this quickstart we'll attach the user access token that will have Nblocks automatically resolve all the information that's necessary for evaluating a flag.
+The integration essentially consists of requesting an evaluation of a flag by providing user context information and then handling the evaluation response.
 
 The evaluation endpoint URL consists of your app id and the flag key you wish to evaluate.
 
@@ -42,6 +53,37 @@ And the response looks like this:
 ```json
 {
     "enabled": true
+}
+```
+
+### Adding user context information
+Adding user context information to your evaluation request enable you to build conditions for what and whom flags should be enabled for in Nblocks Admin.
+We've simplified this by defining a base structure, the context object, of what information you can and should send.
+
+We recommend you to send as much information as possible from start for a flexible experience without the need for re-releases while you add more flags and conditions. 
+
+The context object contains three areas, `user`, `org` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
+Here's an example:
+
+```json
+{
+    user: {
+        id: "john@doe.com",
+        role: "ADMIN",
+        name: "John Doe",
+        key: "custom-user-trait"
+    }
+
+    org: {
+        id: "66238feb99227400774266f5",
+        plan: "PREMIUM",
+        name: "My Workspace",
+        key: "custom-customer-trait",
+    }
+
+    device: {
+        key: "iphone"
+    }
 }
 ```
 
@@ -73,7 +115,7 @@ import { useEffect, useState } from 'react';
 // The component takes the prop flag.
 export default function FeatureFlag({ flag, children }) {
 
-    // Replace this with your own APP ID
+  // Replace this with your own APP ID
   const APP_ID = 'XXX';
 
   // This will be our variable telling if the feature is enabled or and we should render the component children
@@ -81,14 +123,14 @@ export default function FeatureFlag({ flag, children }) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    // Evaluate the flag
-    const accessToken = window.localStorage.getItem('access_token');
-    if (accessToken) {
-      evaluate(accessToken);
-    }
+    evaluate();
   }, []);
 
-  const evaluate = async (accessToken) => {
+  const evaluate = async () => {
+    
+    // We fetch information from localStorage that we have previously set e.g. during login 
+    const context = window.localStorage.getItem('context');
+
     const result = await fetch(
       `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
       {
@@ -97,7 +139,7 @@ export default function FeatureFlag({ flag, children }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          accessToken,
+          context,
         }),
       }
     ).then((res) => res.json());
@@ -109,6 +151,13 @@ export default function FeatureFlag({ flag, children }) {
   else return '';
 }
 ```
+
+:::tip
+
+For the purpose of simplicity this component use a context object from localStorage. 
+This object could be stored during your login process when the user is identified.
+
+:::
 
 Now we can use this component anywhere in your app to conditionally show content like pages or buttons in our React app.
 Like this, where the changes are highlighted:
@@ -169,14 +218,14 @@ export default function FeatureFlag({ flag, children}) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    // Evaluate the flag
-    const accessToken = window.localStorage.getItem('access_token');
-    if (accessToken) {
-      evaluate(accessToken);
-    }
+    evaluate();
   }, []);
 
   const evaluate = async (accessToken) => {
+    
+    // We fetch information from localStorage that we have previously set e.g. during login 
+    const context = window.localStorage.getItem('context');
+
     const result = await fetch(
       `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
       {
@@ -185,7 +234,7 @@ export default function FeatureFlag({ flag, children}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          accessToken,
+          context,
         }),
       }
     ).then((res) => res.json());
@@ -197,6 +246,13 @@ export default function FeatureFlag({ flag, children}) {
   else return '';
 }
 ```
+
+:::tip
+
+For the purpose of simplicity this component use a context object from localStorage. 
+This object could be stored during your login process when the user is identified.
+
+:::
 
 Now we can use this component anywhere in your app to conditionally show content like pages or buttons in our app.
 Like this, where the changes are highlighted:
@@ -267,12 +323,12 @@ public class FeatureFlag {
     public static Boolean evaluateFlag(String flagId, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Extract the access token from the Authorization header
-            String authHeader = request.getHeader("Authorization");
-            String accessToken = authHeader.substring("Bearer ".length());
+            // Grab your context information from your storage
+            // and build the feature flags context
+            String context = "{\"device\": {\"key\": \"iphone\"}}";
 
             // Prepare the request
-            JSONObject requestBody = new JSONObject().put("accessToken", accessToken);
+            JSONObject requestBody = new JSONObject().put("context", context);
 
             HttpRequest flagsRequest = HttpRequest.newBuilder()
                     .uri(URI.create(FEATURE_FLAG_URL + flagId))
@@ -296,6 +352,13 @@ public class FeatureFlag {
     }
 }
 ```
+
+:::tip
+
+For the purpose of simplicity this class use a context object previously saved in a storage. 
+This object could be stored during your login process when the user is identified.
+
+:::
 
 Now we can use the `evaluateFlag` method anywhere in your app to conditionally run operations, such as the new model.
 Like in this `ModelServlet`:
@@ -357,9 +420,10 @@ With groups we can build reusable conditions that can be attached to our differe
 Think of this as you'd want to target an individual tenant, user or a group of roles. That's what groups are for. 
 
 Navigate to Feature flags and click the groups tab. 
-Click add group and name it "beta-customer" and specify to match on "Workspace ID" using the operator "Equals" and choose one of the current tenants that has signed up for your app.  
+Click add group and name it "beta-customer" and specify to match on "Workspace name" using the operator "Begins with". Enter the value "beta-".
+This means all users with the workspace name that begins with "beta-" will be matched for this group and it's a good starting point to test with the context you will provide when testing.
 
-![Adding a group](../assets/feature-flags/add-segment-org-id.png)
+![Adding a group](../assets/feature-flags/add-segment-org-id-standalone.png)
 
 ### Step 3. Attach the group to the flag
 Get back to the flags tab and click edit on the "beta-feature" flag we created earlier.
@@ -370,54 +434,12 @@ This means that the flag will be evaluated to `enabled: true` if any of the grou
 ![Adding a flag](../assets/feature-flags/update-flag-with-segment.png)
 
 ## Testing it
-We can now test this by logging into your app with the tenant we selected as target in the "beta-customer" group.
+You can now test this by starting your application. Save a test context object into localStorage directly from the browser developer console or add it to your own logic.
+Make sure the workspace name is set to something that begins with `beta-....`.
 You should see the content that was set with the flag `beta-feature`. Now you can try creating flags for the other elements.
 
 
-**That's it, your now done with this quickstart**
-
-<details><summary>Can I provide other information than access token?</summary>
-
-Instead of providing the user's access token you can send your own user context information to the evaluation api. 
-
-We recommend you to send as much information as possible from start for a flexible experience without the need for re-releases while you add more flags and conditions. 
-
-We've simplified this by defining a base structure of what information to send so you can more easily build your groups and conditions in Nblocks Admin.
-
-The context object contains three areas, `user`, `org` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
-Here's an example:
-
-```json
-{
-    user: {
-        id: "63d2ab029e23db0afb07a5a7",
-        role: "ADMIN",
-        name: "John Doe",
-        key: "custom-user-trait"
-    }
-
-    org: {
-        id: "66238feb99227400774266f5",
-        plan: "PREMIUM",
-        name: "My Workspace",
-        key: "custom-customer-trait",
-    }
-
-    device: {
-        key: "iphone"
-    }
-}
-```
-
-This context object can be that can be sent to [/flags/evaluate](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-a-flag) and [/flags/bulkEvaluate](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk).
-
-:::tip
-
-Providing the access token will automatically resolve all values for `user` and `org` so you don't have to. Read more in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#feature-flags)
-
-:::
-
-</details>
+**That's it, your now done with this tutorial**
 
 :::tip
 
