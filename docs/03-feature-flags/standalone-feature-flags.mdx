@@ -91,7 +91,98 @@ Now, let's integrate this into our app!
 
 ##### Example code
 <Tabs>
+
 <TabItem value="reactjs" label="ReactJS" default>
+
+1. Install the Nblocks react plugin
+
+```bash
+npx @nebulr-group/nblocks-cli setup-react
+```
+
+2. Add the NblocksProvider
+Add the `NblocksProvider` to your top most component, e.g. the App component and wrap the rest of your app as children.
+
+```tsx
+import { NblocksProvider } from '@nebulr-group/nblocks-react';
+
+export default function App() {
+  return (
+    <NblocksProvider config={{ appId: 'XXX'  /* Replace this with your own APP ID */ }}>
+      ... App components ...
+    </NblocksProvider>
+  );
+}
+```
+
+3. Use the FeatureFlag Component
+
+Imagine you have a component that looks something like this:
+
+```tsx
+// We just want to render this for premium customers
+<span>Premium content</span>
+
+// We just want to render this for admins 
+<a href="/beta">Button to admin features</a>
+
+// We just want to render this if we're doing a release
+<h1>We're currently doing a release and will be back soon</h1>
+```
+
+Now you can use the `FeatureFlagComponent` from the plugin to conditionally show these components in your React app.
+
+```tsx
+import { FeatureFlagComponent } from '@nebulr-group/nblocks-react';
+
+// highlight-start  
+<FeatureFlagComponent flag="premium-features">
+// highlight-end
+    <span>Premium content</span>
+// highlight-start  
+</FeatureFlagComponent>
+<FeatureFlagComponent flagKey="admin-features">
+// highlight-end
+    <a href="/beta">Button to admin features</a>
+// highlight-start  
+</FeatureFlagComponent>
+<FeatureFlagComponent flagKey="release-announcement">
+// highlight-end
+    <h1>We're currently doing a release and will be back soon</h1>
+// highlight-start  
+</FeatureFlagComponent>
+// highlight-end
+```
+
+4. Provide the user context
+
+To attach context information to the flags when they get evaluated use `setContext` method from the `useFlags()` hook.
+This is especially useful to set during your login process when the user is identified.
+
+```tsx
+import { useFlags } from '@nebulr-group/nblocks-react';
+
+const { setContext } = useFlags();
+
+setContext({
+  user: {
+    id: "john@doe.com",
+    ...
+  }
+})
+```
+
+:::tip
+
+When calling `setContext()` all your FeatureFlagComponents will reload automatically. 
+
+You can also provide an inital flags context to `NblocksProvider`.
+
+:::
+
+</TabItem>
+
+<TabItem value="reactjs-vanilla" label="ReactJS (vanilla)">
 
 Imagine you have a component that looks something like this:
 
@@ -156,6 +247,12 @@ export default function FeatureFlag({ flag, children }) {
 
 For the purpose of simplicity this component use a context object from localStorage. 
 This object could be stored during your login process when the user is identified.
+
+:::
+
+:::tip
+
+Instead of making multiple requests for each flag you can evaluate all flags in bulk once for better performance. See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk)
 
 :::
 
@@ -251,6 +348,12 @@ export default function FeatureFlag({ flag, children}) {
 
 For the purpose of simplicity this component use a context object from localStorage. 
 This object could be stored during your login process when the user is identified.
+
+:::
+
+:::tip
+
+Instead of making multiple requests for each flag you can evaluate all flags in bulk once for better performance. See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk)
 
 :::
 
@@ -360,6 +463,12 @@ This object could be stored during your login process when the user is identifie
 
 :::
 
+:::tip
+
+Instead of making multiple requests for each flag you can evaluate all flags in bulk once for better performance. See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk)
+
+:::
+
 Now we can use the `evaluateFlag` method anywhere in your app to conditionally run operations, such as the new model.
 Like in this `ModelServlet`:
 
@@ -440,9 +549,3 @@ You should see the content that was set with the flag `beta-feature`. Now you ca
 
 
 **That's it, your now done with this tutorial**
-
-:::tip
-
-Instead of making multiple requests for each flag you can evaluate all flags in bulk once for better performance. See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#evaluate-flags-in-bulk)
-
-:::

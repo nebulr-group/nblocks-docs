@@ -49,7 +49,72 @@ Now, let's integrate this into our app!
 
 ##### Example code
 <Tabs>
+
 <TabItem value="reactjs" label="ReactJS" default>
+
+1. If you haven't already, install the Nblocks react plugin
+
+```bash
+npx @nebulr-group/nblocks-cli setup-react
+```
+
+2. Add the NblocksProvider
+Add the `NblocksProvider` to your top most component, e.g. the App component and wrap the rest of your app as children.
+
+```tsx
+import { NblocksProvider } from '@nebulr-group/nblocks-react';
+
+export default function App() {
+  return (
+    <NblocksProvider config={{ appId: 'XXX'  /* Replace this with your own APP ID */ }}>
+      ... App components ...
+    </NblocksProvider>
+  );
+}
+```
+
+3. Use the FeatureFlag Component
+
+Imagine you have a component that looks something like this:
+
+```tsx
+// We just want to render this for premium customers
+<span>Premium content</span>
+
+// We just want to render this for admins 
+<a href="/beta">Button to admin features</a>
+
+// We just want to render this if we're doing a release
+<h1>We're currently doing a release and will be back soon</h1>
+```
+
+Now you can use the `FeatureFlagComponent` from the plugin to conditionally show these components in your React app.
+
+```tsx
+import { FeatureFlagComponent } from '@nebulr-group/nblocks-react';
+
+// highlight-start  
+<FeatureFlagComponent flag="premium-features">
+// highlight-end
+    <span>Premium content</span>
+// highlight-start  
+</FeatureFlagComponent>
+<FeatureFlagComponent flagKey="admin-features">
+// highlight-end
+    <a href="/beta">Button to admin features</a>
+// highlight-start  
+</FeatureFlagComponent>
+<FeatureFlagComponent flagKey="release-announcement">
+// highlight-end
+    <h1>We're currently doing a release and will be back soon</h1>
+// highlight-start  
+</FeatureFlagComponent>
+// highlight-end
+```
+
+</TabItem>
+
+<TabItem value="reactjs-vanilla" label="ReactJS (vanilla)" default>
 
 Imagine you have a component that looks something like this:
 
