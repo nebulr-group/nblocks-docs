@@ -157,23 +157,47 @@ import { FeatureFlagComponent } from '@nebulr-group/nblocks-react';
 
 4. Provide the user context
 
-To attach context information to the flags when they get evaluated use `setContext` method from the `useFlags()` hook.
-This is especially useful to set during your login process when the user is identified.
+To attach context information to the flags when they get evaluated use `setContext` method from the `useFlags()` hook. 
+You can call this method from anywhere as long as it's inside the `NblocksProvider`, for example during your login process when the user is identified.
+
+Here's an example:
 
 ```tsx
+import { useEffect } from 'react';
 import { useFlags } from '@nebulr-group/nblocks-react';
 
 const { setContext } = useFlags();
 
-setContext({
-  user: {
-    id: "john@doe.com",
-    ...
-  }
-})
+// Your user object might look something like this.
+const userObject = {
+  username: "john@doe.com",
+  role: "ADMIN",
+  name: "John Doe",
+  customerName: "John Doe LTD",
+  plan: "Premium"
+}
+
+useEffect(()=> {
+
+  // set the context
+  setContext({
+    user: {
+      id: userObject.username,
+      name: userObject.name,
+      role: userObject.role,
+    },
+    org: {
+      name: userObject.customerName,
+      plan: userObject.plan
+    }
+  })
+
+}, []);
 ```
 
 :::tip
+
+You don't need to send all parameters but we recommend you to send as much as possible. This gives a flexible experience without the need for re-releases while you add more flags and conditions.
 
 When calling `setContext()` all your FeatureFlagComponents will reload automatically. 
 
@@ -219,9 +243,16 @@ export default function FeatureFlag({ flag, children }) {
   }, []);
 
   const evaluate = async () => {
-    
-    // We fetch information from localStorage that we have previously set e.g. during login 
-    const context = window.localStorage.getItem('context');
+
+    // Here we've retrieved our user information
+    // The object might look something like this.
+    const userObject = {
+      username: "john@doe.com",
+      role: "ADMIN",
+      name: "John Doe",
+      customerName: "John Doe LTD",
+      plan: "Premium"
+    }
 
     const result = await fetch(
       `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
@@ -231,7 +262,17 @@ export default function FeatureFlag({ flag, children }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          context,
+          context: {
+            user: {
+              id: userObject.username,
+              name: userObject.name,
+              role: userObject.role,
+            },
+            org: {
+              name: userObject.customerName,
+              plan: userObject.plan
+            },
+          }
         }),
       }
     ).then((res) => res.json());
@@ -243,13 +284,6 @@ export default function FeatureFlag({ flag, children }) {
   else return '';
 }
 ```
-
-:::tip
-
-For the purpose of simplicity this component use a context object from localStorage. 
-This object could be stored during your login process when the user is identified.
-
-:::
 
 :::tip
 
@@ -321,8 +355,15 @@ export default function FeatureFlag({ flag, children}) {
 
   const evaluate = async (accessToken) => {
     
-    // We fetch information from localStorage that we have previously set e.g. during login 
-    const context = window.localStorage.getItem('context');
+    // Here we've retrieved our user information
+    // The object might look something like this.
+    const userObject = {
+      username: "john@doe.com",
+      role: "ADMIN",
+      name: "John Doe",
+      customerName: "John Doe LTD",
+      plan: "Premium"
+    }
 
     const result = await fetch(
       `https://backendless.nblocks.cloud/flags/evaluate/${APP_ID}/${flag}`,
@@ -332,7 +373,17 @@ export default function FeatureFlag({ flag, children}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          context,
+          context: {
+            user: {
+              id: userObject.username,
+              name: userObject.name,
+              role: userObject.role,
+            },
+            org: {
+              name: userObject.customerName,
+              plan: userObject.plan
+            },
+          }
         }),
       }
     ).then((res) => res.json());
@@ -344,13 +395,6 @@ export default function FeatureFlag({ flag, children}) {
   else return '';
 }
 ```
-
-:::tip
-
-For the purpose of simplicity this component use a context object from localStorage. 
-This object could be stored during your login process when the user is identified.
-
-:::
 
 :::tip
 
@@ -544,7 +588,8 @@ This means that the flag will be evaluated to `enabled: true` if any of the grou
 ![Adding a flag](../assets/feature-flags/update-flag-with-segment.png)
 
 ## Testing it
-You can now test this by starting your application. Save a test context object into localStorage directly from the browser developer console or add it to your own logic.
+You can now test this by starting your application.
+
 Make sure the workspace name is set to something that begins with `beta-....`.
 You should see the content that was set with the flag `beta-feature`. Now you can try creating flags for the other elements.
 
