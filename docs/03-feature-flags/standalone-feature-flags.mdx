@@ -174,7 +174,7 @@ const userObject = {
   role: "ADMIN",
   name: "John Doe",
   customerName: "John Doe LTD",
-  plan: "Premium"
+  plan: "premium"
 }
 
 useEffect(()=> {
@@ -191,7 +191,6 @@ useEffect(()=> {
       plan: userObject.plan
     }
   })
-
 }, []);
 ```
 
@@ -251,7 +250,7 @@ export default function FeatureFlag({ flag, children }) {
       role: "ADMIN",
       name: "John Doe",
       customerName: "John Doe LTD",
-      plan: "Premium"
+      plan: "premium"
     }
 
     const result = await fetch(
@@ -362,7 +361,7 @@ export default function FeatureFlag({ flag, children}) {
       role: "ADMIN",
       name: "John Doe",
       customerName: "John Doe LTD",
-      plan: "Premium"
+      plan: "premium"
     }
 
     const result = await fetch(
