@@ -62,27 +62,34 @@ We've simplified this by defining a base structure, the context object, of what 
 
 We recommend you to send as much information as possible from start for a flexible experience without the need for re-releases while you add more flags and conditions. 
 
-The context object contains three areas, `user`, `org` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
+The context object contains three areas, `user`, `tenant` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
+
+Additionally, there's a forth property `custom` which is a map that allows developers to include any additional custom key-value pairs. Each key in the custom object should be a string, and the corresponding value should also be a string.
+
 Here's an example:
 
 ```json
 {
-    user: {
-        id: "john@doe.com",
-        role: "ADMIN",
-        name: "John Doe",
-        key: "custom-user-trait"
-    }
-
-    org: {
-        id: "66238feb99227400774266f5",
-        plan: "PREMIUM",
-        name: "My Workspace",
-        key: "custom-customer-trait",
-    }
-
-    device: {
-        key: "iphone"
+    "user": {
+        "id": "63d2ab029e23db0afb07a5a7",
+        "role": "ADMIN",
+        "name": "John Doe",
+        "email": "john@doe.com",
+        "key": "custom-user-trait"
+    },
+    "tenant": {
+        "id": "66238feb99227400774266f5",
+        "plan": "PREMIUM",
+        "name": "My Workspace",
+        "key": "custom-customer-trait",
+    },
+    "device": {
+        "key": "iphone"
+    },
+    "custom": {
+        "property1": "value1",
+        "property2": "value2",
+        "property3": "value2",
     }
 }
 ```
@@ -186,7 +193,7 @@ useEffect(()=> {
       name: userObject.name,
       role: userObject.role,
     },
-    org: {
+    tenant: {
       name: userObject.customerName,
       plan: userObject.plan
     }
@@ -267,7 +274,7 @@ export default function FeatureFlag({ flag, children }) {
               name: userObject.name,
               role: userObject.role,
             },
-            org: {
+            tenant: {
               name: userObject.customerName,
               plan: userObject.plan
             },
@@ -378,7 +385,7 @@ export default function FeatureFlag({ flag, children}) {
               name: userObject.name,
               role: userObject.role,
             },
-            org: {
+            tenant: {
               name: userObject.customerName,
               plan: userObject.plan
             },

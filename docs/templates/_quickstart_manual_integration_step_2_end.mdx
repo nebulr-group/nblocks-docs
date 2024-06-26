@@ -1,0 +1,21 @@
+<details><summary>What is included in the tokens response?</summary>
+
+**Tokens Response example**   
+This is the anatomy of the tokens response.
+```json
+{
+  "token_type": "Bearer", // Token type
+  "expires_in": 3600, // How long the access token is valid (in seconds)
+  "access_token": "eyJhbGciOiJQ...", // The access token
+  "refresh_token": "eyJhbGciOiJQ...", // The refresh token used to generate new access tokens
+  "id_token": "eyJhbGciOiJQ...", // The OpenID token (user profile)
+}
+```
+
+</details>
+
+:::tip
+
+Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
+
+:::

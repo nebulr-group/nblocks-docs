@@ -9,6 +9,10 @@ tags:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import PseudoCode from '../templates/_pseudo-code.mdx';
+import IntegrationStep1 from '../templates/_quickstart_manual_integration_step_1.mdx';
+import IntegrationStep1End from '../templates/_quickstart_manual_integration_step_1_end.mdx';
+import IntegrationStep2 from '../templates/_quickstart_manual_integration_step_2.mdx';
+import IntegrationStep2End from '../templates/_quickstart_manual_integration_step_2_end.mdx';
 
 # Quickstart
 On this page you will integrate your web application with Nblocks to get login, signup, plans and payments functionality for your users out of the box. We call this being user ready and you will accomplish this in no time. 
@@ -66,20 +70,91 @@ npx @nebulr-group/nblocks-cli push-app
 
 </details>
 
-
-## Step 1: Redirect users to Nblocks login
-
-### Add a redirect action
-Open your project source code in an editor of your choice. 
-Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
-
-A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing is a common concept and available for most frameworks.
-
-#### Example code
 <Tabs>
+
 <TabItem value="reactjs" label="ReactJS" default>
 
+:::tip Integration using Plugin
+This approach covers using our [React plugin on NPM](https://www.npmjs.com/package/@nebulr-group/nblocks-react/v/3.0.0) to automatically get the nessesary components for this integration. 
+See the other tabs for a manual integration approach.
+:::
+
+1. If you haven't already, install the Nblocks react plugin
+
+```bash
+npx @nebulr-group/nblocks-cli setup-react
+```
+
+2. Add the NblocksProvider
+
+Add the `NblocksProvider` to your top most component, e.g. the App component and wrap the rest of your app as children.
+
+#### Example code
+
+```tsx
+import { NblocksProvider } from '@nebulr-group/nblocks-react';
+
+export default function App() {
+  return (
+    <NblocksProvider config={{ appId: 'XXX'  /* Replace this with your own APP ID */ }}>
+      ... App components ...
+    </NblocksProvider>
+  );
+}
+```
+
+3. Create three new routes and secure the rest of the app
+
+Add the new routes `/login`, `/logout` and `/auth/oauth-callback` and import the components from the plugin that should render for each one of them. 
+Add all other existing routes you wish to restrict and protect to logged in users as childs to `ProtectedRouteComponent`.
+
+Here's an example setting up routes in react with react-router.
+
+#### Example code
+
+```tsx
+import { 
+  LoginComponent, 
+  LogoutComponent, 
+  CallbackComponent,
+  ProtectedRouteComponent
+} from '@nebulr-group/nblocks-react';
+import { Route, Routes } from "react-router-dom";
+
+export default function AppRoutes() {
+  return (
+    <div>
+      <Routes>
+        <!-- Create new routes that renders the login, logout and callback components -->
+        <Route path="/login" element={ <LoginComponent /> }/>
+        <Route path="/logout" element={ <LogoutComponent /> }/>
+        <Route path="/auth/oauth-callback" element={ <CallbackComponent /> }/>
+
+        <!-- Wrap all the routes which you want to protect inside ProtectedRouteComponent  -->
+        <Route path="*" element={
+          <ProtectedRouteComponent>
+            <Routes>
+              ... These routes are protected from unauthenticated users...
+            </Routes>
+          </ProtectedRouteComponent>
+          }
+        />
+      </Routes>
+    </div>
+  );
+}
+```
+
+</TabItem>
+
+<TabItem value="reactjs-vanilla" label="ReactJS (vanilla)">
+
+<IntegrationStep1/>
+
 Create a new component that we call `Login` and add this to the `/login` route. In React routes can be created with [react-router](https://reactrouter.com/) plugin.
+
+#### Example code
+
 ```tsx
 import { useEffect } from "react";
 
@@ -95,117 +170,13 @@ export default function Login() {
   return ("");
 }
 ```
+<IntegrationStep1End />
 
-</TabItem>
-
-<TabItem value="nextjs" label="NextJS" default>
-
-Create a new file `/app/login/page.jsx` and call this component `Login`. This will add a new route to `/login` by the framework.
-
-```tsx title=/app/login/page.jsx
-import { redirect } from 'next/navigation'
- 
-export default function Login() {
-
-  // Replace this with your own APP ID
-  // highlight-start
-  const APP_ID = "XXX";
-  // highlight-end
-
-  // Immediately redirect the web browser to Nblocks login
-  redirect(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
-}
-```
-</TabItem>
-
-<TabItem value="angular" label="Angular" default>
-
-Create a new component that we call `Login` and add this to the `/login` route. In Angular routes can be created with the built in **RouterModule**.
-```ts
-@Component({
-  template: '',
-})
-export class Login {
-  constructor(
-  ) {
-    // Replace this with your own APP ID
-    // highlight-start
-    const APP_ID = "XXX";
-    // highlight-end
-
-    // Immediately redirect the web browser to Nblocks login
-    window.location.replace(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="java" label="Java" default>
-
-Create a new class that we call `LoginServlet` and add this to the `/login` route. In Java, routes can be created in a **Jetty** web server.
-
-```java title=src/main/java/com/mycompany/app/LoginServlet.java
-package com.mycompany.app;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-class LoginServlet extends HttpServlet {
-    // Replace this with your own APP ID
-    // highlight-start
-    private static final String APP_ID = "XXX";
-    // highlight-end
-    private static final String LOGIN_URL = "https://auth.nblocks.cloud/url/login/";
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.sendRedirect(LOGIN_URL + APP_ID);
-    }
-}
-```
-
-</TabItem>
-
-<TabItem value="pseudo" label="Can't find your stack?" default>
-  <PseudoCode/>
-</TabItem>
-
-</Tabs>
-
-:::tip
-
-Curious in what more ways you can use the  `/url/login` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#short-hand-authorize)
-
-:::
-
-## Step 2: Receive the user back to your app
-When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code token that we will resolve into something more useful.
-The URL containing the code token will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
-
-### Add a callback route and use the code to exchange for user tokens
-Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
-
-Then we will exchange this code token for more useful user profile information. 
-Your app should make an API call to the Nblocks "Token" endpoint at `https://auth.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
-The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
-
-:::tip Decoding and verifying JWTs
-
-JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode and verify them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
-We'll be using one of these in our code examples.
-:::
-
-#### Example code
-<Tabs>
-<TabItem value="reactjs" label="ReactJS" default>
+<IntegrationStep2 />
 
 Create a new component that we call `Callback` and add this to the `/auth/oauth-callback` route. In React routes can be created with [react-router](https://reactrouter.com/) plugin.
+
+#### Example code
 
 ```jsx
 import React, { useEffect, useState } from "react";
@@ -261,12 +232,39 @@ export default function Callback() {
     return (<p>Not logged in</p>);
 }
 ```
+<IntegrationStep2End/>
 
 </TabItem>
 
-<TabItem value="nextjs" label="NextJS" default>
+<TabItem value="nextjs" label="NextJS">
+
+<IntegrationStep1 />
+
+Create a new file `/app/login/page.jsx` and call this component `Login`. This will add a new route to `/login` by the framework.
+
+#### Example code
+
+```tsx title=/app/login/page.jsx
+import { redirect } from 'next/navigation'
+ 
+export default function Login() {
+
+  // Replace this with your own APP ID
+  // highlight-start
+  const APP_ID = "XXX";
+  // highlight-end
+
+  // Immediately redirect the web browser to Nblocks login
+  redirect(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
+}
+```
+<IntegrationStep1End />
+
+<IntegrationStep2 />
 
 Create a new file `/app/auth/oauth-callback/page.jsx` and call this component `Callback`. This will add a new route to `/auth/oauth-callback` by the framework.
+
+#### Example code
 
 ```tsx title=/app/auth/oauth-callback/page.jsx
 'use client'
@@ -324,11 +322,42 @@ export default function Callback() {
     return (<p>Not logged in</p>);
 }
 ```
+
+<IntegrationStep2End/>
+
 </TabItem>
 
-<TabItem value="angular" label="Angular" default>
+<TabItem value="angular" label="Angular">
+
+Create a new component that we call `Login` and add this to the `/login` route. In Angular routes can be created with the built in **RouterModule**.
+
+#### Example code
+
+```ts
+@Component({
+  template: '',
+})
+export class Login {
+  constructor(
+  ) {
+    // Replace this with your own APP ID
+    // highlight-start
+    const APP_ID = "XXX";
+    // highlight-end
+
+    // Immediately redirect the web browser to Nblocks login
+    window.location.replace(`https://auth.nblocks.cloud/url/login/${APP_ID}`);
+  }
+}
+```
+
+<IntegrationStep1End />
+
+<IntegrationStep2 />
 
 Create a new component that we call `Callback` and add this to the `/auth/` route. In Angular routes can be created with the built in **RouterModule**.
+
+#### Example code
 
 ```ts
 import { jwtVerify, createRemoteJWKSet } from 'jose';
@@ -383,11 +412,48 @@ export class Callback {
 
 ```
 
+<IntegrationStep2End/>
+
 </TabItem>
 
 <TabItem value="java" label="Java">
 
+Create a new class that we call `LoginServlet` and add this to the `/login` route. In Java, routes can be created in a **Jetty** web server.
+
+#### Example code
+
+```java title=src/main/java/com/mycompany/app/LoginServlet.java
+package com.mycompany.app;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+class LoginServlet extends HttpServlet {
+    // Replace this with your own APP ID
+    // highlight-start
+    private static final String APP_ID = "XXX";
+    // highlight-end
+    private static final String LOGIN_URL = "https://auth.nblocks.cloud/url/login/";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(LOGIN_URL + APP_ID);
+    }
+}
+```
+
+<IntegrationStep1End />
+
+<IntegrationStep2/>
+
 Create a new class that we call `CallbackServlet` and add this to the `/auth/oauth-callback` route. In Java, routes can be created in a **Jetty** web server.
+
+#### Example code
 
 ```java title=src/main/java/com/mycompany/app/CallbackServlet.java
 package com.mycompany.app;
@@ -474,37 +540,18 @@ public class CallbackServlet extends HttpServlet {
 }
 ```
 
+<IntegrationStep2End/>
+
+
 </TabItem>
 
-<TabItem value="pseudo" label="Can't find your stack?" default>
+<TabItem value="pseudo" label="Can't find your stack?">
   <PseudoCode/>
 </TabItem>
 
 </Tabs>
 
-<details><summary>What is included in the tokens response?</summary>
-
-**Tokens Response example**   
-This is the anatomy of the tokens response.
-```json
-{
-  "token_type": "Bearer", // Token type
-  "expires_in": 3600, // How long the access token is valid (in seconds)
-  "access_token": "eyJhbGciOiJQ...", // The access token
-  "refresh_token": "eyJhbGciOiJQ...", // The refresh token used to generate new access tokens
-  "id_token": "eyJhbGciOiJQ...", // The OpenID token (user profile)
-}
-```
-
-</details>
-
-:::tip
-
-Curious in what more ways you can use the  `/token/code` endpoint? See the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#shorthand-get-tokens)
-
-:::
-
-## Step 3: Test it
+## Test it
 
 ### 1. Start your app
 Start your application so that it is accessible on [http://localhost:8080](http://localhost:8080)
@@ -537,7 +584,7 @@ If not, check the prerequisites section again to learn how to use another port t
 
 :::
 
-## Step 4: Exploring the dashboard in Nblocks Admin
+## Exploring the dashboard in Nblocks Admin
 Congratulations! You’ve successfully integrated Nblocks into your app, enabling seamless user authentication and plan selection. Now, let’s dive into the dashboard, where you can further customize and manage your application’s features.
 
 ### Admin Overview:

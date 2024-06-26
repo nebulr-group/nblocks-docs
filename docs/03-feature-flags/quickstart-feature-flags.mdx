@@ -115,7 +115,7 @@ import { FeatureFlagComponent } from '@nebulr-group/nblocks-react';
 
 </TabItem>
 
-<TabItem value="reactjs-vanilla" label="ReactJS (vanilla)" default>
+<TabItem value="reactjs-vanilla" label="ReactJS (vanilla)">
 
 Imagine you have a component that looks something like this:
 
@@ -450,27 +450,34 @@ We recommend you to send as much information as possible from start for a flexib
 
 We've simplified this by defining a base structure of what information to send so you can more easily build your groups and conditions in Nblocks Admin.
 
-The context object contains three areas, `user`, `org` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
+The context object contains three areas, `user`, `tenant` and `device`. Each one of them reflect different traits and holds predefined relevant properties that you can assign.
+
+Additionally, there's a forth property `custom` which is a map that allows developers to include any additional custom key-value pairs. Each key in the custom object should be a string, and the corresponding value should also be a string.
+
 Here's an example:
 
 ```json
 {
-    user: {
-        id: "63d2ab029e23db0afb07a5a7",
-        role: "ADMIN",
-        name: "John Doe",
-        key: "custom-user-trait"
-    }
-
-    org: {
-        id: "66238feb99227400774266f5",
-        plan: "PREMIUM",
-        name: "My Workspace",
-        key: "custom-customer-trait",
-    }
-
-    device: {
-        key: "iphone"
+    "user": {
+        "id": "63d2ab029e23db0afb07a5a7",
+        "role": "ADMIN",
+        "name": "John Doe",
+        "email": "john@doe.com",
+        "key": "custom-user-trait"
+    },
+    "tenant": {
+        "id": "66238feb99227400774266f5",
+        "plan": "PREMIUM",
+        "name": "My Workspace",
+        "key": "custom-customer-trait",
+    },
+    "device": {
+        "key": "iphone"
+    },
+    "custom": {
+        "property1": "value1",
+        "property2": "value2",
+        "property3": "value2",
     }
 }
 ```
@@ -479,7 +486,7 @@ This context object can be that can be sent to [/flags/evaluate](https://nebulr-
 
 :::tip
 
-Providing the access token will automatically resolve all values for `user` and `org` so you don't have to. Read more in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#feature-flags)
+Providing the access token will automatically resolve all values for `user` and `tenant` so you don't have to. Read more in the [API reference](https://nebulr-group.github.io/nblocks-api-docs/#feature-flags)
 
 :::
 

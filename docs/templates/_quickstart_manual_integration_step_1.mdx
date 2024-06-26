@@ -1,0 +1,7 @@
+## Step 1: Redirect users to Nblocks login
+
+### Add a redirect action
+Open your project source code in an editor of your choice. 
+Then add an action in your app that will redirect the user to the Nblocks "Login" endpoint at `https://auth.nblocks.cloud/url/login/APP_ID` where `APP_ID` is your known app id.
+
+A good practice is to add a new app route `/login` that triggers this action, so that when you navigate to `http://localhost:8080/login` the redirect is performed. Routing is a common concept and available for most frameworks.

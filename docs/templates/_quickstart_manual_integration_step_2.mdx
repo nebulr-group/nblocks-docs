@@ -1,0 +1,16 @@
+## Step 2: Receive the user back to your app
+When the user completes authentication with Nblocks Login, the user is redirected back to your app with a code token that we will resolve into something more useful.
+The URL containing the code token will look like this: `http://localhost:8080/auth/oauth-callback?code=XXXXXX....`
+
+### Add a callback route and use the code to exchange for user tokens
+Add a new route `/auth/oauth-callback` in your app that will act as a handler when the user is returned. In this handler you should retrieve the code token from the URL mentioned above and save it.
+
+Then we will exchange this code token for more useful user profile information. 
+Your app should make an API call to the Nblocks "Token" endpoint at `https://auth.nblocks.cloud/token/code/APP_ID` where `APP_ID` is your known app id in order to make this exchange.
+The returning response contains secure token data in JWT format that we'll verify cryptographically usign public keys.
+
+:::tip Decoding and verifying JWTs
+
+JWTs is a well known concept in security. That means there are plenty of libraries for many software stacks to decode and verify them into readable JSON. Here's a extensive [list](https://jwt.io/libraries) of different libraries.
+We'll be using one of these in our code examples.
+:::
